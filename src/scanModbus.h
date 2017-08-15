@@ -184,20 +184,27 @@ private:
     // all physically stored in memory in little-endian byte order, so this union
     // is all that is needed to get the correct float value from the small-endian
     // hex frames returned by the S::CAN sensors.
-    union SeFrame {
-      float Float;
-      byte Byte[4];
-    };
+    // union SeFrame {
+    //   float Float;
+    //   byte Byte[4];
+    // };
 
     // This is just as above, but for a 2-byte interger
-    union SeFrame2 {
-      uint16_t Int;
-      byte Byte[2];
-    };
+    // union SeFrame2 {
+    //   uint16_t Int;
+    //   byte Byte[2];
+    // };
 
     // This functions return the float from a 4-byte small-endian array beginning
     // at a specific index of another array.
     float floatFromFrame(byte indata[], int stindex);
+
+    // This functions return an integer from a 2-byte big-endian array beginning
+    // at a specific index of another array.
+    int intFromFrame(byte indata[], int stindex);
+
+    // This returns a "String" from a slice of a character array
+    String StringFromFrame(byte indata[], int stindex, int length);
 
     // This functions inserts a float as a 4-byte small endian array into another
     // array beginning at the specified index.
@@ -230,6 +237,10 @@ private:
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
     int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
+    int _commMode;
+    int _baudRate;
+    int _parity;
+    String _scanPoint;
 
     // This creates a null stream to use for "debugging" if you don't want to
     // actually print to a real stream.
@@ -247,7 +258,9 @@ private:
     Stream *_debugStream = &nullstream;  // The stream instance (serial port) for debugging
 
     int respSize;
-    byte responseBuffer[60];  // This needs to be bigger than the largest response
+    byte responseBuffer[135];  // This needs to be bigger than the largest response
+                               // For 8 parameters with 8 registers each:
+                               // 64 registers * 2 bytes per register + 5 frame bytes
 
     // The modbus protocol defines that there can be no more than 1.5 characters
     // of silence between characters in a frame and any space over 3.5 characters

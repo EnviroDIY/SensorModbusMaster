@@ -53,6 +53,21 @@ bool scan::getSetup(void)
 
     if (respSize == (27*2 + 5) && responseBuffer[0] == _slaveID)
     {
+        _commMode = intFromFrame(responseBuffer, 4);
+        _debugStream->print("Communication mode is: ");
+        _debugStream->println(_commMode);
+
+        _baudRate = intFromFrame(responseBuffer, 6);
+        _debugStream->print("Baud Rate is: ");
+        _debugStream->println(_baudRate);
+
+        _parity = intFromFrame(responseBuffer, 8);
+        _debugStream->print("Parity is: ");
+        _debugStream->println(_parity);
+
+        _scanPoint = StringFromFrame(responseBuffer, 10, 12);
+        _debugStream->print("Current s::canpoint is: ");
+        _debugStream->println(_scanPoint);
         return true;
     }
     else return false;
@@ -234,27 +249,46 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
 //                           PRIVATE HELPER FUNCTIONS
 //----------------------------------------------------------------------------
 
-// This functions return the float from a 4-byte small-endian array beginning
+// This functions return the float from a 4-byte big-endian array beginning
 // at a specific index of another array.
 float scan::floatFromFrame(byte indata[], int stindex)
 {
-    SeFrame Sefram;
-    Sefram.Byte[0] = indata[stindex];
-    Sefram.Byte[1] = indata[stindex + 1];
-    Sefram.Byte[2] = indata[stindex + 2];
-    Sefram.Byte[3] = indata[stindex + 3];
-    return Sefram.Float;
+    char charFloat[4];
+    charFloat[0] = indata[stindex];
+    charFloat[1] = indata[stindex + 1];
+    charFloat[2] = indata[stindex + 2];
+    charFloat[3] = indata[stindex + 3];
+    return atof(charFloat);
 }
+
+// This functions return an integer from a 2-byte big-endian array beginning
+// at a specific index of another array.
+int scan::intFromFrame(byte indata[], int stindex)
+{
+    char charInt[2];
+    charInt[0] = indata[stindex];
+    charInt[1] = indata[stindex + 1];
+    return atoi(charInt);
+}
+
+// This returns a "String" from a slice of a character array
+String scan::StringFromFrame(byte indata[], int stindex, int length)
+{
+    char charString[length];
+    for (int i = 0; i < length; i++) charString[i] = indata[stindex + i];
+    return String((char*)charString);
+}
+
 // This functions inserts a float as a 4-byte small endian array into another
 // array beginning at the specified index.
 void scan::floatIntoFrame(byte indata[], int stindex, float value)
 {
-    SeFrame Sefram;
-    Sefram.Float = value;
-    indata[stindex] = Sefram.Byte[0];
-    indata[stindex + 1] = Sefram.Byte[1];
-    indata[stindex + 2] = Sefram.Byte[2];
-    indata[stindex + 3] = Sefram.Byte[3];
+    // SeFrame Sefram;
+    // Sefram.Float = value;
+    // indata[stindex] = Sefram.Byte[0];
+    // indata[stindex + 1] = Sefram.Byte[1];
+    // indata[stindex + 2] = Sefram.Byte[2];
+    // indata[stindex + 3] = Sefram.Byte[3];
 }
 
 // This flips the device/receive enable to DRIVER so the arduino can send text
@@ -357,7 +391,7 @@ int scan::sendCommand(byte command[], int commandLength)
     if (_stream->available() > 0)
     {
         // Read the incoming bytes
-        int bytesRead = _stream->readBytes(responseBuffer, 60);
+        int bytesRead = _stream->readBytes(responseBuffer, 135);
         emptyResponseBuffer(_stream);
 
         // Print the raw response (for debugging)
