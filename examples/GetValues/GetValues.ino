@@ -44,13 +44,9 @@ bool success;
 // ---------------------------------------------------------------------------
 void setup()
 {
-
-    pinMode(PwrPin, OUTPUT);
-    digitalWrite(PwrPin, HIGH);
-
     if (DEREPin > 0) pinMode(DEREPin, OUTPUT);
 
-    Serial.begin(9600);  // Main serial port for debugging via USB Serial Monitor
+    Serial.begin(57600);  // Main serial port for debugging via USB Serial Monitor
     modbusSerial.begin(38400);  // The modbus serial stream
     // The default baud rate for the spectro::lyzer is 38400
 
@@ -64,11 +60,10 @@ void setup()
     Serial.println("S::CAN Spect::lyzer Test");
 
     // Allow the sensor and converter to warm up
-    // DO responds within 275-300ms;
-    // Turbidity and pH within 500ms
-    // Conductivity doesn't respond until 1.15-1.2s
     Serial.println("Waiting for sensor and adapter to be ready.");
     delay(500);
+
+    sensor.getSetup();
 
     // Get the sensor's hardware and software version
     // Serial.println("Getting sensor version.");
@@ -92,20 +87,20 @@ void setup()
 void loop()
 {
     // send the command to get the values
-    float temp = 0;
-    float val = 0;
-    if (model == Y532)
-    {
-        sensor.getValues(val);
-        sensor.getTemperatureValue(temp);
-    }
-    else sensor.getValues(temp, val);
-    Serial.print(temp);
-    Serial.print("      ");
-    Serial.print(val);
+    // float temp = 0;
+    // float val = 0;
+    // if (model == Y532)
+    // {
+    //     sensor.getValues(val);
+    //     sensor.getTemperatureValue(temp);
+    // }
+    // else sensor.getValues(temp, val);
+    // Serial.print(temp);
+    // Serial.print("      ");
+    // Serial.print(val);
     // Serial.print("      ");
     // Serial.print(millis());
-    Serial.println();
+    // Serial.println();
 
 
     // Delay between readings
@@ -120,5 +115,5 @@ void loop()
 
     // The teperature sensors can take readings much more quickly.  The same results
     // can be read many times from the registers between the new sensor readings.
-    delay(3000);
+    // delay(3000);
 }

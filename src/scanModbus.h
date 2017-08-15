@@ -223,6 +223,10 @@ private:
     // This sends a command to the sensor bus and listens for a response
     int sendCommand(byte command[], int commandLength);
 
+    // This sends three requests for a single register
+    // If the spectro::lyzer is sleeping, it will not respond until the third one
+    bool wakeSpec(void);
+
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
     int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
@@ -243,7 +247,7 @@ private:
     Stream *_debugStream = &nullstream;  // The stream instance (serial port) for debugging
 
     int respSize;
-    byte responseBuffer[18];  // This needs to be bigger than the largest response
+    byte responseBuffer[60];  // This needs to be bigger than the largest response
 
     // The modbus protocol defines that there can be no more than 1.5 characters
     // of silence between characters in a frame and any space over 3.5 characters

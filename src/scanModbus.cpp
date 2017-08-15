@@ -42,9 +42,24 @@ bool scan::begin(byte modbusSlaveID, Stream &stream, int enablePin)
     return true;
 }
 
+
 // This gets all of the setup information at once
 bool scan::getSetup(void)
-{return false;}
+{
+    wakeSpec();
+    byte getHoldingRegisters[8] = {_slaveID, 0x03, 0x00, 0x00, 0x00, 0x1b, 0x00, 0x00};
+                                 // Address, Read,   Reg 0,   27 Registers,   CRC
+    respSize = sendCommand(getHoldingRegisters, 8);
+
+    if (respSize == (27*2 + 5) && responseBuffer[0] == _slaveID)
+    {
+        return true;
+    }
+    else return false;
+}
+
+
+
 
 // This just returns the given slave ID.  If you don't know your slave ID, you
 // must find it some other way
@@ -53,7 +68,18 @@ byte scan::getSlaveID(void)
 
 // This sets a new modbus slave ID
 bool scan::setSlaveID(byte newSlaveID)
-{return false;}
+{
+    byte setSlaveID[11] = {_slaveID, 0x06, 0x00, 0x00, 0x00, 0x01, 0x02, 0x00, newSlaveID, 0x00, 0x00};
+                         // Address, Write,   Reg 0,   1 Register, 2byte,   newAddress,       CRC
+    respSize = sendCommand(setSlaveID, 11);
+
+    if (respSize == 8 && responseBuffer[0] == _slaveID)
+    {
+        _slaveID = newSlaveID;
+        return true;
+    }
+    else return false;
+}
 
 // The communication mode
 int scan::getCommunicationMode(void)
@@ -331,7 +357,7 @@ int scan::sendCommand(byte command[], int commandLength)
     if (_stream->available() > 0)
     {
         // Read the incoming bytes
-        int bytesRead = _stream->readBytes(responseBuffer, 20);
+        int bytesRead = _stream->readBytes(responseBuffer, 60);
         emptyResponseBuffer(_stream);
 
         // Print the raw response (for debugging)
@@ -343,4 +369,31 @@ int scan::sendCommand(byte command[], int commandLength)
         return bytesRead;
     }
     else return 0;
+}
+
+// This sends three requests for a single register
+// If the spectro::lyzer is sleeping, it will not respond until the third one
+bool scan::wakeSpec(void)
+{
+    _debugStream->println("------>Checking if spectro::lyzer is awake.<------");
+    byte get1Register[8] = {_slaveID, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00};
+                          // Address, Read,   Reg 0,    1 Register,   CRC
+                          //
+    uint8_t attempts = 0;
+    int respSize = 0;
+    while (attempts < 3 and respSize < 7)
+    {
+        respSize = respSize + sendCommand(get1Register, 8);
+        attempts ++;
+    }
+    if (respSize < 7)
+    {
+        _debugStream->println("------>No response from spectro::lyzer!<------");
+        return false;
+    }
+    else
+    {
+        _debugStream->println("------>Spectro::lyser is now awake.<------");
+        return true;
+    }
 }
