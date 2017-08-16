@@ -48,26 +48,128 @@ bool scan::getSetup(void)
 {
     wakeSpec();
     byte getHoldingRegisters[8] = {_slaveID, 0x03, 0x00, 0x00, 0x00, 0x1b, 0x00, 0x00};
-                                 // Address, Read,   Reg 0,   27 Registers,   CRC
+                                 // Address, Read,Start@Reg 0,27 Registers,   CRC
     respSize = sendCommand(getHoldingRegisters, 8);
+
+    // When returning a bunch of registers, as here, to get
+    // the byte location in the frame of the desired register use:
+    // (3 bytes of Modbus frame + (2 bytes/register x (desired register - start register))
 
     if (respSize == (27*2 + 5) && responseBuffer[0] == _slaveID)
     {
-        _commMode = intFromFrame(responseBuffer, 4);
-        _debugStream->print("Communication mode is: ");
-        _debugStream->println(_commMode);
+        // Communication mode is in register 1 (1 uint16 register = 2 bytes)
+        _commMode = uint16FromBEFrame(responseBuffer, 5);
+        _debugStream->print("Communication mode setting is: ");
+        _debugStream->print(_commMode);
+        _debugStream->print(" (");
+        _debugStream->print(printCommMode(_commMode));
+        _debugStream->println(")");
 
-        _baudRate = intFromFrame(responseBuffer, 6);
-        _debugStream->print("Baud Rate is: ");
-        _debugStream->println(_baudRate);
+        // Baud rate is in register 2 (1 uint16 register = 2 bytes)
+        _baudRate = uint16FromBEFrame(responseBuffer, 7);
+        _debugStream->print("Baud Rate setting is: ");
+        _debugStream->print(_baudRate);
+        _debugStream->print(" (");
+        _debugStream->print(printBaudRate(_baudRate));
+        _debugStream->println(")");
 
-        _parity = intFromFrame(responseBuffer, 8);
-        _debugStream->print("Parity is: ");
-        _debugStream->println(_parity);
+        // Parity is in register 3 (1 uint16 register = 2 bytes)
+        _parity = uint16FromBEFrame(responseBuffer, 9);
+        _debugStream->print("Parity setting is: ");
+        _debugStream->print(_parity);
+        _debugStream->print(" (");
+        _debugStream->print(printParity(_parity));
+        _debugStream->println(")");
 
-        _scanPoint = StringFromFrame(responseBuffer, 10, 12);
+        // Skipping register 4, which is just to be written to reset all
+        // settings back to default.
+
+        // Pointer to the private configuration is in register 5
+        _configRegNumber = pointerFromBEFrame(responseBuffer, 13);
+        _configRegType = pointerTypeFromBEFrame(responseBuffer, 13);
+        _debugStream->print("Private configuration begins in register ");
+        _debugStream->print(_configRegNumber);
+        _debugStream->print(", which is type ");
+        _debugStream->print(_configRegType);
+        _debugStream->print(" (");
+        _debugStream->print(printRegisterType(_configRegType));
+        _debugStream->println(")");
+
+        // Device Location (s::canpoint) is registers 6-11 (char[12])
+        _scanPoint = StringFromFrame(responseBuffer, 15, 12);
         _debugStream->print("Current s::canpoint is: ");
         _debugStream->println(_scanPoint);
+
+        // Cleaning mode is in register 12 (1 uint16 register = 2 bytes)
+        _cleaningMode = uint16FromBEFrame(responseBuffer, 27);
+        _debugStream->print("Cleaning mode setting is: ");
+        _debugStream->print(_cleaningMode);
+        _debugStream->print(" (");
+        _debugStream->print(printCleaningMode(_cleaningMode));
+        _debugStream->println(")");
+
+        // Cleaning interval is in register 13 (1 uint16 register = 2 bytes)
+        _cleaningInterval = uint16FromBEFrame(responseBuffer, 29);
+        _debugStream->print("Cleaning interval is: ");
+        _debugStream->print(_cleaningInterval);
+        _debugStream->println(" measurements between cleanings");
+
+        // Cleaning duration is in register 14 (1 uint16 register = 2 bytes)
+        _cleaningDuration = uint16FromBEFrame(responseBuffer, 31);
+        _debugStream->print("Cleaning time is: ");
+        _debugStream->print(_cleaningDuration);
+        _debugStream->println(" seconds");
+
+        // Cleaning duration is in register 15 (1 uint16 register = 2 bytes)
+        _cleaningWait = uint16FromBEFrame(responseBuffer, 33);
+        _debugStream->print("Wait time between cleaning and sampling is: ");
+        _debugStream->print(_cleaningWait);
+        _debugStream->println(" seconds");
+
+        // System time is in registers 16-21 (64-bit timestamp + padding)
+        // Registers 16 and 17 will be 0x4000 0000 until the year 2106;
+        // I'm ignoring it for the next 90 years to avoid using 64bit math
+        // Registers 18 and 19 will have the seconds past Jan 1, 1970
+        // Registers 20 and 21 are just 0's.
+        uint32_t secsPast1970 = uint32FromBEFrame(responseBuffer, 39);
+        _debugStream->print("Current System Time is: ");
+        _debugStream->print((unsigned long)(secsPast1970));
+        _debugStream->println(" seconds past Jan 1, 1970");
+
+        // Measurement interval is in register 22 (1 uint16 register = 2 bytes)
+        _measInterval = uint16FromBEFrame(responseBuffer, 47);
+        _debugStream->print("Measurement interval is: ");
+        _debugStream->print(_measInterval);
+        _debugStream->println(" seconds");
+
+        // Logging Mode (0 = on; 1 = off) is in register 23 (1 uint16 register = 2 bytes)
+        _loggingMode = uint16FromBEFrame(responseBuffer, 49);
+        _debugStream->print("Logging mode setting is: ");
+        _debugStream->print(_loggingMode);
+        _debugStream->print(" (");
+        _debugStream->print(printLoggingMode(_loggingMode));
+        _debugStream->println(")");
+
+        // Logging interval is in register 24 (1 uint16 register = 2 bytes)
+        _loggingInterval = uint16FromBEFrame(responseBuffer, 51);
+        _debugStream->print("Logging interval is: ");
+        _debugStream->print(_loggingInterval);
+        _debugStream->println(" seconds");
+
+        // Available number of logged results is in register 25 (1 uint16 register = 2 bytes)
+        _numLoggedResults = uint16FromBEFrame(responseBuffer, 53);
+        _debugStream->print(_numLoggedResults);
+        _debugStream->println(" results have been logged so far");
+
+        // "Index device status" is in register 26 (1 uint16 register = 2 bytes)
+        _indexLogResult = uint16FromBEFrame(responseBuffer, 55);
+        _debugStream->print("Index device status is: ");
+        _debugStream->println(_indexLogResult);
+
+        // Set the holding register flag to true
+        _gotHoldingRegSpecSetup = true;
+
+        // Return true after parsing everything
         return true;
     }
     else return false;
@@ -245,50 +347,157 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
                   float &value5, float &value6, float &value7, float &value8)
 {return false;}
 
+// These functions are to convert various s::can register code to strings
+String scan::printCommMode(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "Modbus RTU";
+        case 1: return "Modbus ASCII";
+        case 2: return "Modbus TCP";
+        default: return "Unknown";
+    }
+}
+uint16_t scan::printBaudRate(uint16_t code)
+{
+    String baud;
+    switch (code)
+    {
+        case 0: baud = "9600"; break;
+        case 1: baud = "19200"; break;
+        case 2: baud = "38400"; break;
+        default: baud = "0"; break;
+    }
+    uint16_t baudr = baud.toInt();
+    return baudr;
+}
+String scan::printParity(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "no parity";
+        case 1: return "even parity";
+        case 2: return "odd parity";
+        default: return "Unknown";
+    }
+}
+String scan::printCleaningMode(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "no cleaning supported";
+        case 1: return "manual";
+        case 2: return "automatic";
+        default: return "Unknown";
+    }
+}
+String scan::printRegisterType(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "Holding register";
+        case 1: return "Input register";
+        case 2: return "Discrete input register";
+        case 3: return "Coil";
+        default: return "Unknown";
+    }
+}
+String scan::printLoggingMode(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "Logging On";
+        default: return "Logging Off";
+    }
+}
+
 //----------------------------------------------------------------------------
 //                           PRIVATE HELPER FUNCTIONS
 //----------------------------------------------------------------------------
 
-// This functions return the float from a 4-byte big-endian array beginning
+// This function returns the float from a 4-byte big-endian array beginning
 // at a specific index of another array.
-float scan::floatFromFrame(byte indata[], int stindex)
+float scan::float32FromBEFrame(byte indata[], int start_index)
 {
-    char charFloat[4];
-    charFloat[0] = indata[stindex];
-    charFloat[1] = indata[stindex + 1];
-    charFloat[2] = indata[stindex + 2];
-    charFloat[3] = indata[stindex + 3];
-    return atof(charFloat);
+    SeFrame4 Sefram;
+    // Reverse the order of bytes to get from big-endian to little-endian
+    Sefram.Byte[0] = indata[start_index + 3];
+    Sefram.Byte[1] = indata[start_index + 2];
+    Sefram.Byte[2] = indata[start_index + 1];
+    Sefram.Byte[3] = indata[start_index + 0];
+    return Sefram.Float;
 }
 
-// This functions return an integer from a 2-byte big-endian array beginning
-// at a specific index of another array.
-int scan::intFromFrame(byte indata[], int stindex)
+uint32_t scan::uint32FromBEFrame(byte indata[], int start_index)
 {
-    char charInt[2];
-    charInt[0] = indata[stindex];
-    charInt[1] = indata[stindex + 1];
-    return atoi(charInt);
+    SeFrame4 Sefram;
+    // Reverse the order of bytes to get from big-endian to little-endian
+    Sefram.Byte[0] = indata[start_index + 3];
+    Sefram.Byte[1] = indata[start_index + 2];
+    Sefram.Byte[2] = indata[start_index + 1];
+    Sefram.Byte[3] = indata[start_index + 0];
+    return Sefram.Int;
+}
+
+// This function returns an integer from a 2-byte big-endian array beginning
+// at a specific index of another array.
+int scan::uint16FromBEFrame(byte indata[], int start_index)
+{
+    SeFrame2 Sefram;
+    // Reverse the order of bytes to get from big-endian to little-endian
+    Sefram.Byte[0] = indata[start_index + 1];
+    Sefram.Byte[1] = indata[start_index + 0];
+    return Sefram.Int;
 }
 
 // This returns a "String" from a slice of a character array
-String scan::StringFromFrame(byte indata[], int stindex, int length)
+String scan::StringFromFrame(byte indata[], int start_index, int length)
 {
-    char charString[length];
-    for (int i = 0; i < length; i++) charString[i] = indata[stindex + i];
-    return String((char*)charString);
+    char charString[length+1] = {0,};
+    int j = 0;
+    for (int i = start_index; i < start_index+length; i++)
+    {
+        charString[j] = responseBuffer[i];  // converts from "byte" or "byte" type to "char" type
+        j++;
+    }
+    String string = String(charString);
+    string.trim();
+    return string;
 }
 
-// This functions inserts a float as a 4-byte small endian array into another
-// array beginning at the specified index.
-void scan::floatIntoFrame(byte indata[], int stindex, float value)
+// Thes gets the register address and register type of a pointer to other
+// information within a modbus register.
+// The register address and type must be initialized prior to calling this function
+// For the register types:
+//   0 (0b00) - Holding register (read by command 0x03, written by 0x06 or 0x10)
+//   1 (0b01) - Input register (read by command 0x04)
+//   2 (0b10) - Discrete input register (read by command 0x02)
+//   3 (0b10) - Coil  (read by command 0x01, written by 0x05)
+int scan::pointerFromBEFrame(byte indata[], int start_index)
 {
-    // SeFrame Sefram;
-    // Sefram.Float = value;
-    // indata[stindex] = Sefram.Byte[0];
-    // indata[stindex + 1] = Sefram.Byte[1];
-    // indata[stindex + 2] = Sefram.Byte[2];
-    // indata[stindex + 3] = Sefram.Byte[3];
+    SeFrame2 Sefram;
+    // Reverse the order of bytes to get from big-endian to little-endian
+    Sefram.Byte[0] = indata[start_index + 1]>>2;  // Bit shift the address lower bits
+    Sefram.Byte[1] = indata[start_index + 0];
+    return Sefram.Int;
+}
+int scan::pointerTypeFromBEFrame(byte indata[], int start_index)
+{
+    // Mask to get the last two bits , which are the type
+    uint8_t regType = indata[start_index + 1] & 3;
+    return regType;
+}
+
+// This function inserts a float as a 4-byte big endian array into another
+// array beginning at the specified index.
+void scan::floatIntoFrame(byte indata[], int start_index, float value)
+{
+    SeFrame4 Sefram;
+    Sefram.Float = value;
+    indata[start_index] = Sefram.Byte[3];
+    indata[start_index + 1] = Sefram.Byte[2];
+    indata[start_index + 2] = Sefram.Byte[1];
+    indata[start_index + 3] = Sefram.Byte[0];
 }
 
 // This flips the device/receive enable to DRIVER so the arduino can send text

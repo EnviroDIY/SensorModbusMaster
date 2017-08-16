@@ -7,7 +7,7 @@
 
 #include <Arduino.h>
 
-// The possible communication modes
+// The communcations modes
 typedef enum specCommMode
 {
     modbusRTU = 0,
@@ -38,7 +38,6 @@ typedef enum cleaningMode
     manual,
     automatic
 } cleaningMode;
-
 
 class scan
 {
@@ -174,41 +173,64 @@ public:
     // This sets a stream for debugging information to go to;
     void setDebugStream(Stream *stream){_debugStream = stream;}
 
+    // These functions are to convert various s::can register code to strings
+    String printCommMode(uint16_t code);
+    uint16_t printBaudRate(uint16_t code);
+    String printParity(uint16_t code);
+    String printCleaningMode(uint16_t code);
+    String printRegisterType(uint16_t code);
+    String printLoggingMode(uint16_t code);
+
 
 private:
 
     // Define a small-endian frame as a union - that is a special class type that
     // can hold only one of its non-static data members at a time, in this case,
-    // either 4-bytes OR a single float.
+    // either 4-bytes OR a single float OR a 32 bit interger
     // With avr-gcc (Arduino's compiler), integer and floating point variables are
     // all physically stored in memory in little-endian byte order, so this union
-    // is all that is needed to get the correct float value from the small-endian
-    // hex frames returned by the S::CAN sensors.
-    // union SeFrame {
-    //   float Float;
-    //   byte Byte[4];
-    // };
+    // is all that is needed to get the correct float value from a small-endian
+    // modbus..  S::CAN's version of modbus returns all values in big-endian
+    // form, so you must reverse the byte order to make this work.
+    union SeFrame4 {
+      float Float;
+      uint32_t Int;
+      byte Byte[4];
+    };
 
-    // This is just as above, but for a 2-byte interger
-    // union SeFrame2 {
-    //   uint16_t Int;
-    //   byte Byte[2];
-    // };
+    // This is just as above, but for a 2-bytes
+    union SeFrame2 {
+      float Float;
+      uint16_t Int;
+      byte Byte[2];
+    };
 
-    // This functions return the float from a 4-byte small-endian array beginning
+    // These functions returns the float/int from a 4-byte big-endian array
+    // beginning at a specific index of another array.
+    float float32FromBEFrame(byte indata[], int start_index);
+    uint32_t uint32FromBEFrame(byte indata[], int start_index);
+
+    // This function returns an integer from a 2-byte big-endian array beginning
     // at a specific index of another array.
-    float floatFromFrame(byte indata[], int stindex);
-
-    // This functions return an integer from a 2-byte big-endian array beginning
-    // at a specific index of another array.
-    int intFromFrame(byte indata[], int stindex);
+    int uint16FromBEFrame(byte indata[], int start_index);
 
     // This returns a "String" from a slice of a character array
-    String StringFromFrame(byte indata[], int stindex, int length);
+    String StringFromFrame(byte indata[], int start_index, int length);
 
-    // This functions inserts a float as a 4-byte small endian array into another
+    // These get the register address and register type of a pointer to other
+    // information within a modbus register.
+    // The register address and type must be initialized prior to calling this function
+    // For the register types:
+    //   0 (0b00) - Holding register (read by command 0x03, written by 0x06 or 0x10)
+    //   1 (0b01) - Input register (read by command 0x04)
+    //   2 (0b10) - Discrete input register (read by command 0x02)
+    //   3 (0b10) - Coil  (read by command 0x01, written by 0x05)
+    int pointerFromBEFrame(byte indata[], int start_index);
+    int pointerTypeFromBEFrame(byte indata[], int start_index);
+
+    // This function inserts a float as a 4-byte small endian array into another
     // array beginning at the specified index.
-    void floatIntoFrame(byte indata[], int stindex, float value);
+    void floatIntoFrame(byte indata[], int start_index, float value);
 
     // This flips the device/receive enable to DRIVER so the arduino can send text
     void driverEnable(void);
@@ -237,10 +259,24 @@ private:
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
     int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
-    int _commMode;
-    int _baudRate;
-    int _parity;
+
+    // Setup information from holding registers
+    bool _gotHoldingRegSpecSetup = false;
+    uint16_t _commMode;
+    uint16_t _baudRate;
+    uint16_t _parity;
     String _scanPoint;
+    uint16_t _configRegNumber;
+    uint8_t _configRegType;
+    uint16_t _cleaningMode;
+    uint16_t _cleaningInterval;
+    uint16_t _cleaningDuration;
+    uint16_t _cleaningWait;
+    uint16_t _measInterval;
+    uint16_t _loggingMode;
+    uint16_t _loggingInterval;
+    uint16_t _numLoggedResults;
+    uint16_t _indexLogResult;
 
     // This creates a null stream to use for "debugging" if you don't want to
     // actually print to a real stream.
