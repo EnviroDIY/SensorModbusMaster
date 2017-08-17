@@ -780,21 +780,73 @@ int scan::getParameterScale(int startIndex)
 
 // This returns a pretty string with the parameter measured.
 String scan::getParameter(int parmNumber)
-{return "UNKNOWN";}
+{
+    int regNumber = 120*parmNumber;
+    // Get the register data
+    getRegisters(0x03, regNumber, 4);
+
+    String parm;
+    dataFromFrame(parm, character, responseBuffer, 3, 8);
+    _debugStream->print("Parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->println(parm);
+    return parm;
+}
 
 // This returns a pretty string with the measurement units.
 String scan::getUnits(int parmNumber)
-{return "UNKNOWN";}
+{
+    int regNumber = 120*parmNumber + 4;
+    // Get the register data
+    getRegisters(0x03, regNumber, 4);
+
+    String parm;
+    dataFromFrame(parm, character, responseBuffer, 3, 8);
+    _debugStream->print("Parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" has units of: ");
+    _debugStream->println(parm);
+    return parm;
+}
 
 // This gets the upper limit of the parameter
-// The float variable must be initialized prior to calling this function.
-bool scan::getUpperLimit(int parmNumber, float &upperLimit)
-{return false;}
+float scan::getUpperLimit(int parmNumber)
+{
+    int regNumber = 120*parmNumber + 8;
+    // Get the register data
+    getRegisters(0x03, regNumber, 2);
+
+    float parm;
+    dataFromFrame(parm, float32, responseBuffer, 3);
+    _debugStream->print("Upper limit of parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->println(parm);
+    return parm;
+}
 
 // This gets the lower limit of the parameter
-// The float variable must be initialized prior to calling this function.
-bool scan::getLowerLimit(int parmNumber, float &lowerLimit)
-{return false;}
+float scan::getLowerLimit(int parmNumber)
+{
+    int regNumber = 120*parmNumber + 10;
+    // Get the register data
+    getRegisters(0x03, regNumber, 2);
+
+    float parm;
+    dataFromFrame(parm, float32, responseBuffer, 3);
+    _debugStream->print("Lower limit of parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->println(parm);
+    return parm;
+}
+
+
+
+//----------------------------------------------------------------------------
+//                       ACTUAL SAMPLE TIMES AND VALUES
+//----------------------------------------------------------------------------
 
 // Last measurement time as a 64-bit count of seconds from Jan 1, 1970
 long scan::getSampleTime(int startIndex)

@@ -209,11 +209,17 @@ public:
 
     // This gets the upper limit of the parameter
     // The float variable must be initialized prior to calling this function.
-    bool getUpperLimit(int parmNumber, float &upperLimit);
+    float getUpperLimit(int parmNumber);
 
     // This gets the lower limit of the parameter
     // The float variable must be initialized prior to calling this function.
-    bool getLowerLimit(int parmNumber, float &lowerLimit);
+    float getLowerLimit(int parmNumber);
+
+
+
+    //----------------------------------------------------------------------------
+    //                       ACTUAL SAMPLE TIMES AND VALUES
+    //----------------------------------------------------------------------------
 
     // Last measurement time as a 64-bit count of seconds from Jan 1, 1970
     long getSampleTime(int startIndex = 3);
