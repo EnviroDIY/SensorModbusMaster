@@ -48,8 +48,15 @@ typedef enum dataTypes
     bitmask,
     character,
     float32,
-    timestamp
+    tai64
 } dataTypes;
+
+// The possible modbus datatypes
+typedef enum endianness
+{
+    little = 0,
+    big
+} endianness;
 
 class scan
 {
@@ -72,62 +79,65 @@ public:
     bool setSlaveID(byte newSlaveID);
 
     // The communication mode
-    int getCommunicationMode(void);
+    int getCommunicationMode(int startIndex = 3);
     bool setCommunicationMode(specCommMode mode);
 
     // The serial baud rate (iff communication mode = modbus RTU or modbus ASCII)
-    int getBaudRate(void);
+    int getBaudRate(int startIndex = 3);
     bool setBaudRate(specBaudRate baud);
 
     // The serial parity (iff communication mode = modbus RTU or modbus ASCII)
-    int getParity(void);
+    int getParity(int startIndex = 3);
     bool setParity(specParity parity);
 
     // Reset all settings to default
     bool resetSettings(void);
 
+    // Get a pointer to the private configuration register
+    int getprivateConfigRegister(int startIndex = 3);
+
     // Get the "s::canpoint" of the device
-    String getScanPoint(void);
+    String getScanPoint(int startIndex = 3);
 
     // Cleaning mode configuration
-    int getCleaningMode(void);
+    int getCleaningMode(int startIndex = 3);
     bool setCleaningMode(cleaningMode mode);
 
     // Cleaning interval (ie, number of samples between cleanings)
-    int getCleaningInterval(void);
+    int getCleaningInterval(int startIndex = 3);
     bool setCleaningInterval(uint16_t intervalSamples);
 
     // Cleaning duration in seconds
-    int getCleaningDuration(void);
+    int getCleaningDuration(int startIndex = 3);
     bool setCleaningDuration(uint16_t secDuration);
 
     // Waiting time between end of cleaning and start of measurement
-    int getCleaningWait(void);
+    int getCleaningWait(int startIndex = 3);
     bool setCleaningWait(uint16_t secDuration);
 
     // Current system time as a 64-bit count of seconds from Jan 1, 1970
-    long getSystemTime(void);
+    long getSystemTime(int startIndex = 3);
 
     // Measurement interval in seconds (0 - as fast as possible)
-    int getMeasInterval(void);
+    int getMeasInterval(int startIndex = 3);
     bool setMeasInterval(uint16_t secBetween);
 
     // Logging Mode (0 = on; 1 = off)
-    int getLoggingMode(void);
+    int getLoggingMode(int startIndex = 3);
     bool setLoggingMode(uint8_t mode);
 
     // Logging interval for data logger in minutes (0 = no logging active)
-    int getLoggingInterval(void);
+    int getLoggingInterval(int startIndex = 3);
     bool setLoggingInterval(uint16_t interval);
 
     // Available number of logged results in datalogger since last clearing
-    int getNumLoggedResults(void);
+    int getNumLoggedResults(int startIndex = 3);
 
     // "Index device status public + private & parameter results from logger
     // storage to Modbus registers.  If no stored results are available,
     // results are NaN, Device status bit3 is set."
     // I'm really not sure what this means...
-    int getIndexLogResult(void);
+    int getIndexLogResult(int startIndex = 3);
 
 
     // Get the version of the modbus mapping protocol
@@ -136,10 +146,10 @@ public:
     bool getModbusVersion(float &modbusVersion);
 
     // This returns a pretty string with the model information
-    String getModel(void);
+    String getModel(int startIndex = 3);
 
     // This gets the instrument serial number as a String
-    String getSerialNumber(void);
+    String getSerialNumber(int startIndex = 3);
 
     // This gets the hardware and software version of the sensor
     // The float variables for the hardware and software versions must be
@@ -151,10 +161,10 @@ public:
     bool getVersion(float &hardwareVersion, float &softwareVersion);
 
     // Device rebooter counter
-    int getHWStarts(void);
+    int getHWStarts(int startIndex = 3);
 
     // This gets the number of parameters the spectro::lyzer is set to measure
-    int getParameterCount(void);
+    int getParameterCount(int startIndex = 3);
 
     // This returns a pretty string with the parameter measured.
     String getParameter(int parmNumber);
@@ -171,7 +181,7 @@ public:
     bool getLowerLimit(int parmNumber, float &lowerLimit);
 
     // Last measurement time as a 64-bit count of seconds from Jan 1, 1970
-    long getSampleTime(void);
+    long getSampleTime(int startIndex = 3);
 
     // This gets values back from the sensor and puts them into a previously
     // initialized float variable.  The actual return from the function is the
@@ -204,25 +214,12 @@ private:
     // is all that is needed to get the correct float value from a small-endian
     // modbus..  S::CAN's version of modbus returns all values in big-endian
     // form, so you must reverse the byte order to make this work.
-    union SeFrame4 {
-      float Float;
-      uint32_t Int;
-      byte Byte[4];
+    union SeFrame {
+        byte Byte[4];       // occupies 4 bytes
+        float Float;        // occupies 4 bytes
+        uint32_t Int32;     // occupies 4 bytes
+        uint16_t Int16[2];  // occupies 4 bytes
     };
-
-    // This is just as above, but for a 2-bytes
-    union SeFrame2 {
-      float Float;
-      uint16_t Int;
-      byte Byte[2];
-    };
-
-    // These functions returns the propertype big-endian data register
-    // beginning at a specific index of another array.
-    bool dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
-    bool dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
-    bool dataFromBEFrame(String outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
-    bool dataFromBEFrame(uint32_t outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
 
     // This flips the device/receive enable to DRIVER so the arduino can send text
     void driverEnable(void);
@@ -244,6 +241,23 @@ private:
     // This sends a command to the sensor bus and listens for a response
     int sendCommand(byte command[], int commandLength);
 
+    // This gets data from either a holding or input register
+    // For a holding register readCommand = 0x03
+    // For an input register readCommand = 0x04
+    bool getRegisters(byte readCommand, int16_t startRegister, int16_t numRegisters);
+
+    // This slices one array out of another
+    void sliceArray(byte inputArray[], byte outputArray[],
+                    int start_index, int numBytes, bool reverseOrder=false);
+
+    // These functions return the propertype big-endian data register
+    // beginning at a specific index of another array.
+    bool dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[], int start_index, endianness endian = big);
+    bool dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], int start_index, endianness endian = big);
+    bool dataFromBEFrame(String outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
+    bool dataFromBEFrame(uint32_t outputVar, dataTypes regType, byte indata[], int start_index, endianness endian = big);
+
+
     // This sends three requests for a single register
     // If the spectro::lyzer is sleeping, it will not respond until the third one
     bool wakeSpec(void);
@@ -257,6 +271,7 @@ private:
     uint16_t _commMode;
     uint16_t _baudRate;
     uint16_t _parity;
+    char _scanPointChar[12];
     String _scanPoint;
     uint16_t _configRegNumber;
     uint16_t _configRegType;
