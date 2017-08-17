@@ -47,9 +47,11 @@ bool scan::begin(byte modbusSlaveID, Stream &stream, int enablePin)
 bool scan::getSetup(void)
 {
     // Wake up the spec if it was sleeping
+    _debugStream->println("------------------------------------------");
     wakeSpec();
 
     // Get the holding registers
+    _debugStream->println("------------------------------------------");
     _gotHoldingRegSpecSetup = getRegisters(0x03, 0, 27);
 
     // When returning a bunch of registers, as here, to get
@@ -77,23 +79,25 @@ bool scan::getSetup(void)
     else return false;
 
     // Get the input registers
+    _debugStream->println("------------------------------------------");
     _gotInputRegSpecSetup = getRegisters(0x04, 0, 25);
 
     if (_gotInputRegSpecSetup)
     {
         getModbusVersion(3);
-        getModel(5);
-        getSerialNumber(7);
-        getHWVersion(29);
-        getSWVersion(33);
-        getHWStarts(37);
-        getParameterCount(39);
-        getParamterType(41);
-        getParameterScale(44);
+        getModel(9);
+        getSerialNumber(29);
+        getHWVersion(37);
+        getSWVersion(41);
+        getHWStarts(45);
+        getParameterCount(47);
+        getParamterType(49);
+        getParameterScale(51);
     }
     else return false;
 
     // if all passed, return true
+    _debugStream->println("------------------------------------------");
     return true;
 }
 
@@ -316,6 +320,7 @@ bool scan::setScanPoint(char charScanPoint[12])
         _scanPoint.trim();
         return true;
     }
+    else return false;
 }
 
 // Functions for the cleaning mode configuration
@@ -624,8 +629,10 @@ float scan::getModbusVersion(int startIndex)
     dataFromFrame(_modbusVersion, uint16, responseBuffer, startIndex);
     SeFrame sefram;
     sefram.Int16[0] = _modbusVersion;
+    printFrameHex(sefram.Byte, 4);
     float mjv = sefram.Byte[1];
-    float mnv = (sefram.Byte[0])/100;
+    float mnv = sefram.Byte[0];
+    mnv = mnv/100;
     float version = mjv + mnv;
     _debugStream->print("Modbus Version is: ");
     _debugStream->println(version);
@@ -639,7 +646,7 @@ String scan::getModel(int startIndex)
     {
         getRegisters(0x04, 3, 10);
     }
-    dataFromFrame(_model, character, responseBuffer, startIndex, 10);
+    dataFromFrame(_model, character, responseBuffer, startIndex, 20);
     _debugStream->print("Instrument model is: ");
     _debugStream->println(_model);
     return _model;
@@ -650,12 +657,12 @@ String scan::getSerialNumber(int startIndex)
 {
     if (!_gotInputRegSpecSetup)
     {
-        getRegisters(0x04, 13, 8);
+        getRegisters(0x04, 13, 4);
     }
     dataFromFrame(_serialNumber, character, responseBuffer, startIndex, 8);
     _debugStream->print("Instrument Serial Number is: ");
     _debugStream->println(_serialNumber);
-    return _model;
+    return _serialNumber;
 }
 
 // This gets the hardware version of the sensor
@@ -663,7 +670,7 @@ float scan::getHWVersion(int startIndex)
 {
     if (!_gotInputRegSpecSetup)
     {
-        getRegisters(0x04, 17, 4);
+        getRegisters(0x04, 17, 2);
     }
     dataFromFrame(_model, character, responseBuffer, startIndex, 4);
     float mjv = _model.substring(0,2).toFloat();
@@ -679,7 +686,7 @@ float scan::getSWVersion(int startIndex)
 {
     if (!_gotInputRegSpecSetup)
     {
-        getRegisters(0x04, 19, 4);
+        getRegisters(0x04, 19, 2);
     }
     dataFromFrame(_model, character, responseBuffer, startIndex, 4);
     float mjv = _model.substring(0,2).toFloat();
@@ -963,16 +970,16 @@ bool scan::setRegisters(int16_t startRegister, int16_t numRegisters, byte value[
 {
     // figure out how long the command will be
     int commandLength;
-    if (numRegisters > 1) commandLength = numRegisters*2 + 6;
-    else commandLength = numRegisters*2 + 5;
+    if (numRegisters > 1) commandLength = numRegisters*2 + 7;
+    else commandLength = numRegisters*2 + 6;
 
     // Create an array for the command
-    byte command[commandLength];
+    byte command[commandLength] = {0,};
 
     // Put in the slave id and the command
     command[0] = _slaveID;
-    if (numRegisters > 1) command[1] = 0x06;
-    else command[1] = 0x10;
+    if (numRegisters > 1) command[1] = 0x10;
+    else command[1] = 0x06;
 
     // Put in the starting register
     SeFrame Sefram = {0,};
@@ -980,29 +987,26 @@ bool scan::setRegisters(int16_t startRegister, int16_t numRegisters, byte value[
     command[2] = Sefram.Byte[1];
     command[3] = Sefram.Byte[0];
 
-    // Put in the number of registers
-    Sefram.Int16[1] = numRegisters;
-    command[4] = Sefram.Byte[3];
-    command[5] = Sefram.Byte[2];
-
     // Put in the register values
     if (numRegisters > 1)
     {
+        // Put in the number of registers
+        Sefram.Int16[1] = numRegisters;
+        command[4] = Sefram.Byte[3];
+        command[5] = Sefram.Byte[2];
+        // Put in the number of bytes to write
         command[6] = numRegisters*2;
-        for (int i = 7; i < numRegisters*2 + 7; i++)
-        {
-            command[i] = value[i-7];
-        }
+        // Put in the data
+        for (int i = 7; i < numRegisters*2 + 7; i++) command[i] = value[i-7];
     }
     else
     {
-        for (int i = 6; i < numRegisters*2; i++)
-        {
-            command[i] = value[i-6];
-        }
+        // Only have to put in the data
+        for (int i = 4; i < numRegisters*2 + 4; i++) command[i] = value[i-4];
     }
 
     // Send out the command (this adds the CRC)
+    // printFrameHex(command,commandLength);
     int16_t respSize = sendCommand(command, commandLength);
 
     // The structure of the response should be:

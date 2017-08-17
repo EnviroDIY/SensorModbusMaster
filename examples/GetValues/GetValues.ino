@@ -64,7 +64,11 @@ void setup()
     delay(500);
 
     sensor.getSetup();
-    sensor.getCleaningInterval(5);
+    Serial.println("=======================");
+    Serial.println("=======================");
+    sensor.setCleaningInterval(5);
+    Serial.println("=======================");
+    Serial.println("=======================");
     sensor.getSetup();
 }
 
