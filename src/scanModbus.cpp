@@ -58,42 +58,43 @@ bool scan::getSetup(void)
 
     if (_gotHoldingRegSpecSetup)
     {
-        // Communication mode is in holding register 1 (1 uint16 register)
         getCommunicationMode(5);
-        // Baud rate is in holding register 2 (1 uint16 register)
         getBaudRate(7);
-        // Parity is in holding register 3 (1 uint16 register)
         getParity(9);
-        // Skipping register 4, which is just to be written to reset all
-        // settings back to default.
-        // Pointer to the private configuration is in holding register 5
         getprivateConfigRegister(13);
-        // Device Location (s::canpoint) is registers 6-11 (char[12])
         getScanPoint(15);
-        // Cleaning mode is in holding register 12 (1 uint16 register)
         getCleaningMode(27);
-        // Cleaning interval is in holding register 13 (1 uint16 register)
         getCleaningInterval(29);
-        // Cleaning duration is in holding register 14 (1 uint16 register)
         getCleaningDuration(31);
-        // Cleaning wait time is in holding register 15 (1 uint16 register)
         getCleaningWait(33);
-        // System time is in holding registers 16-21 (64-bit timestamp in TAI64 format + padding)
         getSystemTime(35);
-        // Measurement interval is in holding register 22 (1 uint16 register)
         getMeasInterval(47);
-        // Logging Mode (0 = on; 1 = off) is in holding register 23 (1 uint16 register)
         getLoggingMode(49);
-        // Logging interval is in holding register 24 (1 uint16 register)
         getLoggingInterval(51);
-        // Available number of logged results is in holding register 25 (1 uint16 register)
         getNumLoggedResults(53);
-        // "Index device status" is in holding register 26 (1 uint16 register)
         getIndexLogResult(55);
-        // Return true after parsing everything
-        return true;
     }
     else return false;
+
+    // Get the input registers
+    _gotInputRegSpecSetup = getRegisters(0x04, 0, 25);
+
+    if (_gotInputRegSpecSetup)
+    {
+        getModbusVersion(3);
+        getModel(5);
+        getSerialNumber(7);
+        getHWVersion(29);
+        getSWVersion(33);
+        getHWStarts(37);
+        getParameterCount(39);
+        getParamterType(41);
+        getParameterScale(44);
+    }
+    else return false;
+
+    // if all passed, return true
+    return true;
 }
 
 

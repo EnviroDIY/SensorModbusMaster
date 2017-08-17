@@ -64,21 +64,8 @@ void setup()
     delay(500);
 
     sensor.getSetup();
-
-    // Get the sensor's hardware and software version
-    // Serial.println("Getting sensor version.");
-    // float hardwareV, softwareV;
-    // sensor.getVersion(hardwareV, softwareV);
-    // Serial.print("    Current Hardware Version: ");
-    // Serial.println(hardwareV);
-    // Serial.print("    Current Software Version: ");
-    // Serial.println(softwareV);
-
-    // Get the sensor serial number
-    // Serial.println("Getting sensor serial number.");
-    // String SN = sensor.getSerialNumber();
-    // Serial.print("    Serial Number: ");
-    // Serial.println(SN);
+    sensor.getCleaningInterval(5);
+    sensor.getSetup();
 }
 
 // ---------------------------------------------------------------------------
