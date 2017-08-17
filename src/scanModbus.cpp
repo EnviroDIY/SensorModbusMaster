@@ -756,15 +756,12 @@ int scan::getParameterScale(int startIndex)
     if (!_gotInputRegSpecSetup)
     {
         // "Index device status" is in holding register 26 (1 uint16 register)
-        getRegisters(0x04, 23, 1);
+        getRegisters(0x04, 24, 1);
     }
-    dataFromFrame(_paramType, uint16, responseBuffer, startIndex);
-    _debugStream->print("The data type of the parameters is: ");
-    _debugStream->print(_paramType);
-    _debugStream->print(" (");
-    _debugStream->print(printParamterType(_paramType));
-    _debugStream->println(")");
-    return _paramType;
+    dataFromFrame(_paramScale, uint16, responseBuffer, startIndex);
+    _debugStream->print("The parameter scale factor is: ");
+    _debugStream->println(_paramScale);
+    return _paramScale;
 }
 
 
