@@ -151,6 +151,17 @@ int scan::getCommunicationMode(int startIndex)
 }
 bool scan::setCommunicationMode(specCommMode mode)
 {return false;}
+String scan::printCommMode(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "Modbus RTU";
+        case 1: return "Modbus ASCII";
+        case 2: return "Modbus TCP";
+        default: return "Unknown";
+    }
+}
+
 
 // The serial baud rate (iff communication mode = modbus RTU or modbus ASCII)
 int scan::getBaudRate(int startIndex)
@@ -170,6 +181,20 @@ int scan::getBaudRate(int startIndex)
 }
 bool scan::setBaudRate(specBaudRate baud)
 {return false;}
+uint16_t scan::printBaudRate(uint16_t code)
+{
+    String baud;
+    switch (code)
+    {
+        case 0: baud = "9600"; break;
+        case 1: baud = "19200"; break;
+        case 2: baud = "38400"; break;
+        default: baud = "0"; break;
+    }
+    uint16_t baudr = baud.toInt();
+    return baudr;
+}
+
 
 // The serial parity (iff communication mode = modbus RTU or modbus ASCII)
 int scan::getParity(int startIndex)
@@ -189,6 +214,17 @@ int scan::getParity(int startIndex)
 }
 bool scan::setParity(specParity parity)
 {return false;}
+String scan::printParity(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "no parity";
+        case 1: return "even parity";
+        case 2: return "odd parity";
+        default: return "Unknown";
+    }
+}
+
 
 // Reset all settings to default
 bool scan::resetSettings(void)
@@ -213,6 +249,18 @@ int scan::getprivateConfigRegister(int startIndex)
     _debugStream->println(")");
     return _configRegNumber;
 }
+String scan::printRegisterType(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "Holding register";  // 0b00 - read by command 0x03, written by 0x06 or 0x10
+        case 1: return "Input register";  // 0b01 - read by command 0x04
+        case 2: return "Discrete input register";  // 0b10 - read by command 0x02
+        case 3: return "Coil";  // 0b10) - read by command 0x01, written by 0x05
+        default: return "Unknown";
+    }
+}
+
 
 // Get the "s::canpoint" of the device
 String scan::getScanPoint(int startIndex)
@@ -222,9 +270,7 @@ String scan::getScanPoint(int startIndex)
         // Device Location (s::canpoint) is registers 6-11 (char[12])
         getRegisters(0x03, 6, 6);
     }
-    dataFromBEFrame(_scanPointChar, character, responseBuffer, startIndex);
-    _scanPoint = String(_scanPointChar);
-    _scanPoint.trim();
+    dataFromBEFrame(_scanPoint, character, responseBuffer, startIndex, 12);
     _debugStream->print("Current s::canpoint is: ");
     _debugStream->println(_scanPoint);
     return _scanPoint;
@@ -248,6 +294,17 @@ int scan::getCleaningMode(int startIndex)
 }
 bool scan::setCleaningMode(cleaningMode mode)
 {return false;}
+String scan::printCleaningMode(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "no cleaning supported";
+        case 1: return "manual";
+        case 2: return "automatic";
+        default: return "Unknown";
+    }
+}
+
 
 // Cleaning interval (ie, number of samples between cleanings)
 int scan::getCleaningInterval(int startIndex)
@@ -351,6 +408,15 @@ int scan::getLoggingMode(int startIndex)
 }
 bool scan::setLoggingMode(uint8_t mode)
 {return false;}
+String scan::printLoggingMode(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "Logging On";
+        default: return "Logging Off";
+    }
+}
+
 
 // Logging interval for data logger in minutes (0 = no logging active)
 int scan::getLoggingInterval(int startIndex)
@@ -466,69 +532,7 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
                   float &value5, float &value6, float &value7, float &value8)
 {return false;}
 
-// These functions are to convert various s::can register code to strings
-String scan::printCommMode(uint16_t code)
-{
-    switch (code)
-    {
-        case 0: return "Modbus RTU";
-        case 1: return "Modbus ASCII";
-        case 2: return "Modbus TCP";
-        default: return "Unknown";
-    }
-}
-uint16_t scan::printBaudRate(uint16_t code)
-{
-    String baud;
-    switch (code)
-    {
-        case 0: baud = "9600"; break;
-        case 1: baud = "19200"; break;
-        case 2: baud = "38400"; break;
-        default: baud = "0"; break;
-    }
-    uint16_t baudr = baud.toInt();
-    return baudr;
-}
-String scan::printParity(uint16_t code)
-{
-    switch (code)
-    {
-        case 0: return "no parity";
-        case 1: return "even parity";
-        case 2: return "odd parity";
-        default: return "Unknown";
-    }
-}
-String scan::printCleaningMode(uint16_t code)
-{
-    switch (code)
-    {
-        case 0: return "no cleaning supported";
-        case 1: return "manual";
-        case 2: return "automatic";
-        default: return "Unknown";
-    }
-}
-String scan::printRegisterType(uint16_t code)
-{
-    switch (code)
-    {
-        case 0: return "Holding register";  // 0b00 - read by command 0x03, written by 0x06 or 0x10
-        case 1: return "Input register";  // 0b01 - read by command 0x04
-        case 2: return "Discrete input register";  // 0b10 - read by command 0x02
-        case 3: return "Coil";  // 0b10) - read by command 0x01, written by 0x05
-        default: return "Unknown";
-    }
-}
-String scan::printLoggingMode(uint16_t code)
-{
-    switch (code)
-    {
-        case 0: return "Logging On";
-        default: return "Logging Off";
-    }
-}
+
 
 //----------------------------------------------------------------------------
 //                           PRIVATE HELPER FUNCTIONS
@@ -661,7 +665,7 @@ bool scan::getRegisters(byte readCommand, int16_t startRegister, int16_t numRegi
     command[1] = readCommand;
 
     // Put in the starting register
-    SeFrame Sefram;
+    SeFrame Sefram = {0,};
     Sefram.Int16[0] = startRegister;
     command[2] = Sefram.Byte[1];
     command[3] = Sefram.Byte[0];
@@ -685,14 +689,14 @@ bool scan::getRegisters(byte readCommand, int16_t startRegister, int16_t numRegi
 void scan::sliceArray(byte inputArray[], byte outputArray[],
                 int start_index, int numBytes, bool reverseOrder)
 {
-    _debugStream->println("------------------");
-    _debugStream->print("  Returned Register Number: ");
-    _debugStream->println((start_index-3)/2);
-    _debugStream->print("  Variable Length: ");
-    _debugStream->print(numBytes);
-    _debugStream->print("  (");
-    _debugStream->print(numBytes/2);
-    _debugStream->println(" Registers)");
+    // _debugStream->println("------------------");
+    // _debugStream->print("  Returned Register Number: ");
+    // _debugStream->println((start_index-3)/2);
+    // _debugStream->print("  Variable Length: ");
+    // _debugStream->print(numBytes);
+    // _debugStream->print("  (");
+    // _debugStream->print(numBytes/2);
+    // _debugStream->println(" Registers)");
 
     if (reverseOrder)
     {
@@ -711,14 +715,15 @@ void scan::sliceArray(byte inputArray[], byte outputArray[],
             outputArray[i] = inputArray[start_index + i];
     }
 
-    _debugStream->print("  Sliced Array:");
-    _debugStream->print("  ");
-    printFrameHex(outputArray, numBytes);
+    // _debugStream->print("  Sliced Array:");
+    // _debugStream->print("  ");
+    // printFrameHex(outputArray, numBytes);
 }
 
 // These functions returns data from a register within a modbus frame
 // The outputVar must always be initialized prior to calling this function
-bool scan::dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[], int start_index, endianness endian)
+bool scan::dataFromBEFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
+                           int start_index, endianness endian)
 {
     // Read a substring of the input frame into an "output frame"
     int varLength = 2;
@@ -726,7 +731,7 @@ bool scan::dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[],
     if (endian == big) sliceArray(indata, outFrame, start_index, varLength, true);
     else sliceArray(indata, outFrame, start_index, varLength, false);
 
-    SeFrame Sefram;
+    SeFrame Sefram = {0,};
     memcpy(Sefram.Byte, outFrame, varLength);
 
     switch (regType)
@@ -736,12 +741,14 @@ bool scan::dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[],
         {
             outputVar = Sefram.Int16[0];
             return true;
+            break;
         }
         case pointer:
         {
             Sefram.Byte[0] = indata[start_index + 1]>>2;  // Bit shift the address lower bits
             outputVar = Sefram.Int16[0];
             return true;
+            break;
         }
         case pointerType:
         {
@@ -749,11 +756,17 @@ bool scan::dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[],
             uint8_t pointerRegType = outFrame[0] & 3;
             outputVar = pointerRegType;
             return true;
+            break;
         }
-        default: return false;
+        default:
+        {
+            return false;
+            break;
+        }
     }
 }
-bool scan::dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], int start_index, endianness endian)
+bool scan::dataFromBEFrame(float &outputVar, dataTypes regType, byte indata[],
+                           int start_index, endianness endian)
 {
     // Read a substring of the input frame into an "output frame"
     int varLength = 4;
@@ -761,7 +774,7 @@ bool scan::dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], in
     if (endian == big) sliceArray(indata, outFrame, start_index, varLength, true);
     else sliceArray(indata, outFrame, start_index, varLength, false);
 
-    SeFrame Sefram;
+    SeFrame Sefram = {0,};
     memcpy(Sefram.Byte, outFrame, varLength);
 
     switch (regType)
@@ -774,15 +787,16 @@ bool scan::dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], in
         default: return false;
     }
 }
-bool scan::dataFromBEFrame(String outputVar, dataTypes regType, byte indata[], int start_index, int end_index)
+bool scan::dataFromBEFrame(String &outputVar, dataTypes regType, byte indata[],
+                           int start_index, int charLength)
 {
     switch (regType)
     {
         case character:
         {
-            char charString[20] = {0,};  // Pick a value longer than then longest string returned
+            char charString[24] = {0,};  // Pick a value longer than then longest string returned
             int j = 0;
-            for (int i = start_index; i < end_index; i++)
+            for (int i = start_index; i < start_index + charLength; i++)
             {
                 charString[j] = responseBuffer[i];  // converts from "byte" type to "char" type
                 j++;
@@ -795,7 +809,8 @@ bool scan::dataFromBEFrame(String outputVar, dataTypes regType, byte indata[], i
         default: return false;
     }
 }
-bool scan::dataFromBEFrame(uint32_t outputVar, dataTypes regType, byte indata[], int start_index, endianness endian)
+bool scan::dataFromBEFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
+                           int start_index, endianness endian)
 {
     // Read a substring of the input frame into an "output frame"
 
@@ -813,7 +828,7 @@ bool scan::dataFromBEFrame(uint32_t outputVar, dataTypes regType, byte indata[],
             int varLength = 4;
             byte outFrame[varLength] = {0,};
             sliceArray(indata, outFrame, start_index+4, varLength, true);
-            SeFrame Sefram;
+            SeFrame Sefram = {0,};
             memcpy(Sefram.Byte, outFrame, varLength);
             outputVar = Sefram.Int32;
             return true;

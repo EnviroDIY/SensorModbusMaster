@@ -81,20 +81,24 @@ public:
     // The communication mode
     int getCommunicationMode(int startIndex = 3);
     bool setCommunicationMode(specCommMode mode);
+    String printCommMode(uint16_t code);
 
     // The serial baud rate (iff communication mode = modbus RTU or modbus ASCII)
     int getBaudRate(int startIndex = 3);
     bool setBaudRate(specBaudRate baud);
+    uint16_t printBaudRate(uint16_t code);
 
     // The serial parity (iff communication mode = modbus RTU or modbus ASCII)
     int getParity(int startIndex = 3);
     bool setParity(specParity parity);
+    String printParity(uint16_t code);
 
     // Reset all settings to default
     bool resetSettings(void);
 
     // Get a pointer to the private configuration register
     int getprivateConfigRegister(int startIndex = 3);
+    String printRegisterType(uint16_t code);
 
     // Get the "s::canpoint" of the device
     String getScanPoint(int startIndex = 3);
@@ -102,6 +106,7 @@ public:
     // Cleaning mode configuration
     int getCleaningMode(int startIndex = 3);
     bool setCleaningMode(cleaningMode mode);
+    String printCleaningMode(uint16_t code);
 
     // Cleaning interval (ie, number of samples between cleanings)
     int getCleaningInterval(int startIndex = 3);
@@ -125,6 +130,7 @@ public:
     // Logging Mode (0 = on; 1 = off)
     int getLoggingMode(int startIndex = 3);
     bool setLoggingMode(uint8_t mode);
+    String printLoggingMode(uint16_t code);
 
     // Logging interval for data logger in minutes (0 = no logging active)
     int getLoggingInterval(int startIndex = 3);
@@ -195,14 +201,6 @@ public:
     // This sets a stream for debugging information to go to;
     void setDebugStream(Stream *stream){_debugStream = stream;}
 
-    // These functions are to convert various s::can register code to strings
-    String printCommMode(uint16_t code);
-    uint16_t printBaudRate(uint16_t code);
-    String printParity(uint16_t code);
-    String printCleaningMode(uint16_t code);
-    String printRegisterType(uint16_t code);
-    String printLoggingMode(uint16_t code);
-
 
 private:
 
@@ -252,10 +250,14 @@ private:
 
     // These functions return the propertype big-endian data register
     // beginning at a specific index of another array.
-    bool dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[], int start_index, endianness endian = big);
-    bool dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], int start_index, endianness endian = big);
-    bool dataFromBEFrame(String outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
-    bool dataFromBEFrame(uint32_t outputVar, dataTypes regType, byte indata[], int start_index, endianness endian = big);
+    bool dataFromBEFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
+                         int start_index, endianness endian = big);
+    bool dataFromBEFrame(float &outputVar, dataTypes regType, byte indata[],
+                         int start_index, endianness endian = big);
+    bool dataFromBEFrame(String &outputVar, dataTypes regType, byte indata[],
+                         int start_index, int charLength);
+    bool dataFromBEFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
+                         int start_index, endianness endian = big);
 
 
     // This sends three requests for a single register
@@ -271,7 +273,6 @@ private:
     uint16_t _commMode;
     uint16_t _baudRate;
     uint16_t _parity;
-    char _scanPointChar[12];
     String _scanPoint;
     uint16_t _configRegNumber;
     uint16_t _configRegType;
