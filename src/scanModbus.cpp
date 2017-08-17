@@ -58,55 +58,54 @@ bool scan::getSetup(void)
 
     if (_gotHoldingRegSpecSetup)
     {
-        // Communication mode is in register 1 (1 uint16 register)
+        // Communication mode is in holding register 1 (1 uint16 register)
         getCommunicationMode(5);
-
-        // Baud rate is in register 2 (1 uint16 register)
+        // Baud rate is in holding register 2 (1 uint16 register)
         getBaudRate(7);
-
-        // Parity is in register 3 (1 uint16 register)
+        // Parity is in holding register 3 (1 uint16 register)
         getParity(9);
-
         // Skipping register 4, which is just to be written to reset all
         // settings back to default.
-
-        // Pointer to the private configuration is in register 5
+        // Pointer to the private configuration is in holding register 5
         getprivateConfigRegister(13);
-
         // Device Location (s::canpoint) is registers 6-11 (char[12])
         getScanPoint(15);
-
-        // Cleaning mode is in register 12 (1 uint16 register)
+        // Cleaning mode is in holding register 12 (1 uint16 register)
         getCleaningMode(27);
-
-        // Cleaning interval is in register 13 (1 uint16 register)
+        // Cleaning interval is in holding register 13 (1 uint16 register)
         getCleaningInterval(29);
-
-        // Cleaning duration is in register 14 (1 uint16 register)
+        // Cleaning duration is in holding register 14 (1 uint16 register)
         getCleaningDuration(31);
-
-        // Cleaning wait time is in register 15 (1 uint16 register)
+        // Cleaning wait time is in holding register 15 (1 uint16 register)
         getCleaningWait(33);
-
-        // System time is in registers 16-21 (64-bit timestamp in TAI64 format + padding)
+        // System time is in holding registers 16-21 (64-bit timestamp in TAI64 format + padding)
         getSystemTime(35);
-
-        // Measurement interval is in register 22 (1 uint16 register)
+        // Measurement interval is in holding register 22 (1 uint16 register)
         getMeasInterval(47);
-
-        // Logging Mode (0 = on; 1 = off) is in register 23 (1 uint16 register)
+        // Logging Mode (0 = on; 1 = off) is in holding register 23 (1 uint16 register)
         getLoggingMode(49);
-
-        // Logging interval is in register 24 (1 uint16 register)
+        // Logging interval is in holding register 24 (1 uint16 register)
         getLoggingInterval(51);
-
-        // Available number of logged results is in register 25 (1 uint16 register)
+        // Available number of logged results is in holding register 25 (1 uint16 register)
         getNumLoggedResults(53);
-
-        // "Index device status" is in register 26 (1 uint16 register)
+        // "Index device status" is in holding register 26 (1 uint16 register)
         getIndexLogResult(55);
-
         // Return true after parsing everything
+        return true;
+    }
+    else return false;
+}
+
+
+// Reset all settings to default
+bool scan::resetSettings(void)
+{
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = 0x01;
+    if (setRegisters(4, 1, byteToSend))
+    {
+        getSetup();
         return true;
     }
     else return false;
@@ -121,11 +120,10 @@ byte scan::getSlaveID(void)
 // This sets a new modbus slave ID
 bool scan::setSlaveID(byte newSlaveID)
 {
-    byte setSlaveID[11] = {_slaveID, 0x06, 0x00, 0x00, 0x00, 0x01, 0x02, 0x00, newSlaveID, 0x00, 0x00};
-                         // Address, Write,   Reg 0,   1 Register, 2byte,   newAddress,       CRC
-    respSize = sendCommand(setSlaveID, 11);
-
-    if (respSize == 8 && responseBuffer[0] == _slaveID)
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = newSlaveID;
+    if (setRegisters(0, 1, byteToSend))
     {
         _slaveID = newSlaveID;
         return true;
@@ -133,15 +131,20 @@ bool scan::setSlaveID(byte newSlaveID)
     else return false;
 }
 
-// The communication mode
+
+
+//----------------------------------------------------------------------------
+//               SETUP INFORMATION FROM THE HOLDING REGISTERS
+//----------------------------------------------------------------------------
+// Functions for the communication mode
+// The Communication mode is in holding register 1 (1 uint16 register)
 int scan::getCommunicationMode(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Communication mode is in register 1 (1 uint16 register)
         getRegisters(0x03, 1, 1);
     }
-    dataFromBEFrame(_commMode, uint16, responseBuffer, startIndex);
+    dataFromFrame(_commMode, uint16, responseBuffer, startIndex);
     _debugStream->print("Communication mode setting is: ");
     _debugStream->print(_commMode);
     _debugStream->print(" (");
@@ -150,7 +153,17 @@ int scan::getCommunicationMode(int startIndex)
     return _commMode;
 }
 bool scan::setCommunicationMode(specCommMode mode)
-{return false;}
+{
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = mode;
+    if (setRegisters(1, 1, byteToSend))
+    {
+        _commMode = mode;
+        return true;
+    }
+    else return false;
+}
 String scan::printCommMode(uint16_t code)
 {
     switch (code)
@@ -163,15 +176,15 @@ String scan::printCommMode(uint16_t code)
 }
 
 
-// The serial baud rate (iff communication mode = modbus RTU or modbus ASCII)
+// Functions for the serial baud rate (iff communication mode = modbus RTU or modbus ASCII)
+// Baud rate is in holding register 2 (1 uint16 register)
 int scan::getBaudRate(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Baud rate is in register 2 (1 uint16 register)
         getRegisters(0x03, 2, 1);
     }
-    dataFromBEFrame(_baudRate, uint16, responseBuffer, startIndex);
+    dataFromFrame(_baudRate, uint16, responseBuffer, startIndex);
     _debugStream->print("Baud Rate setting is: ");
     _debugStream->print(_baudRate);
     _debugStream->print(" (");
@@ -180,7 +193,17 @@ int scan::getBaudRate(int startIndex)
     return _baudRate;
 }
 bool scan::setBaudRate(specBaudRate baud)
-{return false;}
+{
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = baud;
+    if (setRegisters(2, 1, byteToSend))
+    {
+        _baudRate = baud;
+        return true;
+    }
+    else return false;
+}
 uint16_t scan::printBaudRate(uint16_t code)
 {
     String baud;
@@ -196,15 +219,15 @@ uint16_t scan::printBaudRate(uint16_t code)
 }
 
 
-// The serial parity (iff communication mode = modbus RTU or modbus ASCII)
+// Functions for the serial parity (iff communication mode = modbus RTU or modbus ASCII)
+// Parity is in holding register 3 (1 uint16 register)
 int scan::getParity(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Parity is in register 3 (1 uint16 register)
         getRegisters(0x03, 3, 1);
     }
-    dataFromBEFrame(_parity, uint16, responseBuffer, startIndex);
+    dataFromFrame(_parity, uint16, responseBuffer, startIndex);
     _debugStream->print("Parity setting is: ");
     _debugStream->print(_parity);
     _debugStream->print(" (");
@@ -213,7 +236,17 @@ int scan::getParity(int startIndex)
     return _parity;
 }
 bool scan::setParity(specParity parity)
-{return false;}
+{
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = parity;
+    if (setRegisters(3, 1, byteToSend))
+    {
+        _parity = parity;
+        return true;
+    }
+    else return false;
+}
 String scan::printParity(uint16_t code)
 {
     switch (code)
@@ -225,21 +258,17 @@ String scan::printParity(uint16_t code)
     }
 }
 
-
-// Reset all settings to default
-bool scan::resetSettings(void)
-{return false;}
-
-// Get a pointer to the private configuration register
+// Functions to get a pointer to the private configuration register
+// Pointer to the private configuration is in holding register 5
+// This is read only
 int scan::getprivateConfigRegister(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Pointer to the private configuration is in register 5
         getRegisters(0x03, 5, 1);
     }
-    dataFromBEFrame(_configRegNumber, pointer, responseBuffer, startIndex);
-    dataFromBEFrame(_configRegType, pointerType, responseBuffer, startIndex);
+    dataFromFrame(_configRegNumber, pointer, responseBuffer, startIndex);
+    dataFromFrame(_configRegType, pointerType, responseBuffer, startIndex);
     _debugStream->print("Private configuration begins in register ");
     _debugStream->print(_configRegNumber);
     _debugStream->print(", which is type ");
@@ -262,29 +291,41 @@ String scan::printRegisterType(uint16_t code)
 }
 
 
-// Get the "s::canpoint" of the device
+// Functions for the "s::canpoint" of the device
+// Device Location (s::canpoint) is registers 6-11 (char[12])
+// This is read only
 String scan::getScanPoint(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Device Location (s::canpoint) is registers 6-11 (char[12])
         getRegisters(0x03, 6, 6);
     }
-    dataFromBEFrame(_scanPoint, character, responseBuffer, startIndex, 12);
+    dataFromFrame(_scanPoint, character, responseBuffer, startIndex, 12);
     _debugStream->print("Current s::canpoint is: ");
     _debugStream->println(_scanPoint);
     return _scanPoint;
 }
+bool scan::setScanPoint(char charScanPoint[12])
+{
+    byte sp[12] = {0,};
+    for (int i = 0; i < 12; i++) sp[i] = charScanPoint[i];
+    if (setRegisters(6, 6, sp))
+    {
+        _scanPoint = String(charScanPoint);
+        _scanPoint.trim();
+        return true;
+    }
+}
 
-// Cleaning mode configuration
+// Functions for the cleaning mode configuration
+// Cleaning mode is in holding register 12 (1 uint16 register)
 int scan::getCleaningMode(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Cleaning mode is in register 12 (1 uint16 register)
         getRegisters(0x03, 12, 1);
     }
-    dataFromBEFrame(_cleaningMode, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningMode, uint16, responseBuffer, startIndex);
     _debugStream->print("Cleaning mode setting is: ");
     _debugStream->print(_cleaningMode);
     _debugStream->print(" (");
@@ -293,7 +334,17 @@ int scan::getCleaningMode(int startIndex)
     return _cleaningMode;
 }
 bool scan::setCleaningMode(cleaningMode mode)
-{return false;}
+{
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = mode;
+    if (setRegisters(12, 1, byteToSend))
+    {
+        _cleaningMode = mode;
+        return true;
+    }
+    else return false;
+}
 String scan::printCleaningMode(uint16_t code)
 {
     switch (code)
@@ -306,99 +357,166 @@ String scan::printCleaningMode(uint16_t code)
 }
 
 
-// Cleaning interval (ie, number of samples between cleanings)
+// Functions for the cleaning interval (ie, number of samples between cleanings)
+// Cleaning interval is in holding register 13 (1 uint16 register)
 int scan::getCleaningInterval(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Cleaning interval is in register 13 (1 uint16 register)
         getRegisters(0x03, 13, 1);
     }
-    dataFromBEFrame(_cleaningInterval, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningInterval, uint16, responseBuffer, startIndex);
     _debugStream->print("Cleaning interval is: ");
     _debugStream->print(_cleaningInterval);
     _debugStream->println(" measurements between cleanings");
     return _cleaningInterval;
 }
 bool scan::setCleaningInterval(uint16_t intervalSamples)
-{return false;}
+{
+    // Using a small-endian frame to get into bytes and then reverse the order
+    SeFrame sefram;
+    sefram.Int16[0] = intervalSamples;
+    byte byteToSend[2];
+    byteToSend[0] = sefram.Byte[1];
+    byteToSend[1] = sefram.Byte[0];
+    if (setRegisters(13, 1, byteToSend))
+    {
+        _cleaningInterval = intervalSamples;
+        return true;
+    }
+    else return false;
+}
 
-// Cleaning duration in seconds
+// Functions for the cleaning duration in seconds
+// Cleaning duration is in holding register 14 (1 uint16 register)
 int scan::getCleaningDuration(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Cleaning duration is in register 14 (1 uint16 register)
         getRegisters(0x03, 14, 1);
     }
-    dataFromBEFrame(_cleaningDuration, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningDuration, uint16, responseBuffer, startIndex);
     _debugStream->print("Cleaning time is: ");
     _debugStream->print(_cleaningDuration);
     _debugStream->println(" seconds");
     return _cleaningDuration;
 }
 bool scan::setCleaningDuration(uint16_t secDuration)
-{return false;}
+{
+    // Using a small-endian frame to get into bytes and then reverse the order
+    SeFrame sefram;
+    sefram.Int16[0] = secDuration;
+    byte byteToSend[2];
+    byteToSend[0] = sefram.Byte[1];
+    byteToSend[1] = sefram.Byte[0];
+    if (setRegisters(14, 1, byteToSend))
+    {
+        _cleaningDuration = secDuration;
+        return true;
+    }
+    else return false;
+}
 
-// Waiting time between end of cleaning and start of measurement
+// Functions for the waiting time between end of cleaning
+// and the start of a measurement
+// Cleaning wait time is in holding register 15 (1 uint16 register)
 int scan::getCleaningWait(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Cleaning wait time is in register 15 (1 uint16 register)
         getRegisters(0x03, 15, 1);
     }
-    dataFromBEFrame(_cleaningWait, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningWait, uint16, responseBuffer, startIndex);
     _debugStream->print("Wait time between cleaning and sampling is: ");
     _debugStream->print(_cleaningWait);
     _debugStream->println(" seconds");
     return _cleaningWait;
 }
 bool scan::setCleaningWait(uint16_t secDuration)
-{return false;}
+{
+    // Using a small-endian frame to get into bytes and then reverse the order
+    SeFrame sefram;
+    sefram.Int16[0] = secDuration;
+    byte byteToSend[2];
+    byteToSend[0] = sefram.Byte[1];
+    byteToSend[1] = sefram.Byte[0];
+    if (setRegisters(15, 1, byteToSend))
+    {
+        _cleaningWait = secDuration;
+        return true;
+    }
+    else return false;
+}
 
-// Current system time as a 64-bit count of seconds from Jan 1, 1970
+// Functions for the current system time in seconds from Jan 1, 1970
+// System time is in holding registers 16-21
+// (64-bit timestamp in TAI64 format + padding)
 long scan::getSystemTime(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // System time is in registers 16-21 (64-bit timestamp in TAI64 format + padding)
         getRegisters(0x03, 16, 6);
     }
     uint32_t secsPast1970 = 0;
-    dataFromBEFrame(secsPast1970, tai64, responseBuffer, startIndex);
+    dataFromFrame(secsPast1970, tai64, responseBuffer, startIndex);
     _debugStream->print("Current System Time is: ");
     _debugStream->print((unsigned long)(secsPast1970));
     _debugStream->println(" seconds past Jan 1, 1970");
     return secsPast1970;
 }
+bool scan::setSystemTime(long currentUnixTime)
+{
+    // Using a small-endian frame to get into bytes and then reverse the order
+    SeFrame sefram;
+    sefram.Int32 = currentUnixTime;
+    byte byteToSend[12] = {0,};
+    byteToSend[0] = 0x40;  // It will be for the next 90 years
+    byteToSend[4] = sefram.Byte[3];
+    byteToSend[5] = sefram.Byte[2];
+    byteToSend[6] = sefram.Byte[1];
+    byteToSend[7] = sefram.Byte[0];
+    return setRegisters(16, 6, byteToSend);
+}
 
-// Measurement interval in seconds (0 - as fast as possible)
+// Functions for the measurement interval in seconds (0 - as fast as possible)
+// Measurement interval is in holding register 22 (1 uint16 register)
 int scan::getMeasInterval(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Measurement interval is in register 22 (1 uint16 register)
         getRegisters(0x03, 22, 1);
     }
-    dataFromBEFrame(_measInterval, uint16, responseBuffer, startIndex);
+    dataFromFrame(_measInterval, uint16, responseBuffer, startIndex);
     _debugStream->print("Measurement interval is: ");
     _debugStream->print(_measInterval);
     _debugStream->println(" seconds");
     return _measInterval;
 }
 bool scan::setMeasInterval(uint16_t secBetween)
-{return false;}
+{
+    // Using a small-endian frame to get into bytes and then reverse the order
+    SeFrame sefram;
+    sefram.Int16[0] = secBetween;
+    byte byteToSend[2];
+    byteToSend[0] = sefram.Byte[1];
+    byteToSend[1] = sefram.Byte[0];
+    if (setRegisters(22, 1, byteToSend))
+    {
+        _measInterval = secBetween;
+        return true;
+    }
+    else return false;
+}
 
-// Logging Mode (0 = on; 1 = off)
+// Functions for the logging Mode (0 = on; 1 = off)
+// Logging Mode (0 = on; 1 = off) is in holding register 23 (1 uint16 register)
 int scan::getLoggingMode(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Logging Mode (0 = on; 1 = off) is in register 23 (1 uint16 register)
         getRegisters(0x03, 23, 1);
     }
-    dataFromBEFrame(_loggingMode, uint16, responseBuffer, startIndex);
+    dataFromFrame(_loggingMode, uint16, responseBuffer, startIndex);
     _debugStream->print("Logging mode setting is: ");
     _debugStream->print(_loggingMode);
     _debugStream->print(" (");
@@ -407,7 +525,17 @@ int scan::getLoggingMode(int startIndex)
     return _loggingMode;
 }
 bool scan::setLoggingMode(uint8_t mode)
-{return false;}
+{
+    byte byteToSend[2];
+    byteToSend[0] = 0x00;
+    byteToSend[1] = mode;
+    if (setRegisters(23, 1, byteToSend))
+    {
+        _loggingMode = mode;
+        return true;
+    }
+    else return false;
+}
 String scan::printLoggingMode(uint16_t code)
 {
     switch (code)
@@ -418,32 +546,46 @@ String scan::printLoggingMode(uint16_t code)
 }
 
 
-// Logging interval for data logger in minutes (0 = no logging active)
+// Functions for the logging interval for data logger in minutes
+// (0 = no logging active)
+// Logging interval is in holding register 24 (1 uint16 register)
 int scan::getLoggingInterval(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Logging interval is in register 24 (1 uint16 register)
         getRegisters(0x03, 24, 1);
     }
-    dataFromBEFrame(_loggingInterval, uint16, responseBuffer, startIndex);
+    dataFromFrame(_loggingInterval, uint16, responseBuffer, startIndex);
     _debugStream->print("Logging interval is: ");
     _debugStream->print(_loggingInterval);
     _debugStream->println(" seconds");
     return _loggingInterval;
 }
 bool scan::setLoggingInterval(uint16_t interval)
-{return false;}
+{
+    // Using a small-endian frame to get into bytes and then reverse the order
+    SeFrame sefram;
+    sefram.Int16[0] = interval;
+    byte byteToSend[2];
+    byteToSend[0] = sefram.Byte[1];
+    byteToSend[1] = sefram.Byte[0];
+    if (setRegisters(24, 1, byteToSend))
+    {
+        _loggingInterval = interval;
+        return true;
+    }
+    else return false;
+}
 
 // Available number of logged results in datalogger since last clearing
 int scan::getNumLoggedResults(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // Available number of logged results is in register 25 (1 uint16 register)
+        // Available number of logged results is in holding register 25 (1 uint16 register)
         getRegisters(0x03, 25, 1);
     }
-    dataFromBEFrame(_numLoggedResults, uint16, responseBuffer, startIndex);
+    dataFromFrame(_numLoggedResults, uint16, responseBuffer, startIndex);
     _debugStream->print(_numLoggedResults);
     _debugStream->println(" results have been logged so far");
     return _numLoggedResults;
@@ -457,47 +599,179 @@ int scan::getIndexLogResult(int startIndex)
 {
     if (!_gotHoldingRegSpecSetup)
     {
-        // "Index device status" is in register 26 (1 uint16 register)
+        // "Index device status" is in holding register 26 (1 uint16 register)
         getRegisters(0x03, 26, 1);
     }
-    dataFromBEFrame(_indexLogResult, uint16, responseBuffer, startIndex);
+    dataFromFrame(_indexLogResult, uint16, responseBuffer, startIndex);
     _debugStream->print("Index device status is: ");
     _debugStream->println(_indexLogResult);
     return _indexLogResult;
 }
 
 
+
+//----------------------------------------------------------------------------
+//               SETUP INFORMATION FROM THE INPUT REGISTERS
+//----------------------------------------------------------------------------
 // Get the version of the modbus mapping protocol
-// The float variables for the version must be
-// initialized prior to calling this function.
-bool scan::getModbusVersion(float &modbusVersion)
-{return false;}
+float scan::getModbusVersion(int startIndex)
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        getRegisters(0x04, 0, 1);
+    }
+    dataFromFrame(_modbusVersion, uint16, responseBuffer, startIndex);
+    SeFrame sefram;
+    sefram.Int16[0] = _modbusVersion;
+    float mjv = sefram.Byte[1];
+    float mnv = (sefram.Byte[0])/100;
+    float version = mjv + mnv;
+    _debugStream->print("Modbus Version is: ");
+    _debugStream->println(version);
+    return version;
+}
 
 // This returns a pretty string with the model information
 String scan::getModel(int startIndex)
-{return "UNKNOWN";}
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        getRegisters(0x04, 3, 10);
+    }
+    dataFromFrame(_model, character, responseBuffer, startIndex, 10);
+    _debugStream->print("Instrument model is: ");
+    _debugStream->println(_model);
+    return _model;
+}
 
 // This gets the instrument serial number as a String
 String scan::getSerialNumber(int startIndex)
-{return "UNKNOWN";}
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        getRegisters(0x04, 13, 8);
+    }
+    dataFromFrame(_serialNumber, character, responseBuffer, startIndex, 8);
+    _debugStream->print("Instrument Serial Number is: ");
+    _debugStream->println(_serialNumber);
+    return _model;
+}
 
-// This gets the hardware and software version of the sensor
-// The float variables for the hardware and software versions must be
-// initialized prior to calling this function.
-// The reference (&) is needed when declaring this function so that
-// the function is able to modify the actual input floats rather than
-// create and destroy copies of them.
-// There is no need to add the & when actually usig the function.
-bool scan::getVersion(float &hardwareVersion, float &softwareVersion)
-{return false;}
+// This gets the hardware version of the sensor
+float scan::getHWVersion(int startIndex)
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        getRegisters(0x04, 17, 4);
+    }
+    dataFromFrame(_model, character, responseBuffer, startIndex, 4);
+    float mjv = _model.substring(0,2).toFloat();
+    float mnv = (_model.substring(2,4).toFloat())/100;
+    float version = mjv + mnv;
+    _debugStream->print("Hardware Version is: ");
+    _debugStream->println(version);
+    return version;
+}
 
-// Device rebooter counter
+// This gets the software version of the sensor
+float scan::getSWVersion(int startIndex)
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        getRegisters(0x04, 19, 4);
+    }
+    dataFromFrame(_model, character, responseBuffer, startIndex, 4);
+    float mjv = _model.substring(0,2).toFloat();
+    float mnv = (_model.substring(2,4).toFloat())/100;
+    float version = mjv + mnv;
+    _debugStream->print("Software Version is: ");
+    _debugStream->println(version);
+    return version;
+}
+
+// This gets the number of times the spec has been rebooted
+// (Device rebooter counter)
 int scan::getHWStarts(int startIndex)
-{return false;}
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        // "Index device status" is in holding register 26 (1 uint16 register)
+        getRegisters(0x04, 21, 1);
+    }
+    dataFromFrame(_HWstarts, uint16, responseBuffer, startIndex);
+    _debugStream->print("Hardware has been restarted: ");
+    _debugStream->print(_HWstarts);
+    _debugStream->println(" times");
+    return _HWstarts;
+}
 
 // This gets the number of parameters the spectro::lyzer is set to measure
 int scan::getParameterCount(int startIndex)
-{return false;}
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        // "Index device status" is in holding register 26 (1 uint16 register)
+        getRegisters(0x04, 22, 1);
+    }
+    dataFromFrame(_paramCount, uint16, responseBuffer, startIndex);
+    _debugStream->print("There are ");
+    _debugStream->print(_paramCount);
+    _debugStream->println(" parameters being measured");
+    return _paramCount;
+}
+
+// This gets the datatype of the parameters and parameter limits
+// This is a check for compatibility
+int scan::getParamterType(int startIndex)
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        // "Index device status" is in holding register 26 (1 uint16 register)
+        getRegisters(0x04, 23, 1);
+    }
+    dataFromFrame(_paramType, uint16, responseBuffer, startIndex);
+    _debugStream->print("The data type of the parameters is: ");
+    _debugStream->print(_paramType);
+    _debugStream->print(" (");
+    _debugStream->print(printParamterType(_paramType));
+    _debugStream->println(")");
+    return _paramType;
+}
+String scan::printParamterType(uint16_t code)
+{
+    switch (code)
+    {
+        case 0: return "uint16?";
+        case 1: return "enum?";
+        case 2: return "bitmask?";
+        case 3: return "char?";
+        case 4: return "float?";
+        default: return "Unknown";
+    }
+}
+
+// This gets the scaling factor for all parameters which depend on eParameterType
+int scan::getParameterScale(int startIndex)
+{
+    if (!_gotInputRegSpecSetup)
+    {
+        // "Index device status" is in holding register 26 (1 uint16 register)
+        getRegisters(0x04, 23, 1);
+    }
+    dataFromFrame(_paramType, uint16, responseBuffer, startIndex);
+    _debugStream->print("The data type of the parameters is: ");
+    _debugStream->print(_paramType);
+    _debugStream->print(" (");
+    _debugStream->print(printParamterType(_paramType));
+    _debugStream->println(")");
+    return _paramType;
+}
+
+
+
+//----------------------------------------------------------------------------
+//             PARAMETER INFORMATION FROM THE HOLDING REGISTERS
+//----------------------------------------------------------------------------
 
 // This returns a pretty string with the parameter measured.
 String scan::getParameter(int parmNumber)
@@ -675,12 +949,67 @@ bool scan::getRegisters(byte readCommand, int16_t startRegister, int16_t numRegi
     command[4] = Sefram.Byte[3];
     command[5] = Sefram.Byte[2];
 
-    // Send out the command
+    // Send out the command (this adds the CRC)
     int16_t respSize = sendCommand(command, 8);
 
     // The size of the returned frame should be:
     // # Registers X 2 bytes/register + 5 bytes of modbus frame
     if (respSize == (numRegisters*2 + 5) && responseBuffer[0] == _slaveID)
+        return true;
+    else return false;
+};
+
+// This sets the value of one or more holding registers
+// Modbus commands 0x06 and 0x10 (16)
+bool scan::setRegisters(int16_t startRegister, int16_t numRegisters, byte value[])
+{
+    // figure out how long the command will be
+    int commandLength;
+    if (numRegisters > 1) commandLength = numRegisters*2 + 6;
+    else commandLength = numRegisters*2 + 5;
+
+    // Create an array for the command
+    byte command[commandLength];
+
+    // Put in the slave id and the command
+    command[0] = _slaveID;
+    if (numRegisters > 1) command[1] = 0x06;
+    else command[1] = 0x10;
+
+    // Put in the starting register
+    SeFrame Sefram = {0,};
+    Sefram.Int16[0] = startRegister;
+    command[2] = Sefram.Byte[1];
+    command[3] = Sefram.Byte[0];
+
+    // Put in the number of registers
+    Sefram.Int16[1] = numRegisters;
+    command[4] = Sefram.Byte[3];
+    command[5] = Sefram.Byte[2];
+
+    // Put in the register values
+    if (numRegisters > 1)
+    {
+        command[6] = numRegisters*2;
+        for (int i = 7; i < numRegisters*2 + 7; i++)
+        {
+            command[i] = value[i-7];
+        }
+    }
+    else
+    {
+        for (int i = 6; i < numRegisters*2; i++)
+        {
+            command[i] = value[i-6];
+        }
+    }
+
+    // Send out the command (this adds the CRC)
+    int16_t respSize = sendCommand(command, commandLength);
+
+    // The structure of the response should be:
+    // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
+    if (respSize == 8 && responseBuffer[0] == _slaveID && responseBuffer[5] == numRegisters)
         return true;
     else return false;
 };
@@ -722,7 +1051,7 @@ void scan::sliceArray(byte inputArray[], byte outputArray[],
 
 // These functions returns data from a register within a modbus frame
 // The outputVar must always be initialized prior to calling this function
-bool scan::dataFromBEFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
+bool scan::dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
                            int start_index, endianness endian)
 {
     // Read a substring of the input frame into an "output frame"
@@ -765,7 +1094,7 @@ bool scan::dataFromBEFrame(uint16_t &outputVar, dataTypes regType, byte indata[]
         }
     }
 }
-bool scan::dataFromBEFrame(float &outputVar, dataTypes regType, byte indata[],
+bool scan::dataFromFrame(float &outputVar, dataTypes regType, byte indata[],
                            int start_index, endianness endian)
 {
     // Read a substring of the input frame into an "output frame"
@@ -787,7 +1116,7 @@ bool scan::dataFromBEFrame(float &outputVar, dataTypes regType, byte indata[],
         default: return false;
     }
 }
-bool scan::dataFromBEFrame(String &outputVar, dataTypes regType, byte indata[],
+bool scan::dataFromFrame(String &outputVar, dataTypes regType, byte indata[],
                            int start_index, int charLength)
 {
     switch (regType)
@@ -809,7 +1138,7 @@ bool scan::dataFromBEFrame(String &outputVar, dataTypes regType, byte indata[],
         default: return false;
     }
 }
-bool scan::dataFromBEFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
+bool scan::dataFromFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
                            int start_index, endianness endian)
 {
     // Read a substring of the input frame into an "output frame"

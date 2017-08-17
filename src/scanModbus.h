@@ -72,67 +72,82 @@ public:
     // This gets all of the setup information at once
     bool getSetup(void);
 
+    // This resets all settings to default
+    // Please note that after this you will most likely have to re-begin
+    // your stream because your baud rate and parity will have changed.
+    bool resetSettings(void);
+
     // This gets the modbus slave ID.  Not supported by many sensors.
     byte getSlaveID(void);
 
     // This sets a new modbus slave ID
     bool setSlaveID(byte newSlaveID);
 
-    // The communication mode
+
+
+//----------------------------------------------------------------------------
+//               SETUP INFORMATION FROM THE INPUT REGISTERS
+//----------------------------------------------------------------------------
+
+    // Functions for the communication mode
     int getCommunicationMode(int startIndex = 3);
     bool setCommunicationMode(specCommMode mode);
     String printCommMode(uint16_t code);
 
-    // The serial baud rate (iff communication mode = modbus RTU or modbus ASCII)
+    // Functions for the serial baud rate
+    // (iff communication mode = modbus RTU or modbus ASCII)
     int getBaudRate(int startIndex = 3);
     bool setBaudRate(specBaudRate baud);
     uint16_t printBaudRate(uint16_t code);
 
-    // The serial parity (iff communication mode = modbus RTU or modbus ASCII)
+    // Functions for the serial parity
+    // (iff communication mode = modbus RTU or modbus ASCII)
     int getParity(int startIndex = 3);
     bool setParity(specParity parity);
     String printParity(uint16_t code);
 
-    // Reset all settings to default
-    bool resetSettings(void);
-
-    // Get a pointer to the private configuration register
+    // Functions for the pointer to the private configuration register
     int getprivateConfigRegister(int startIndex = 3);
     String printRegisterType(uint16_t code);
 
-    // Get the "s::canpoint" of the device
+    // Functions for the "s::canpoint" of the device
     String getScanPoint(int startIndex = 3);
+    bool setScanPoint(char charScanPoint[12]);
 
-    // Cleaning mode configuration
+    // Functions for the cleaning mode configuration
     int getCleaningMode(int startIndex = 3);
     bool setCleaningMode(cleaningMode mode);
     String printCleaningMode(uint16_t code);
 
-    // Cleaning interval (ie, number of samples between cleanings)
+    // Functions for the cleaning interval (ie, number of samples between cleanings)
     int getCleaningInterval(int startIndex = 3);
     bool setCleaningInterval(uint16_t intervalSamples);
 
-    // Cleaning duration in seconds
+    // Functions for the cleaning duration in seconds
     int getCleaningDuration(int startIndex = 3);
     bool setCleaningDuration(uint16_t secDuration);
 
-    // Waiting time between end of cleaning and start of measurement
+    // Functions for the waiting time between end of cleaning
+    // and the start of a measurement
     int getCleaningWait(int startIndex = 3);
     bool setCleaningWait(uint16_t secDuration);
 
-    // Current system time as a 64-bit count of seconds from Jan 1, 1970
+    // Functions for the current system time in seconds from Jan 1, 1970
     long getSystemTime(int startIndex = 3);
+    bool setSystemTime(long currentUnixTime);
 
-    // Measurement interval in seconds (0 - as fast as possible)
+    // Functions for the measurement interval in seconds
+    // (0 - as fast as possible)
     int getMeasInterval(int startIndex = 3);
     bool setMeasInterval(uint16_t secBetween);
 
-    // Logging Mode (0 = on; 1 = off)
+    // Functions for the logging Mode (0 = on; 1 = off)
     int getLoggingMode(int startIndex = 3);
     bool setLoggingMode(uint8_t mode);
     String printLoggingMode(uint16_t code);
 
-    // Logging interval for data logger in minutes (0 = no logging active)
+    // Functions for the ogging interval for data logger in minutes
+    // (0 = no logging active)
     int getLoggingInterval(int startIndex = 3);
     bool setLoggingInterval(uint16_t interval);
 
@@ -146,10 +161,12 @@ public:
     int getIndexLogResult(int startIndex = 3);
 
 
+
+    //----------------------------------------------------------------------------
+    //               SETUP INFORMATION FROM THE INPUT REGISTERS
+    //----------------------------------------------------------------------------
     // Get the version of the modbus mapping protocol
-    // The float variables for the version must be
-    // initialized prior to calling this function.
-    bool getModbusVersion(float &modbusVersion);
+    float getModbusVersion(int startIndex = 3);
 
     // This returns a pretty string with the model information
     String getModel(int startIndex = 3);
@@ -157,20 +174,32 @@ public:
     // This gets the instrument serial number as a String
     String getSerialNumber(int startIndex = 3);
 
-    // This gets the hardware and software version of the sensor
-    // The float variables for the hardware and software versions must be
-    // initialized prior to calling this function.
-    // The reference (&) is needed when declaring this function so that
-    // the function is able to modify the actual input floats rather than
-    // create and destroy copies of them.
-    // There is no need to add the & when actually usig the function.
-    bool getVersion(float &hardwareVersion, float &softwareVersion);
+    // This gets the hardware version of the sensor
+    float getHWVersion(int startIndex = 3);
 
-    // Device rebooter counter
+    // This gets the software version of the sensor
+    float getSWVersion(int startIndex = 3);
+
+    // This gets the number of times the spec has been rebooted
+    // (Device rebooter counter)
     int getHWStarts(int startIndex = 3);
 
     // This gets the number of parameters the spectro::lyzer is set to measure
     int getParameterCount(int startIndex = 3);
+
+    // This gets the datatype of the parameters and parameter limits
+    // This is a check for compatibility
+    int getParamterType(int startIndex);
+    String printParamterType(uint16_t code);
+
+    // This gets the scaling factor for all parameters which depend on eParameterType
+    int getParameterScale(int startIndex);
+
+
+
+    //----------------------------------------------------------------------------
+    //             PARAMETER INFORMATION FROM THE HOLDING REGISTERS
+    //----------------------------------------------------------------------------
 
     // This returns a pretty string with the parameter measured.
     String getParameter(int parmNumber);
@@ -244,19 +273,24 @@ private:
     // For an input register readCommand = 0x04
     bool getRegisters(byte readCommand, int16_t startRegister, int16_t numRegisters);
 
+    // This sets the value of one or more holding registers
+    // Modbus commands 0x06 and 0x10
+    // Input registers cannot be written by a Modbus controller/master
+    bool setRegisters(int16_t startRegister, int16_t numRegisters, byte value[]);
+
     // This slices one array out of another
     void sliceArray(byte inputArray[], byte outputArray[],
                     int start_index, int numBytes, bool reverseOrder=false);
 
     // These functions return the propertype big-endian data register
     // beginning at a specific index of another array.
-    bool dataFromBEFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
+    bool dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
                          int start_index, endianness endian = big);
-    bool dataFromBEFrame(float &outputVar, dataTypes regType, byte indata[],
+    bool dataFromFrame(float &outputVar, dataTypes regType, byte indata[],
                          int start_index, endianness endian = big);
-    bool dataFromBEFrame(String &outputVar, dataTypes regType, byte indata[],
+    bool dataFromFrame(String &outputVar, dataTypes regType, byte indata[],
                          int start_index, int charLength);
-    bool dataFromBEFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
+    bool dataFromFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
                          int start_index, endianness endian = big);
 
 
@@ -285,6 +319,18 @@ private:
     uint16_t _loggingInterval;
     uint16_t _numLoggedResults;
     uint16_t _indexLogResult;
+
+    // Setup information from input registers
+    bool _gotInputRegSpecSetup = false;
+    uint16_t _modbusVersion;
+    String _model;
+    String _serialNumber;
+    String _HWRelease;
+    String _SWRelease;
+    uint16_t _HWstarts;
+    uint16_t _paramCount;
+    uint16_t _paramType;
+    uint16_t _paramScale;
 
     // This creates a null stream to use for "debugging" if you don't want to
     // actually print to a real stream.
