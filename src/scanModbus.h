@@ -39,6 +39,18 @@ typedef enum cleaningMode
     automatic
 } cleaningMode;
 
+// The possible modbus datatypes
+typedef enum dataTypes
+{
+    uint16 = 0,
+    pointer,
+    pointerType,
+    bitmask,
+    character,
+    float32,
+    timestamp
+} dataTypes;
+
 class scan
 {
 
@@ -205,32 +217,12 @@ private:
       byte Byte[2];
     };
 
-    // These functions returns the float/int from a 4-byte big-endian array
+    // These functions returns the propertype big-endian data register
     // beginning at a specific index of another array.
-    float float32FromBEFrame(byte indata[], int start_index);
-    uint32_t uint32FromBEFrame(byte indata[], int start_index);
-
-    // This function returns an integer from a 2-byte big-endian array beginning
-    // at a specific index of another array.
-    int uint16FromBEFrame(byte indata[], int start_index);
-
-    // This returns a "String" from a slice of a character array
-    String StringFromFrame(byte indata[], int start_index, int length);
-
-    // These get the register address and register type of a pointer to other
-    // information within a modbus register.
-    // The register address and type must be initialized prior to calling this function
-    // For the register types:
-    //   0 (0b00) - Holding register (read by command 0x03, written by 0x06 or 0x10)
-    //   1 (0b01) - Input register (read by command 0x04)
-    //   2 (0b10) - Discrete input register (read by command 0x02)
-    //   3 (0b10) - Coil  (read by command 0x01, written by 0x05)
-    int pointerFromBEFrame(byte indata[], int start_index);
-    int pointerTypeFromBEFrame(byte indata[], int start_index);
-
-    // This function inserts a float as a 4-byte small endian array into another
-    // array beginning at the specified index.
-    void floatIntoFrame(byte indata[], int start_index, float value);
+    bool dataFromBEFrame(uint16_t outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
+    bool dataFromBEFrame(float outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
+    bool dataFromBEFrame(String outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
+    bool dataFromBEFrame(uint32_t outputVar, dataTypes regType, byte indata[], int start_index, int end_index = 0);
 
     // This flips the device/receive enable to DRIVER so the arduino can send text
     void driverEnable(void);
@@ -267,7 +259,7 @@ private:
     uint16_t _parity;
     String _scanPoint;
     uint16_t _configRegNumber;
-    uint8_t _configRegType;
+    uint16_t _configRegType;
     uint16_t _cleaningMode;
     uint16_t _cleaningInterval;
     uint16_t _cleaningDuration;
