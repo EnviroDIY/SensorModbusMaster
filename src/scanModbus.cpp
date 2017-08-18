@@ -30,7 +30,7 @@ bool scan::begin(byte modbusSlaveID, Stream *stream, int enablePin)
     return true;
 }
 bool scan::begin(byte modbusSlaveID, Stream &stream, int enablePin)
-{return begin(modbusSlaveID, stream, enablePin);}
+{return begin(modbusSlaveID, &stream, enablePin);}
 
 
 // This prints out all of the setup information to the selected stream
@@ -183,7 +183,7 @@ bool scan::printSetup(Stream *stream)
     stream->println("------------------------------------------");
     return true;
 }
-bool scan::printSetup(Stream &stream) {return printSetup(stream);}
+bool scan::printSetup(Stream &stream) {return printSetup(&stream);}
 
 
 // Reset all settings to default
@@ -209,18 +209,10 @@ bool scan::setSlaveID(byte newSlaveID)
 // This returns the current device status as a bitmap
 int scan::getDeviceStatus(void)
 {
-    // Get the register data
     getRegisters(0x04, 120, 1);
-
-    uint16_t status = bitmaskFromFrame();
-    _debugStream->print("Current device status is: ");
-    _debugStream->print(status, BIN);
-    _debugStream->print(" (");
-    printParameterStatus(status, _debugStream);
-    _debugStream->println(")");
-    return status;
+    return bitmaskFromFrame();
 }
-// This prints out all of the setup information at once
+// This parses the device status bitmask and prints out from the codes
 void scan::printDeviceStatus(uint16_t bitmask, Stream *stream)
 {
     // b15
@@ -244,9 +236,12 @@ void scan::printDeviceStatus(uint16_t bitmask, Stream *stream)
     // b0
     if ((bitmask & 1) == 1)
         stream->println("s::can device reports error during internal check");
+    // No Codes
+    if (bitmask == 0)
+        stream->println("Device is operating normally");
 }
 void scan::printDeviceStatus(uint16_t bitmask, Stream &stream)
-{printDeviceStatus(bitmask, stream);}
+{printDeviceStatus(bitmask, &stream);}
 
 
 void scan::printSystemStatus(uint16_t bitmask, Stream *stream)
@@ -263,9 +258,12 @@ void scan::printSystemStatus(uint16_t bitmask, Stream *stream)
     // b0
     if ((bitmask & 1) == 1)
         stream->println("No communication between probe/sensor and controller");
+    // No Codes
+    if (bitmask == 0)
+        stream->println("System is operating normally");
 }
 void scan::printSystemStatus(uint16_t bitmask, Stream &stream)
-{printSystemStatus(bitmask, stream);}
+{printSystemStatus(bitmask, &stream);}
 
 
 
@@ -281,12 +279,7 @@ void scan::printSystemStatus(uint16_t bitmask, Stream &stream)
 long scan::getSampleTime(void)
 {
     getRegisters(0x04, 104, 6);
-
-    uint32_t secsPast1970 = tai64FromFrame();
-    _debugStream->print("Last sample was taken at ");
-    _debugStream->print((unsigned long)(secsPast1970));
-    _debugStream->println(" seconds past Jan 1, 1970");
-    return secsPast1970;
+    return tai64FromFrame();
 }
 
 // This gets values back from the sensor and puts them into a previously
@@ -299,17 +292,8 @@ int scan::getValue(int parmNumber, float &value)
     getRegisters(0x04, regNumber, 8);
 
     uint16_t status = bitmaskFromFrame();
-    float parm = float32FromFrame(bigEndian, 7);
-    _debugStream->print("Value of parameter Number ");
-    _debugStream->print(parmNumber);
-    _debugStream->print(" is: ");
-    _debugStream->print(parm);
-    _debugStream->print(" with status code: ");
-    _debugStream->print(status, BIN);
-    _debugStream->print(" (");
-    printParameterStatus(status, _debugStream);
-    _debugStream->println(")");
-    return parm;
+    value = float32FromFrame(bigEndian, 7);
+    return status;
 }
 void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
 {
@@ -340,7 +324,12 @@ void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
     // b0
     if ((bitmask & 1) == 1)
         stream->println("Genereal parameter error, at least one internal parameter check failed");
+    // No Codes
+    if (bitmask == 0)
+        stream->println("Parameter is operating normally");
 }
+void scan::printParameterStatus(uint16_t bitmask, Stream &stream)
+{printParameterStatus(bitmask, &stream);}
 
 // This get up to 8 values back from the spectro::lyzer
 bool scan::getAllValues(float &value1, float &value2, float &value3, float &value4,
@@ -349,30 +338,14 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
     // Get the register data
     if (getRegisters(0x04, 128, 64))
     {
-        float value1 = float32FromFrame(bigEndian, 7);
-        float value2 = float32FromFrame(bigEndian, 23);
-        float value3 = float32FromFrame(bigEndian, 39);
-        float value4 = float32FromFrame(bigEndian, 55);
-        float value5 = float32FromFrame(bigEndian, 71);
-        float value6 = float32FromFrame(bigEndian, 87);
-        float value7 = float32FromFrame(bigEndian, 103);
-        float value8 = float32FromFrame(bigEndian, 119);
-        _debugStream->println("Value1, value2, value3, value4, value5, value6, value7, value8");
-        _debugStream->print(value1);
-        _debugStream->print(", ");
-        _debugStream->print(value2);
-        _debugStream->print(", ");
-        _debugStream->print(value3);
-        _debugStream->print(", ");
-        _debugStream->print(value4);
-        _debugStream->print(", ");
-        _debugStream->print(value5);
-        _debugStream->print(", ");
-        _debugStream->print(value6);
-        _debugStream->print(", ");
-        _debugStream->print(value7);
-        _debugStream->print(", ");
-        _debugStream->println(value8);
+        value1 = float32FromFrame(bigEndian, 7);
+        value2 = float32FromFrame(bigEndian, 23);
+        value3 = float32FromFrame(bigEndian, 39);
+        value4 = float32FromFrame(bigEndian, 55);
+        value5 = float32FromFrame(bigEndian, 71);
+        value6 = float32FromFrame(bigEndian, 87);
+        value7 = float32FromFrame(bigEndian, 103);
+        value8 = float32FromFrame(bigEndian, 119);
         return true;
     }
     else return false;

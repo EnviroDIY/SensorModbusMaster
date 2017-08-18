@@ -54,7 +54,7 @@ void setup()
     sensor.begin(modbusAddress, &modbusSerial, DEREPin);
 
     // Turn on debugging
-    sensor.setDebugStream(&Serial);
+    // sensor.setDebugStream(&Serial);
 
     // Start up note
     Serial.println("S::CAN Spect::lyzer Test");
@@ -63,18 +63,19 @@ void setup()
     Serial.println("Waiting for sensor and adapter to be ready.");
     delay(500);
 
+    // Print out all of the setup information
     sensor.printSetup(Serial);
-    sensor.printDeviceStatus(sensor.getDeviceStatus(), Serial)
-    sensor.getParameter(1);
-    sensor.getUnits(1);
-    sensor.getUpperLimit(1);
-    sensor.getLowerLimit(1);
-    // Serial.println("=======================");
-    // Serial.println("=======================");
-    // sensor.setCleaningInterval(5);
-    // Serial.println("=======================");
-    // Serial.println("=======================");
-    // sensor.getSetup();
+
+    // Print out the device status
+    uint16_t status;
+    status = sensor.getDeviceStatus();
+    Serial.print("Current device status is: ");
+    Serial.print(status, BIN);
+    Serial.print(" (");
+    sensor.printParameterStatus(status, Serial);
+    Serial.println(")");
+    Serial.println("=======================");
+    Serial.println("=======================");
 }
 
 // ---------------------------------------------------------------------------
@@ -82,34 +83,58 @@ void setup()
 // ---------------------------------------------------------------------------
 void loop()
 {
-    // send the command to get the values
-    // float temp = 0;
-    // float val = 0;
-    // if (model == Y532)
-    // {
-    //     sensor.getValues(val);
-    //     sensor.getTemperatureValue(temp);
-    // }
-    // else sensor.getValues(temp, val);
-    // Serial.print(temp);
-    // Serial.print("      ");
-    // Serial.print(val);
-    // Serial.print("      ");
-    // Serial.print(millis());
-    // Serial.println();
+    // Print out the device status
+    uint16_t status;
+    status = sensor.getDeviceStatus();
+    Serial.print("Current device status is: ");
+    Serial.print(status, BIN);
+    Serial.print(" (");
+    sensor.printParameterStatus(status, Serial);
+    Serial.println(")");
 
+    Serial.print("Last sample was taken at ");
+    Serial.print((unsigned long)(sensor.getSampleTime()));
+    Serial.println(" seconds past Jan 1, 1970");
 
-    // Delay between readings
-    // Modbus manuals recommend the following re-measure times:
-    //     2 s for chlorophyll
-    //     2 s for turbidity
-    //     3 s for conductivity
+    // set up the values
+    float value1, value2, value3, value4, value5, value6, value7, value8;
 
-    // The turbidity and DO sensors appear return new readings about every 1.6 seconds.
-    // The pH sensor returns new readings about every 1.8 seconds.
-    // The conductivity sensor only returns new readings about every 2.7 seconds.
+    // Get values one at a time
+    for (int i = 1; i < 9; i++)
+    {
+        status = sensor.getValue(i, value1);
+        Serial.print("Value of parameter Number ");
+        Serial.print(i);
+        Serial.print(" is: ");
+        Serial.print(value1);
+        Serial.print(" ");
+        Serial.print(sensor.getUnits(i));
+        Serial.print(" with status code: ");
+        Serial.print(status, BIN);
+        Serial.print(" (");
+        sensor.printParameterStatus(status, Serial);
+        Serial.println(")");
+    }
 
-    // The teperature sensors can take readings much more quickly.  The same results
-    // can be read many times from the registers between the new sensor readings.
-    // delay(3000);
+    // Get all the values together
+    sensor.getAllValues(value1, value2, value3, value4, value5, value6, value7, value8);
+    Serial.println("Value1, value2, value3, value4, value5, value6, value7, value8");
+    Serial.print(value1);
+    Serial.print(", ");
+    Serial.print(value2);
+    Serial.print(", ");
+    Serial.print(value3);
+    Serial.print(", ");
+    Serial.print(value4);
+    Serial.print(", ");
+    Serial.print(value5);
+    Serial.print(", ");
+    Serial.print(value6);
+    Serial.print(", ");
+    Serial.print(value7);
+    Serial.print(", ");
+    Serial.println(value8);
+
+    // Wait 5 minutes
+    delay(300000L);
 }

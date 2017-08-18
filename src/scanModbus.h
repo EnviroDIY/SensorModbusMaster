@@ -152,6 +152,7 @@ long getSampleTime(void);
 int getValue(int parmNumber, float &value);
 // This parses the parameter status bitmap and prints the resuts to the stream
 void printParameterStatus(uint16_t bitmask, Stream *stream);
+void printParameterStatus(uint16_t bitmask, Stream &stream);
 
 // This get up to 8 values back from the spectro::lyzer
 bool getAllValues(float &value1, float &value2, float &value3, float &value4,
