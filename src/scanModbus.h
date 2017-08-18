@@ -130,6 +130,11 @@ public:
     void printDeviceStatus(uint16_t bitmask, Stream *stream);
     void printDeviceStatus(uint16_t bitmask, Stream &stream);
 
+    // Prints out the current system status
+    // It would be nice if there were a way to actually get it...
+    void printSystemStatus(uint16_t bitmask, Stream *stream);
+    void printSystemStatus(uint16_t bitmask, Stream &stream);
+
 
 
 //----------------------------------------------------------------------------
@@ -256,7 +261,7 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 
 
 //----------------------------------------------------------------------------
-//               SETUP INFORMATION FROM THE INPUT REGISTERS
+//          FUNCTIONS TO GET SETUP INFORMATION FROM THE INPUT REGISTERS
 //----------------------------------------------------------------------------
 // This information can be read, but cannot be changed
 
@@ -298,8 +303,6 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 
     // This sets a stream for debugging information to go to;
     void setDebugStream(Stream *stream){_debugStream = stream;}
-
-    void printSystemStatus(uint16_t bitmask, Stream *stream);
 
 
 

@@ -159,7 +159,26 @@ void scan::printDeviceStatus(uint16_t bitmask, Stream *stream)
         stream->println("s::can device reports error during internal check");
 }
 void scan::printDeviceStatus(uint16_t bitmask, Stream &stream)
-{return printDeviceStatus(bitmask, stream);}
+{printDeviceStatus(bitmask, stream);}
+
+
+void scan::printSystemStatus(uint16_t bitmask, Stream *stream)
+{
+    // b6
+    if ((bitmask & 64) == 64)
+        stream->println("mA signal is outside of the allowed input range");
+    // b5
+    if ((bitmask & 32) == 32)
+        stream->println("Validation results are not available");
+    // b1
+    if ((bitmask & 2) == 2)
+        stream->println("Invalid probe/sensor; serial number of probe/sensor is different");
+    // b0
+    if ((bitmask & 1) == 1)
+        stream->println("No communication between probe/sensor and controller");
+}
+void scan::printSystemStatus(uint16_t bitmask, Stream &stream)
+{printSystemStatus(bitmask, stream);}
 
 
 
@@ -757,8 +776,80 @@ int scan::getIndexLogResult(int startIndex)
 
 
 //----------------------------------------------------------------------------
-//               SETUP INFORMATION FROM THE INPUT REGISTERS
+//           FUNCTIONS TO GET AND CHANGE PARAMETER CONFIGURATIONS
 //----------------------------------------------------------------------------
+
+// This returns a pretty string with the parameter measured.
+String scan::getParameter(int parmNumber)
+{
+    int regNumber = 120*parmNumber;
+    // Get the register data
+    getRegisters(0x03, regNumber, 4);
+
+    String parm;
+    dataFromFrame(parm, character, 8);
+    _debugStream->print("Parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->println(parm);
+    return parm;
+}
+
+// This returns a pretty string with the measurement units.
+String scan::getUnits(int parmNumber)
+{
+    int regNumber = 120*parmNumber + 4;
+    // Get the register data
+    getRegisters(0x03, regNumber, 4);
+
+    String parm;
+    dataFromFrame(parm, character, 8);
+    _debugStream->print("Parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" has units of: ");
+    _debugStream->println(parm);
+    return parm;
+}
+
+// This gets the upper limit of the parameter
+float scan::getUpperLimit(int parmNumber)
+{
+    int regNumber = 120*parmNumber + 8;
+    // Get the register data
+    getRegisters(0x03, regNumber, 2);
+
+    float parm;
+    dataFromFrame(parm, float32);
+    _debugStream->print("Upper limit of parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->println(parm);
+    return parm;
+}
+
+// This gets the lower limit of the parameter
+float scan::getLowerLimit(int parmNumber)
+{
+    int regNumber = 120*parmNumber + 10;
+    // Get the register data
+    getRegisters(0x03, regNumber, 2);
+
+    float parm;
+    dataFromFrame(parm, float32);
+    _debugStream->print("Lower limit of parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->println(parm);
+    return parm;
+}
+
+
+
+//----------------------------------------------------------------------------
+//          FUNCTIONS TO GET SETUP INFORMATION FROM THE INPUT REGISTERS
+//----------------------------------------------------------------------------
+// This information can be read, but cannot be changed
+
 // Get the version of the modbus mapping protocol
 float scan::getModbusVersion(int startIndex)
 {
@@ -910,92 +1001,6 @@ int scan::getParameterScale(int startIndex)
     _debugStream->print("The parameter scale factor is: ");
     _debugStream->println(_paramScale);
     return _paramScale;
-}
-
-
-
-//----------------------------------------------------------------------------
-//             PARAMETER INFORMATION FROM THE HOLDING REGISTERS
-//----------------------------------------------------------------------------
-
-// This returns a pretty string with the parameter measured.
-String scan::getParameter(int parmNumber)
-{
-    int regNumber = 120*parmNumber;
-    // Get the register data
-    getRegisters(0x03, regNumber, 4);
-
-    String parm;
-    dataFromFrame(parm, character, 8);
-    _debugStream->print("Parameter Number ");
-    _debugStream->print(parmNumber);
-    _debugStream->print(" is: ");
-    _debugStream->println(parm);
-    return parm;
-}
-
-// This returns a pretty string with the measurement units.
-String scan::getUnits(int parmNumber)
-{
-    int regNumber = 120*parmNumber + 4;
-    // Get the register data
-    getRegisters(0x03, regNumber, 4);
-
-    String parm;
-    dataFromFrame(parm, character, 8);
-    _debugStream->print("Parameter Number ");
-    _debugStream->print(parmNumber);
-    _debugStream->print(" has units of: ");
-    _debugStream->println(parm);
-    return parm;
-}
-
-// This gets the upper limit of the parameter
-float scan::getUpperLimit(int parmNumber)
-{
-    int regNumber = 120*parmNumber + 8;
-    // Get the register data
-    getRegisters(0x03, regNumber, 2);
-
-    float parm;
-    dataFromFrame(parm, float32);
-    _debugStream->print("Upper limit of parameter Number ");
-    _debugStream->print(parmNumber);
-    _debugStream->print(" is: ");
-    _debugStream->println(parm);
-    return parm;
-}
-
-// This gets the lower limit of the parameter
-float scan::getLowerLimit(int parmNumber)
-{
-    int regNumber = 120*parmNumber + 10;
-    // Get the register data
-    getRegisters(0x03, regNumber, 2);
-
-    float parm;
-    dataFromFrame(parm, float32);
-    _debugStream->print("Lower limit of parameter Number ");
-    _debugStream->print(parmNumber);
-    _debugStream->print(" is: ");
-    _debugStream->println(parm);
-    return parm;
-}
-
-void scan::printSystemStatus(uint16_t bitmask, Stream *stream)
-{
-    // b6
-    if ((bitmask & 64) == 64)
-        stream->println("mA signal is outside of the allowed input range");
-    // b5
-    if ((bitmask & 32) == 32)
-        stream->println("Validation results are not available");
-    // b1
-    if ((bitmask & 2) == 2)
-        stream->println("Invalid probe/sensor; serial number of probe/sensor is different");
-    // b0
-    if ((bitmask & 1) == 1)
-        stream->println("No communication between probe/sensor and controller");
 }
 
 
