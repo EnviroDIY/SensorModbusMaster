@@ -293,7 +293,7 @@ int scan::getCommunicationMode(int startIndex)
     _debugStream->print("Communication mode setting is: ");
     _debugStream->print(_commMode);
     _debugStream->print(" (");
-    _debugStream->print(printCommMode(_commMode));
+    _debugStream->print(parseCommunicationMode(_commMode));
     _debugStream->println(")");
     return _commMode;
 }
@@ -309,7 +309,7 @@ bool scan::setCommunicationMode(specCommMode mode)
     }
     else return false;
 }
-String scan::printCommMode(uint16_t code)
+String scan::parseCommunicationMode(uint16_t code)
 {
     switch (code)
     {
@@ -333,7 +333,7 @@ int scan::getBaudRate(int startIndex)
     _debugStream->print("Baud Rate setting is: ");
     _debugStream->print(_baudRate);
     _debugStream->print(" (");
-    _debugStream->print(printBaudRate(_baudRate));
+    _debugStream->print(parseBaudRate(_baudRate));
     _debugStream->println(")");
     return _baudRate;
 }
@@ -349,7 +349,7 @@ bool scan::setBaudRate(specBaudRate baud)
     }
     else return false;
 }
-uint16_t scan::printBaudRate(uint16_t code)
+uint16_t scan::parseBaudRate(uint16_t code)
 {
     String baud;
     switch (code)
@@ -376,7 +376,7 @@ int scan::getParity(int startIndex)
     _debugStream->print("Parity setting is: ");
     _debugStream->print(_parity);
     _debugStream->print(" (");
-    _debugStream->print(printParity(_parity));
+    _debugStream->print(parseParity(_parity));
     _debugStream->println(")");
     return _parity;
 }
@@ -392,7 +392,7 @@ bool scan::setParity(specParity parity)
     }
     else return false;
 }
-String scan::printParity(uint16_t code)
+String scan::parseParity(uint16_t code)
 {
     switch (code)
     {
@@ -419,11 +419,11 @@ int scan::getprivateConfigRegister(int startIndex)
     _debugStream->print(", which is type ");
     _debugStream->print(_configRegType);
     _debugStream->print(" (");
-    _debugStream->print(printRegisterType(_configRegType));
+    _debugStream->print(parseRegisterType(_configRegType));
     _debugStream->println(")");
     return _configRegNumber;
 }
-String scan::printRegisterType(uint16_t code)
+String scan::parseRegisterType(uint16_t code)
 {
     switch (code)
     {
@@ -475,7 +475,7 @@ int scan::getCleaningMode(int startIndex)
     _debugStream->print("Cleaning mode setting is: ");
     _debugStream->print(_cleaningMode);
     _debugStream->print(" (");
-    _debugStream->print(printCleaningMode(_cleaningMode));
+    _debugStream->print(parseCleaningMode(_cleaningMode));
     _debugStream->println(")");
     return _cleaningMode;
 }
@@ -491,7 +491,7 @@ bool scan::setCleaningMode(cleaningMode mode)
     }
     else return false;
 }
-String scan::printCleaningMode(uint16_t code)
+String scan::parseCleaningMode(uint16_t code)
 {
     switch (code)
     {
@@ -666,7 +666,7 @@ int scan::getLoggingMode(int startIndex)
     _debugStream->print("Logging mode setting is: ");
     _debugStream->print(_loggingMode);
     _debugStream->print(" (");
-    _debugStream->print(printLoggingMode(_loggingMode));
+    _debugStream->print(parseLoggingMode(_loggingMode));
     _debugStream->println(")");
     return _loggingMode;
 }
@@ -682,7 +682,7 @@ bool scan::setLoggingMode(uint8_t mode)
     }
     else return false;
 }
-String scan::printLoggingMode(uint16_t code)
+String scan::parseLoggingMode(uint16_t code)
 {
     switch (code)
     {
@@ -881,11 +881,11 @@ int scan::getParamterType(int startIndex)
     _debugStream->print("The data type of the parameters is: ");
     _debugStream->print(_paramType);
     _debugStream->print(" (");
-    _debugStream->print(printParamterType(_paramType));
+    _debugStream->print(parseParamterType(_paramType));
     _debugStream->println(")");
     return _paramType;
 }
-String scan::printParamterType(uint16_t code)
+String scan::parseParamterType(uint16_t code)
 {
     switch (code)
     {

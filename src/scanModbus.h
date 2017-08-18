@@ -162,23 +162,23 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
     // Functions for the communication mode
     int getCommunicationMode(int startIndex = 3);
     bool setCommunicationMode(specCommMode mode);
-    String printCommMode(uint16_t code);
+    String parseCommunicationMode(uint16_t code);
 
     // Functions for the serial baud rate
     // (iff communication mode = modbus RTU or modbus ASCII)
     int getBaudRate(int startIndex = 3);
     bool setBaudRate(specBaudRate baud);
-    uint16_t printBaudRate(uint16_t code);
+    uint16_t parseBaudRate(uint16_t code);
 
     // Functions for the serial parity
     // (iff communication mode = modbus RTU or modbus ASCII)
     int getParity(int startIndex = 3);
     bool setParity(specParity parity);
-    String printParity(uint16_t code);
+    String parseParity(uint16_t code);
 
     // Functions for the pointer to the private configuration register
     int getprivateConfigRegister(int startIndex = 3);
-    String printRegisterType(uint16_t code);
+    String parseRegisterType(uint16_t code);
 
     // Functions for the "s::canpoint" of the device
     String getScanPoint(int startIndex = 3);
@@ -187,7 +187,7 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
     // Functions for the cleaning mode configuration
     int getCleaningMode(int startIndex = 3);
     bool setCleaningMode(cleaningMode mode);
-    String printCleaningMode(uint16_t code);
+    String parseCleaningMode(uint16_t code);
 
     // Functions for the cleaning interval (ie, number of samples between cleanings)
     int getCleaningInterval(int startIndex = 3);
@@ -214,7 +214,7 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
     // Functions for the logging Mode (0 = on; 1 = off)
     int getLoggingMode(int startIndex = 3);
     bool setLoggingMode(uint8_t mode);
-    String printLoggingMode(uint16_t code);
+    String parseLoggingMode(uint16_t code);
 
     // Functions for the ogging interval for data logger in minutes
     // (0 = no logging active)
@@ -285,7 +285,7 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
     // This gets the datatype of the parameters and parameter limits
     // This is a check for compatibility
     int getParamterType(int startIndex);
-    String printParamterType(uint16_t code);
+    String parseParamterType(uint16_t code);
 
     // This gets the scaling factor for all parameters which depend on eParameterType
     int getParameterScale(int startIndex);
