@@ -49,22 +49,7 @@ typedef enum cleaningMode
     automatic
 } cleaningMode;
 
-// The possible modbus datatypes
-typedef enum dataTypes
-{
-    uint16 = 0,
-    int16,
-    pointer,
-    pointerType,
-    bitmask,
-    character,
-    float32,
-    uint32,
-    int32,
-    tai64
-} dataTypes;
-
-// The possible modbus datatypes
+// The "endianness" of returned values
 typedef enum endianness
 {
     littleEndian = 0,
@@ -72,6 +57,23 @@ typedef enum endianness
 } endianness;
 
 
+// Define a little-endian frame as a union - that is a special class type that
+// can hold only one of its non-static data members at a time, in this case,
+// either 4-bytes OR a single float OR a 32 bit interger
+// With avr-gcc (Arduino's compiler), integer and floating point variables are
+// all physically stored in memory in little-endian byte order, so this union
+// is all that is needed to get the correct float value from a little-endian
+// modbus..  S::CAN's version of modbus returns all values in big-endian
+// form, so you must reverse the byte order to make this work.
+typedef union leFrame {
+    byte Byte[4];        // occupies 4 bytes
+    float Float;         // occupies 4 bytes
+    int32_t Int32;       // occupies 4 bytes
+    uint32_t uInt32;     // occupies 4 bytes
+    int16_t Int16[2];    // occupies 4 bytes
+    uint16_t uInt16[2];  // occupies 4 bytes
+    char Char[4];        // occupies 4 bytes
+} leFrame;
 
 
 
@@ -142,7 +144,7 @@ public:
 //----------------------------------------------------------------------------
 
 // Last measurement time as a 32-bit count of seconds from Jan 1, 1970
-long getSampleTime(int startIndex = 3);
+long getSampleTime(void);
 
 // This gets values back from the sensor and puts them into a previously
 // initialized float variable.  The actual return from the function is the
@@ -165,75 +167,75 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 // changes to the logger configurations.
 
     // Functions for the communication mode
-    int getCommunicationMode(int startIndex = 3);
+    int getCommunicationMode(void);
     bool setCommunicationMode(specCommMode mode);
     String parseCommunicationMode(uint16_t code);
 
     // Functions for the serial baud rate
     // (iff communication mode = modbus RTU or modbus ASCII)
-    int getBaudRate(int startIndex = 3);
+    int getBaudRate(void);
     bool setBaudRate(specBaudRate baud);
     uint16_t parseBaudRate(uint16_t code);
 
     // Functions for the serial parity
     // (iff communication mode = modbus RTU or modbus ASCII)
-    int getParity(int startIndex = 3);
+    int getParity(void);
     bool setParity(specParity parity);
     String parseParity(uint16_t code);
 
     // Functions for the pointer to the private configuration register
-    int getprivateConfigRegister(int startIndex = 3);
+    int getprivateConfigRegister(void);
     String parseRegisterType(uint16_t code);
 
     // Functions for the "s::canpoint" of the device
-    String getScanPoint(int startIndex = 3);
+    String getScanPoint(void);
     bool setScanPoint(char charScanPoint[12]);
 
     // Functions for the cleaning mode configuration
-    int getCleaningMode(int startIndex = 3);
+    int getCleaningMode(void);
     bool setCleaningMode(cleaningMode mode);
     String parseCleaningMode(uint16_t code);
 
     // Functions for the cleaning interval (ie, number of samples between cleanings)
-    int getCleaningInterval(int startIndex = 3);
+    int getCleaningInterval(void);
     bool setCleaningInterval(uint16_t intervalSamples);
 
     // Functions for the cleaning duration in seconds
-    int getCleaningDuration(int startIndex = 3);
+    int getCleaningDuration(void);
     bool setCleaningDuration(uint16_t secDuration);
 
     // Functions for the waiting time between end of cleaning
     // and the start of a measurement
-    int getCleaningWait(int startIndex = 3);
+    int getCleaningWait(void);
     bool setCleaningWait(uint16_t secDuration);
 
     // Functions for the current system time in seconds from Jan 1, 1970
-    long getSystemTime(int startIndex = 3);
+    long getSystemTime(void);
     bool setSystemTime(long currentUnixTime);
 
     // Functions for the measurement interval in seconds
     // (0 - as fast as possible)
-    int getMeasInterval(int startIndex = 3);
+    int getMeasInterval(void);
     bool setMeasInterval(uint16_t secBetween);
 
     // Functions for the logging Mode (0 = on; 1 = off)
-    int getLoggingMode(int startIndex = 3);
+    int getLoggingMode(void);
     bool setLoggingMode(uint8_t mode);
     String parseLoggingMode(uint16_t code);
 
     // Functions for the ogging interval for data logger in minutes
     // (0 = no logging active)
-    int getLoggingInterval(int startIndex = 3);
+    int getLoggingInterval(void);
     bool setLoggingInterval(uint16_t interval);
 
     // Available number of logged results in datalogger since last clearing
-    int getNumLoggedResults(int startIndex = 3);
+    int getNumLoggedResults(void);
 
     // "Index device status public + private & parameter results from logger
     // storage to Modbus registers.  If no stored results are available,
     // results are NaN, Device status bit3 is set."
     // I'm really not sure what this means...
-    int getIndexLogResult(int startIndex = 3);
+    int getIndexLogResult(void);
 
 
 
@@ -266,34 +268,34 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 // This information can be read, but cannot be changed
 
     // Get the version of the modbus mapping protocol
-    float getModbusVersion(int startIndex = 3);
+    float getModbusVersion(void);
 
     // This returns a pretty string with the model information
-    String getModel(int startIndex = 3);
+    String getModel(void);
 
     // This gets the instrument serial number as a String
-    String getSerialNumber(int startIndex = 3);
+    String getSerialNumber(void);
 
     // This gets the hardware version of the sensor
-    float getHWVersion(int startIndex = 3);
+    float getHWVersion(void);
 
     // This gets the software version of the sensor
-    float getSWVersion(int startIndex = 3);
+    float getSWVersion(void);
 
     // This gets the number of times the spec has been rebooted
     // (Device rebooter counter)
-    int getHWStarts(int startIndex = 3);
+    int getHWStarts(void);
 
     // This gets the number of parameters the spectro::lyzer is set to measure
-    int getParameterCount(int startIndex = 3);
+    int getParameterCount(void);
 
     // This gets the datatype of the parameters and parameter limits
     // This is a check for compatibility
-    int getParamterType(int startIndex);
+    int getParamterType(void);
     String parseParamterType(uint16_t code);
 
     // This gets the scaling factor for all parameters which depend on eParameterType
-    int getParameterScale(int startIndex);
+    int getParameterScale(void);
 
 
 
@@ -313,25 +315,6 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 //These more-or-less devine a fairly complete modbus library on their own.
 
 private:
-
-    // Define a small-endian frame as a union - that is a special class type that
-    // can hold only one of its non-static data members at a time, in this case,
-    // either 4-bytes OR a single float OR a 32 bit interger
-    // With avr-gcc (Arduino's compiler), integer and floating point variables are
-    // all physically stored in memory in little-endian byte order, so this union
-    // is all that is needed to get the correct float value from a small-endian
-    // modbus..  S::CAN's version of modbus returns all values in big-endian
-    // form, so you must reverse the byte order to make this work.
-    union SeFrame {
-        byte Byte[4];        // occupies 4 bytes
-        float Float;         // occupies 4 bytes
-        int32_t Int32;       // occupies 4 bytes
-        uint32_t uInt32;     // occupies 4 bytes
-        int16_t Int16[2];    // occupies 4 bytes
-        uint16_t uInt16[2];  // occupies 4 bytes
-        char Char[4];        // occupies 4 bytes
-    };
-
     // This flips the device/receive enable to DRIVER so the arduino can send text
     void driverEnable(void);
 
@@ -366,26 +349,46 @@ private:
     void sliceArray(byte inputArray[], byte outputArray[],
                     int start_index, int numBytes, bool reverseOrder=false);
 
-    // These functions put the proper value into the pre-initalized output variable
-    bool dataFromFrame(uint16_t &outputVar, dataTypes regType,  // required
-                       endianness endian=bigEndian,  // optional
-                       int start_index=3,  // optional
-                       byte indata[]=responseBuffer  // optional
-                       );
-    bool dataFromFrame(float &outputVar, dataTypes regType,  // required
-                       endianness endian=bigEndian,  // optional
-                       int start_index=3,  // optional
-                       byte indata[]=responseBuffer  // optional
-                       );
-    bool dataFromFrame(uint32_t &outputVar, dataTypes regType,  // required
-                       endianness endian=bigEndian,  // optional
-                       int start_index=3,  // optional
-                       byte indata[]=responseBuffer  // optional
-                       );
-    bool dataFromFrame(String &outputVar, dataTypes regType, int charLength,  // required
-                       int start_index=3,  // optional
-                       byte indata[]=responseBuffer  // optional
-                       );
+    // This converts data in a register into a little-endian frame
+    // little-endian frames are needed because all Arduino processors are little-endian
+    leFrame leFrameFromRegister(int varLength,
+                                endianness endian=bigEndian,
+                                int start_index=3,
+                                byte indata[]=responseBuffer);
+
+    // These functions return a variety of data from an input frame
+    uint16_t bitmaskFromFrame(endianness endian=bigEndian,
+                              int start_index=3,
+                              byte indata[]=responseBuffer);
+    uint16_t uint16FromFrame(endianness endian=bigEndian,
+                             int start_index=3,
+                             byte indata[]=responseBuffer);
+    int16_t int16FromFrame(endianness endian=bigEndian,
+                           int start_index=3,
+                           byte indata[]=responseBuffer);
+    uint16_t pointerFromFrame(endianness endian=bigEndian,
+                              int start_index=3,
+                              byte indata[]=responseBuffer);
+    int8_t pointerTypeFromFrame(endianness endian=bigEndian,
+                                int start_index=3,
+                                byte indata[]=responseBuffer);
+    float float32FromFrame(endianness endian=bigEndian,
+                           int start_index=3,
+                           byte indata[]=responseBuffer);
+    uint32_t uint32FromFrame(endianness endian=bigEndian,
+                             int start_index=3,
+                             byte indata[]=responseBuffer);
+    int32_t int32FromFrame(endianness endian=bigEndian,
+                           int start_index=3,
+                           byte indata[]=responseBuffer);
+    uint32_t tai64FromFrame(int start_index=3,
+                            byte indata[]=responseBuffer);
+    String StringFromFrame(int charLength,
+                           int start_index=3,
+                           byte indata[]=responseBuffer);
+    void charFromFrame(char outChar[], int charLength,
+                       int start_index=3,
+                       byte indata[]=responseBuffer);
 
 
     // This sends three requests for a single register
@@ -395,36 +398,6 @@ private:
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
     int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
-
-    // Setup information from holding registers
-    bool _gotHoldingRegSpecSetup = false;
-    uint16_t _commMode;
-    uint16_t _baudRate;
-    uint16_t _parity;
-    String _scanPoint;
-    uint16_t _configRegNumber;
-    uint16_t _configRegType;
-    uint16_t _cleaningMode;
-    uint16_t _cleaningInterval;
-    uint16_t _cleaningDuration;
-    uint16_t _cleaningWait;
-    uint16_t _measInterval;
-    uint16_t _loggingMode;
-    uint16_t _loggingInterval;
-    uint16_t _numLoggedResults;
-    uint16_t _indexLogResult;
-
-    // Setup information from input registers
-    bool _gotInputRegSpecSetup = false;
-    uint16_t _modbusVersion;
-    String _model;
-    String _serialNumber;
-    String _HWRelease;
-    String _SWRelease;
-    uint16_t _HWstarts;
-    uint16_t _paramCount;
-    uint16_t _paramType;
-    uint16_t _paramScale;
 
     // This creates a null stream to use for "debugging" if you don't want to
     // actually print to a real stream.
