@@ -12,6 +12,11 @@
 //                        ENUMERATIONS FOR CONFIGURING DEVICE
 //----------------------------------------------------------------------------
 
+// This needs to be bigger than the largest response
+// For 8 parameters with 8 registers each:
+// 64 registers * 2 bytes per register + 5 frame
+#define MAX_RESPONSE_SIZE 136
+
 // The communcations modes
 typedef enum specCommMode
 {
@@ -62,8 +67,8 @@ typedef enum dataTypes
 // The possible modbus datatypes
 typedef enum endianness
 {
-    little = 0,
-    big
+    littleEndian = 0,
+    bigEndian
 } endianness;
 
 
@@ -144,7 +149,6 @@ void printParameterStatus(uint16_t bitmask, Stream *stream);
 // This get up to 8 values back from the spectro::lyzer
 bool getAllValues(float &value1, float &value2, float &value3, float &value4,
                   float &value5, float &value6, float &value7, float &value8);
-
 
 
 
@@ -359,16 +363,26 @@ private:
     void sliceArray(byte inputArray[], byte outputArray[],
                     int start_index, int numBytes, bool reverseOrder=false);
 
-    // These functions return the propertype big-endian data register
-    // beginning at a specific index of another array.
-    bool dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
-                         int start_index, endianness endian = big);
-    bool dataFromFrame(float &outputVar, dataTypes regType, byte indata[],
-                         int start_index, endianness endian = big);
-    bool dataFromFrame(String &outputVar, dataTypes regType, byte indata[],
-                         int start_index, int charLength);
-    bool dataFromFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
-                         int start_index, endianness endian = big);
+    // These functions put the proper value into the pre-initalized output variable
+    bool dataFromFrame(uint16_t &outputVar, dataTypes regType,  // required
+                       endianness endian=bigEndian,  // optional
+                       int start_index=3,  // optional
+                       byte indata[]=responseBuffer  // optional
+                       );
+    bool dataFromFrame(float &outputVar, dataTypes regType,  // required
+                       endianness endian=bigEndian,  // optional
+                       int start_index=3,  // optional
+                       byte indata[]=responseBuffer  // optional
+                       );
+    bool dataFromFrame(uint32_t &outputVar, dataTypes regType,  // required
+                       endianness endian=bigEndian,  // optional
+                       int start_index=3,  // optional
+                       byte indata[]=responseBuffer  // optional
+                       );
+    bool dataFromFrame(String &outputVar, dataTypes regType, int charLength,  // required
+                       int start_index=3,  // optional
+                       byte indata[]=responseBuffer  // optional
+                       );
 
 
     // This sends three requests for a single register
@@ -424,10 +438,10 @@ private:
     NullStream nullstream;
     Stream *_debugStream = &nullstream;  // The stream instance (serial port) for debugging
 
-    int respSize;
-    byte responseBuffer[135];  // This needs to be bigger than the largest response
-                               // For 8 parameters with 8 registers each:
-                               // 64 registers * 2 bytes per register + 5 frame bytes
+    // This needs to be bigger than the largest response
+    // For 8 parameters with 8 registers each:
+    // 64 registers * 2 bytes per register + 5 frame bytes
+    static byte responseBuffer[MAX_RESPONSE_SIZE];
 
     // The modbus protocol defines that there can be no more than 1.5 characters
     // of silence between characters in a frame and any space over 3.5 characters

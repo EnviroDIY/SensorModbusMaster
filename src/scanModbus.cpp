@@ -4,6 +4,8 @@
 
 #include "scanModbus.h"
 
+// initialize the response buffer
+byte scan::responseBuffer[MAX_RESPONSE_SIZE] = {0x00,};
 
 //----------------------------------------------------------------------------
 //                          GENERAL USE FUNCTIONS
@@ -123,13 +125,13 @@ int scan::getDeviceStatus(void)
     getRegisters(0x04, 120, 1);
 
     uint16_t status;
-    dataFromFrame(status, bitmask, responseBuffer, 3);
+    dataFromFrame(status, bitmask);
     _debugStream->print("Current device status is: ");
     _debugStream->print(bitmask, BIN);
     _debugStream->print(" (");
     printParameterStatus(bitmask, _debugStream);
     _debugStream->println(")");
-    return parm;
+    return status;
 }
 // This prints out all of the setup information at once
 void scan::printDeviceStatus(uint16_t bitmask, Stream *stream)
@@ -175,7 +177,7 @@ long scan::getSampleTime(int startIndex)
     getRegisters(0x04, 104, 6);
 
     uint32_t secsPast1970 = 0;
-    dataFromFrame(secsPast1970, tai64, responseBuffer, startIndex);
+    dataFromFrame(secsPast1970, tai64, bigEndian, startIndex);
     _debugStream->print("Last sample was taken at ");
     _debugStream->print((unsigned long)(secsPast1970));
     _debugStream->println(" seconds past Jan 1, 1970");
@@ -192,9 +194,9 @@ int scan::getValue(int parmNumber, float &value)
     getRegisters(0x04, regNumber, 8);
 
     uint16_t status;
-    dataFromFrame(status, bitmask, responseBuffer, 3);
+    dataFromFrame(status, bitmask);
     float parm;
-    dataFromFrame(parm, float32, responseBuffer, 7);
+    dataFromFrame(parm, float32, bigEndian, 7);
     _debugStream->print("Value of parameter Number ");
     _debugStream->print(parmNumber);
     _debugStream->print(" is: ");
@@ -244,14 +246,14 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
     // Get the register data
     if (getRegisters(0x04, 128, 64))
     {
-        dataFromFrame(value1, float32, responseBuffer, 7);
-        dataFromFrame(value2, float32, responseBuffer, 23);
-        dataFromFrame(value3, float32, responseBuffer, 39);
-        dataFromFrame(value4, float32, responseBuffer, 55);
-        dataFromFrame(value5, float32, responseBuffer, 71);
-        dataFromFrame(value6, float32, responseBuffer, 87);
-        dataFromFrame(value7, float32, responseBuffer, 103);
-        dataFromFrame(value8, float32, responseBuffer, 119);
+        dataFromFrame(value1, float32, bigEndian, 7);
+        dataFromFrame(value2, float32, bigEndian, 23);
+        dataFromFrame(value3, float32, bigEndian, 39);
+        dataFromFrame(value4, float32, bigEndian, 55);
+        dataFromFrame(value5, float32, bigEndian, 71);
+        dataFromFrame(value6, float32, bigEndian, 87);
+        dataFromFrame(value7, float32, bigEndian, 103);
+        dataFromFrame(value8, float32, bigEndian, 119);
         _debugStream->println("Value1, value2, value3, value4, value5, value6, value7, value8");
         _debugStream->print(value1);
         _debugStream->print(", ");
@@ -276,8 +278,9 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
 
 
 //----------------------------------------------------------------------------
-//               SETUP INFORMATION FROM THE HOLDING REGISTERS
+//              FUNCTIONS TO GET AND CHANGE DEVICE CONFIGURATIONS
 //----------------------------------------------------------------------------
+
 // Functions for the communication mode
 // The Communication mode is in holding register 1 (1 uint16 register)
 int scan::getCommunicationMode(int startIndex)
@@ -286,7 +289,7 @@ int scan::getCommunicationMode(int startIndex)
     {
         getRegisters(0x03, 1, 1);
     }
-    dataFromFrame(_commMode, uint16, responseBuffer, startIndex);
+    dataFromFrame(_commMode, uint16, bigEndian, startIndex);
     _debugStream->print("Communication mode setting is: ");
     _debugStream->print(_commMode);
     _debugStream->print(" (");
@@ -326,7 +329,7 @@ int scan::getBaudRate(int startIndex)
     {
         getRegisters(0x03, 2, 1);
     }
-    dataFromFrame(_baudRate, uint16, responseBuffer, startIndex);
+    dataFromFrame(_baudRate, uint16, bigEndian, startIndex);
     _debugStream->print("Baud Rate setting is: ");
     _debugStream->print(_baudRate);
     _debugStream->print(" (");
@@ -369,7 +372,7 @@ int scan::getParity(int startIndex)
     {
         getRegisters(0x03, 3, 1);
     }
-    dataFromFrame(_parity, uint16, responseBuffer, startIndex);
+    dataFromFrame(_parity, uint16, bigEndian, startIndex);
     _debugStream->print("Parity setting is: ");
     _debugStream->print(_parity);
     _debugStream->print(" (");
@@ -409,8 +412,8 @@ int scan::getprivateConfigRegister(int startIndex)
     {
         getRegisters(0x03, 5, 1);
     }
-    dataFromFrame(_configRegNumber, pointer, responseBuffer, startIndex);
-    dataFromFrame(_configRegType, pointerType, responseBuffer, startIndex);
+    dataFromFrame(_configRegNumber, pointer, bigEndian, startIndex);
+    dataFromFrame(_configRegType, pointerType, bigEndian, startIndex);
     _debugStream->print("Private configuration begins in register ");
     _debugStream->print(_configRegNumber);
     _debugStream->print(", which is type ");
@@ -442,7 +445,7 @@ String scan::getScanPoint(int startIndex)
     {
         getRegisters(0x03, 6, 6);
     }
-    dataFromFrame(_scanPoint, character, responseBuffer, startIndex, 12);
+    dataFromFrame(_scanPoint, character, 12, startIndex);
     _debugStream->print("Current s::canpoint is: ");
     _debugStream->println(_scanPoint);
     return _scanPoint;
@@ -468,7 +471,7 @@ int scan::getCleaningMode(int startIndex)
     {
         getRegisters(0x03, 12, 1);
     }
-    dataFromFrame(_cleaningMode, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningMode, uint16, bigEndian, startIndex);
     _debugStream->print("Cleaning mode setting is: ");
     _debugStream->print(_cleaningMode);
     _debugStream->print(" (");
@@ -508,7 +511,7 @@ int scan::getCleaningInterval(int startIndex)
     {
         getRegisters(0x03, 13, 1);
     }
-    dataFromFrame(_cleaningInterval, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningInterval, uint16, bigEndian, startIndex);
     _debugStream->print("Cleaning interval is: ");
     _debugStream->print(_cleaningInterval);
     _debugStream->println(" measurements between cleanings");
@@ -538,7 +541,7 @@ int scan::getCleaningDuration(int startIndex)
     {
         getRegisters(0x03, 14, 1);
     }
-    dataFromFrame(_cleaningDuration, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningDuration, uint16, bigEndian, startIndex);
     _debugStream->print("Cleaning time is: ");
     _debugStream->print(_cleaningDuration);
     _debugStream->println(" seconds");
@@ -569,7 +572,7 @@ int scan::getCleaningWait(int startIndex)
     {
         getRegisters(0x03, 15, 1);
     }
-    dataFromFrame(_cleaningWait, uint16, responseBuffer, startIndex);
+    dataFromFrame(_cleaningWait, uint16, bigEndian, startIndex);
     _debugStream->print("Wait time between cleaning and sampling is: ");
     _debugStream->print(_cleaningWait);
     _debugStream->println(" seconds");
@@ -601,7 +604,7 @@ long scan::getSystemTime(int startIndex)
         getRegisters(0x03, 16, 6);
     }
     uint32_t secsPast1970 = 0;
-    dataFromFrame(secsPast1970, tai64, responseBuffer, startIndex);
+    dataFromFrame(secsPast1970, tai64, bigEndian, startIndex);
     _debugStream->print("Current System Time is: ");
     _debugStream->print((unsigned long)(secsPast1970));
     _debugStream->println(" seconds past Jan 1, 1970");
@@ -629,7 +632,7 @@ int scan::getMeasInterval(int startIndex)
     {
         getRegisters(0x03, 22, 1);
     }
-    dataFromFrame(_measInterval, uint16, responseBuffer, startIndex);
+    dataFromFrame(_measInterval, uint16, bigEndian, startIndex);
     _debugStream->print("Measurement interval is: ");
     _debugStream->print(_measInterval);
     _debugStream->println(" seconds");
@@ -659,7 +662,7 @@ int scan::getLoggingMode(int startIndex)
     {
         getRegisters(0x03, 23, 1);
     }
-    dataFromFrame(_loggingMode, uint16, responseBuffer, startIndex);
+    dataFromFrame(_loggingMode, uint16, bigEndian, startIndex);
     _debugStream->print("Logging mode setting is: ");
     _debugStream->print(_loggingMode);
     _debugStream->print(" (");
@@ -698,7 +701,7 @@ int scan::getLoggingInterval(int startIndex)
     {
         getRegisters(0x03, 24, 1);
     }
-    dataFromFrame(_loggingInterval, uint16, responseBuffer, startIndex);
+    dataFromFrame(_loggingInterval, uint16, bigEndian, startIndex);
     _debugStream->print("Logging interval is: ");
     _debugStream->print(_loggingInterval);
     _debugStream->println(" seconds");
@@ -728,7 +731,7 @@ int scan::getNumLoggedResults(int startIndex)
         // Available number of logged results is in holding register 25 (1 uint16 register)
         getRegisters(0x03, 25, 1);
     }
-    dataFromFrame(_numLoggedResults, uint16, responseBuffer, startIndex);
+    dataFromFrame(_numLoggedResults, uint16, bigEndian, startIndex);
     _debugStream->print(_numLoggedResults);
     _debugStream->println(" results have been logged so far");
     return _numLoggedResults;
@@ -745,7 +748,7 @@ int scan::getIndexLogResult(int startIndex)
         // "Index device status" is in holding register 26 (1 uint16 register)
         getRegisters(0x03, 26, 1);
     }
-    dataFromFrame(_indexLogResult, uint16, responseBuffer, startIndex);
+    dataFromFrame(_indexLogResult, uint16, bigEndian, startIndex);
     _debugStream->print("Index device status is: ");
     _debugStream->println(_indexLogResult);
     return _indexLogResult;
@@ -763,7 +766,7 @@ float scan::getModbusVersion(int startIndex)
     {
         getRegisters(0x04, 0, 1);
     }
-    dataFromFrame(_modbusVersion, uint16, responseBuffer, startIndex);
+    dataFromFrame(_modbusVersion, uint16, bigEndian, startIndex);
     SeFrame sefram;
     sefram.Int16[0] = _modbusVersion;
     printFrameHex(sefram.Byte, 4);
@@ -783,7 +786,7 @@ String scan::getModel(int startIndex)
     {
         getRegisters(0x04, 3, 10);
     }
-    dataFromFrame(_model, character, responseBuffer, startIndex, 20);
+    dataFromFrame(_model, character, 20, startIndex);
     _debugStream->print("Instrument model is: ");
     _debugStream->println(_model);
     return _model;
@@ -796,7 +799,7 @@ String scan::getSerialNumber(int startIndex)
     {
         getRegisters(0x04, 13, 4);
     }
-    dataFromFrame(_serialNumber, character, responseBuffer, startIndex, 8);
+    dataFromFrame(_serialNumber, character, 8, startIndex);
     _debugStream->print("Instrument Serial Number is: ");
     _debugStream->println(_serialNumber);
     return _serialNumber;
@@ -809,7 +812,7 @@ float scan::getHWVersion(int startIndex)
     {
         getRegisters(0x04, 17, 2);
     }
-    dataFromFrame(_model, character, responseBuffer, startIndex, 4);
+    dataFromFrame(_model, character, 4, startIndex);
     float mjv = _model.substring(0,2).toFloat();
     float mnv = (_model.substring(2,4).toFloat())/100;
     float version = mjv + mnv;
@@ -825,7 +828,7 @@ float scan::getSWVersion(int startIndex)
     {
         getRegisters(0x04, 19, 2);
     }
-    dataFromFrame(_model, character, responseBuffer, startIndex, 4);
+    dataFromFrame(_model, character, 4, startIndex);
     float mjv = _model.substring(0,2).toFloat();
     float mnv = (_model.substring(2,4).toFloat())/100;
     float version = mjv + mnv;
@@ -843,7 +846,7 @@ int scan::getHWStarts(int startIndex)
         // "Index device status" is in holding register 26 (1 uint16 register)
         getRegisters(0x04, 21, 1);
     }
-    dataFromFrame(_HWstarts, uint16, responseBuffer, startIndex);
+    dataFromFrame(_HWstarts, uint16, bigEndian, startIndex);
     _debugStream->print("Hardware has been restarted: ");
     _debugStream->print(_HWstarts);
     _debugStream->println(" times");
@@ -858,7 +861,7 @@ int scan::getParameterCount(int startIndex)
         // "Index device status" is in holding register 26 (1 uint16 register)
         getRegisters(0x04, 22, 1);
     }
-    dataFromFrame(_paramCount, uint16, responseBuffer, startIndex);
+    dataFromFrame(_paramCount, uint16, bigEndian, startIndex);
     _debugStream->print("There are ");
     _debugStream->print(_paramCount);
     _debugStream->println(" parameters being measured");
@@ -874,7 +877,7 @@ int scan::getParamterType(int startIndex)
         // "Index device status" is in holding register 26 (1 uint16 register)
         getRegisters(0x04, 23, 1);
     }
-    dataFromFrame(_paramType, uint16, responseBuffer, startIndex);
+    dataFromFrame(_paramType, uint16, bigEndian, startIndex);
     _debugStream->print("The data type of the parameters is: ");
     _debugStream->print(_paramType);
     _debugStream->print(" (");
@@ -903,7 +906,7 @@ int scan::getParameterScale(int startIndex)
         // "Index device status" is in holding register 26 (1 uint16 register)
         getRegisters(0x04, 24, 1);
     }
-    dataFromFrame(_paramScale, uint16, responseBuffer, startIndex);
+    dataFromFrame(_paramScale, uint16, bigEndian, startIndex);
     _debugStream->print("The parameter scale factor is: ");
     _debugStream->println(_paramScale);
     return _paramScale;
@@ -923,7 +926,7 @@ String scan::getParameter(int parmNumber)
     getRegisters(0x03, regNumber, 4);
 
     String parm;
-    dataFromFrame(parm, character, responseBuffer, 3, 8);
+    dataFromFrame(parm, character, 8);
     _debugStream->print("Parameter Number ");
     _debugStream->print(parmNumber);
     _debugStream->print(" is: ");
@@ -939,7 +942,7 @@ String scan::getUnits(int parmNumber)
     getRegisters(0x03, regNumber, 4);
 
     String parm;
-    dataFromFrame(parm, character, responseBuffer, 3, 8);
+    dataFromFrame(parm, character, 8);
     _debugStream->print("Parameter Number ");
     _debugStream->print(parmNumber);
     _debugStream->print(" has units of: ");
@@ -955,7 +958,7 @@ float scan::getUpperLimit(int parmNumber)
     getRegisters(0x03, regNumber, 2);
 
     float parm;
-    dataFromFrame(parm, float32, responseBuffer, 3);
+    dataFromFrame(parm, float32);
     _debugStream->print("Upper limit of parameter Number ");
     _debugStream->print(parmNumber);
     _debugStream->print(" is: ");
@@ -971,7 +974,7 @@ float scan::getLowerLimit(int parmNumber)
     getRegisters(0x03, regNumber, 2);
 
     float parm;
-    dataFromFrame(parm, float32, responseBuffer, 3);
+    dataFromFrame(parm, float32);
     _debugStream->print("Lower limit of parameter Number ");
     _debugStream->print(parmNumber);
     _debugStream->print(" is: ");
@@ -1239,13 +1242,17 @@ void scan::sliceArray(byte inputArray[], byte outputArray[],
 
 // These functions returns data from a register within a modbus frame
 // The outputVar must always be initialized prior to calling this function
-bool scan::dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
-                           int start_index, endianness endian)
+bool scan::dataFromFrame(uint16_t &outputVar, dataTypes regType,
+                         endianness endian,
+                         int start_index,
+                         byte indata[]
+                         )
 {
     // Read a substring of the input frame into an "output frame"
     int varLength = 2;
     byte outFrame[varLength] = {0,};
-    if (endian == big) sliceArray(indata, outFrame, start_index, varLength, true);
+    if (endian == bigEndian)
+        sliceArray(indata, outFrame, start_index, varLength, true);
     else sliceArray(indata, outFrame, start_index, varLength, false);
     // Put it into a small-endian frame (the format of all arduino processors)
     SeFrame Sefram = {0,};
@@ -1282,13 +1289,17 @@ bool scan::dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
         }
     }
 }
-bool scan::dataFromFrame(float &outputVar, dataTypes regType, byte indata[],
-                           int start_index, endianness endian)
+bool scan::dataFromFrame(float &outputVar, dataTypes regType,
+                         endianness endian,
+                         int start_index,
+                         byte indata[]
+                         )
 {
     // Read a substring of the input frame into an "output frame"
     int varLength = 4;
     byte outFrame[varLength] = {0,};
-    if (endian == big) sliceArray(indata, outFrame, start_index, varLength, true);
+    if (endian == bigEndian)
+        sliceArray(indata, outFrame, start_index, varLength, true);
     else sliceArray(indata, outFrame, start_index, varLength, false);
 
     SeFrame Sefram = {0,};
@@ -1304,33 +1315,12 @@ bool scan::dataFromFrame(float &outputVar, dataTypes regType, byte indata[],
         default: return false;
     }
 }
-bool scan::dataFromFrame(String &outputVar, dataTypes regType, byte indata[],
-                           int start_index, int charLength)
+bool scan::dataFromFrame(uint32_t &outputVar, dataTypes regType,
+                         endianness endian,
+                         int start_index,
+                         byte indata[]
+                         )
 {
-    switch (regType)
-    {
-        case character:
-        {
-            char charString[24] = {0,};  // Pick a value longer than then longest string returned
-            int j = 0;
-            for (int i = start_index; i < start_index + charLength; i++)
-            {
-                charString[j] = responseBuffer[i];  // converts from "byte" type to "char" type
-                j++;
-            }
-            String string = String(charString);
-            string.trim();
-            outputVar = string;
-            return true;
-        }
-        default: return false;
-    }
-}
-bool scan::dataFromFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
-                           int start_index, endianness endian)
-{
-    // Read a substring of the input frame into an "output frame"
-
     switch (regType)
     {
         case tai64:
@@ -1348,6 +1338,30 @@ bool scan::dataFromFrame(uint32_t &outputVar, dataTypes regType, byte indata[],
             SeFrame Sefram = {0,};
             memcpy(Sefram.Byte, outFrame, varLength);
             outputVar = Sefram.Int32;
+            return true;
+        }
+        default: return false;
+    }
+}
+bool scan::dataFromFrame(String &outputVar, dataTypes regType, int charLength,
+                         int start_index,
+                         byte indata[]
+                         )
+{
+    switch (regType)
+    {
+        case character:
+        {
+            char charString[24] = {0,};  // Pick a value longer than then longest string returned
+            int j = 0;
+            for (int i = start_index; i < start_index + charLength; i++)
+            {
+                charString[j] = responseBuffer[i];  // converts from "byte" type to "char" type
+                j++;
+            }
+            String string = String(charString);
+            string.trim();
+            outputVar = string;
             return true;
         }
         default: return false;
