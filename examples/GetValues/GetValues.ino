@@ -63,7 +63,8 @@ void setup()
     Serial.println("Waiting for sensor and adapter to be ready.");
     delay(500);
 
-    sensor.getSetup();
+    sensor.printSetup(Serial);
+    sensor.printDeviceStatus(sensor.getDeviceStatus(), Serial)
     sensor.getParameter(1);
     sensor.getUnits(1);
     sensor.getUpperLimit(1);

@@ -6,7 +6,7 @@
 
 
 //----------------------------------------------------------------------------
-//                          PUBLIC SENSOR FUNCTIONS
+//                          GENERAL USE FUNCTIONS
 //----------------------------------------------------------------------------
 
 
@@ -28,30 +28,18 @@ bool scan::begin(byte modbusSlaveID, Stream *stream, int enablePin)
     return true;
 }
 bool scan::begin(byte modbusSlaveID, Stream &stream, int enablePin)
-{
-    // Give values to variables;
-    _slaveID = modbusSlaveID;
-    _stream = &stream;
-    _enablePin = enablePin;
-
-    // Set pin mode for the enable pin
-    if (_enablePin > 0) pinMode(_enablePin, OUTPUT);
-
-    _stream->setTimeout(modbusFrameTimeout);
-
-    return true;
-}
+{return begin(modbusSlaveID, stream, enablePin);}
 
 
-// This gets all of the setup information at once
-bool scan::getSetup(void)
+// This prints out all of the setup information to the selected stream
+bool scan::printSetup(Stream *stream)
 {
     // Wake up the spec if it was sleeping
-    _debugStream->println("------------------------------------------");
+    stream->println("------------------------------------------");
     wakeSpec();
 
     // Get the holding registers
-    _debugStream->println("------------------------------------------");
+    stream->println("------------------------------------------");
     _gotHoldingRegSpecSetup = getRegisters(0x03, 0, 27);
 
     // When returning a bunch of registers, as here, to get
@@ -79,7 +67,7 @@ bool scan::getSetup(void)
     else return false;
 
     // Get the input registers
-    _debugStream->println("------------------------------------------");
+    stream->println("------------------------------------------");
     _gotInputRegSpecSetup = getRegisters(0x04, 0, 25);
 
     if (_gotInputRegSpecSetup)
@@ -97,9 +85,10 @@ bool scan::getSetup(void)
     else return false;
 
     // if all passed, return true
-    _debugStream->println("------------------------------------------");
+    stream->println("------------------------------------------");
     return true;
 }
+bool scan::printSetup(Stream &stream) {return printSetup(stream);}
 
 
 // Reset all settings to default
@@ -108,19 +97,9 @@ bool scan::resetSettings(void)
     byte byteToSend[2];
     byteToSend[0] = 0x00;
     byteToSend[1] = 0x01;
-    if (setRegisters(4, 1, byteToSend))
-    {
-        getSetup();
-        return true;
-    }
-    else return false;
+    return setRegisters(4, 1, byteToSend);
 }
 
-
-// This just returns the given slave ID.  If you don't know your slave ID, you
-// must find it some other way
-byte scan::getSlaveID(void)
-{return _slaveID;}
 
 // This sets a new modbus slave ID
 bool scan::setSlaveID(byte newSlaveID)
@@ -131,6 +110,164 @@ bool scan::setSlaveID(byte newSlaveID)
     if (setRegisters(0, 1, byteToSend))
     {
         _slaveID = newSlaveID;
+        return true;
+    }
+    else return false;
+}
+
+
+// This returns the current device status as a bitmap
+int scan::getDeviceStatus(void)
+{
+    // Get the register data
+    getRegisters(0x04, 120, 1);
+
+    uint16_t status;
+    dataFromFrame(status, bitmask, responseBuffer, 3);
+    _debugStream->print("Current device status is: ");
+    _debugStream->print(bitmask, BIN);
+    _debugStream->print(" (");
+    printParameterStatus(bitmask, _debugStream);
+    _debugStream->println(")");
+    return parm;
+}
+// This prints out all of the setup information at once
+void scan::printDeviceStatus(uint16_t bitmask, Stream *stream)
+{
+    // b15
+    if ((bitmask & 32768) == 32768)
+        stream->println("Device maintenance required");
+    // b14
+    if ((bitmask & 16384) == 16384)
+        stream->println("Device cleaning required");
+    // b13
+    if ((bitmask & 8192) == 8192)
+        stream->println("Device busy");
+    // b3
+    if ((bitmask & 8) == 8)
+        stream->println("Data logger error, no readings can be stored because datalogger is full");
+    // b2
+    if ((bitmask & 4) == 4)
+        stream->println("Missing or devective component detected");
+    // b1
+    if ((bitmask & 2) == 2)
+        stream->println("Probe misuse, operation outside the specified temperature range");
+    // b0
+    if ((bitmask & 1) == 1)
+        stream->println("s::can device reports error during internal check");
+}
+void scan::printDeviceStatus(uint16_t bitmask, Stream &stream)
+{return printDeviceStatus(bitmask, stream);}
+
+
+
+
+
+//----------------------------------------------------------------------------
+//           FUNCTIONS TO RETURN THE ACTUAL SAMPLE TIMES AND VALUES
+//----------------------------------------------------------------------------
+
+// Last measurement time as a 32-bit count of seconds from Jan 1, 1970
+// System time is in input registers 104-109
+// (64-bit timestamp in TAI64 format + padding)
+long scan::getSampleTime(int startIndex)
+{
+    getRegisters(0x04, 104, 6);
+
+    uint32_t secsPast1970 = 0;
+    dataFromFrame(secsPast1970, tai64, responseBuffer, startIndex);
+    _debugStream->print("Last sample was taken at ");
+    _debugStream->print((unsigned long)(secsPast1970));
+    _debugStream->println(" seconds past Jan 1, 1970");
+    return secsPast1970;
+}
+
+// This gets values back from the sensor and puts them into a previously
+// initialized float variable.  The actual return from the function is the
+// int which is a bit-mask describing the parameter status.
+int scan::getValue(int parmNumber, float &value)
+{
+    int regNumber = 12 + 8*parmNumber;
+    // Get the register data
+    getRegisters(0x04, regNumber, 8);
+
+    uint16_t status;
+    dataFromFrame(status, bitmask, responseBuffer, 3);
+    float parm;
+    dataFromFrame(parm, float32, responseBuffer, 7);
+    _debugStream->print("Value of parameter Number ");
+    _debugStream->print(parmNumber);
+    _debugStream->print(" is: ");
+    _debugStream->print(parm);
+    _debugStream->print(" with status code: ");
+    _debugStream->print(bitmask, BIN);
+    _debugStream->print(" (");
+    printParameterStatus(bitmask, _debugStream);
+    _debugStream->println(")");
+    return parm;
+}
+void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
+{
+    // b15
+    if ((bitmask & 32768) == 32768)
+        stream->println("Parameter reading out of measuring range");
+    // b14
+    if ((bitmask & 16384) == 16384)
+        stream->println("Status of alarm paramter is 'WARNING'");
+    // b13
+    if ((bitmask & 8192) == 8192)
+        stream->println("Status of alarm paramter is 'ALARM'");
+    // b5
+    if ((bitmask & 32) == 32)
+        stream->println("Parameter not ready or not available");
+    // b4
+    if ((bitmask & 16) == 16)
+        stream->println("Incorrect calibration, at least one calibration coefficient invalid");
+    // b3
+    if ((bitmask & 8) == 8)
+        stream->println("Paremeter error, the sensor is outside of the medium or in incorrect medium");
+    // b2
+    if ((bitmask & 4) == 4)
+        stream->println("Parameter error, calibration error");
+    // b1
+    if ((bitmask & 2) == 2)
+        stream->println("Parameter error, hardware error");
+    // b0
+    if ((bitmask & 1) == 1)
+        stream->println("Genereal parameter error, at least one internal parameter check failed");
+}
+
+// This get up to 8 values back from the spectro::lyzer
+bool scan::getAllValues(float &value1, float &value2, float &value3, float &value4,
+                  float &value5, float &value6, float &value7, float &value8)
+{
+    // Get the register data
+    if (getRegisters(0x04, 128, 64))
+    {
+        dataFromFrame(value1, float32, responseBuffer, 7);
+        dataFromFrame(value2, float32, responseBuffer, 23);
+        dataFromFrame(value3, float32, responseBuffer, 39);
+        dataFromFrame(value4, float32, responseBuffer, 55);
+        dataFromFrame(value5, float32, responseBuffer, 71);
+        dataFromFrame(value6, float32, responseBuffer, 87);
+        dataFromFrame(value7, float32, responseBuffer, 103);
+        dataFromFrame(value8, float32, responseBuffer, 119);
+        _debugStream->println("Value1, value2, value3, value4, value5, value6, value7, value8");
+        _debugStream->print(value1);
+        _debugStream->print(", ");
+        _debugStream->print(value2);
+        _debugStream->print(", ");
+        _debugStream->print(value3);
+        _debugStream->print(", ");
+        _debugStream->print(value4);
+        _debugStream->print(", ");
+        _debugStream->print(value5);
+        _debugStream->print(", ");
+        _debugStream->print(value6);
+        _debugStream->print(", ");
+        _debugStream->print(value7);
+        _debugStream->print(", ");
+        _debugStream->println(value8);
         return true;
     }
     else return false;
@@ -842,26 +979,22 @@ float scan::getLowerLimit(int parmNumber)
     return parm;
 }
 
+void scan::printSystemStatus(uint16_t bitmask, Stream *stream)
+{
+    // b6
+    if ((bitmask & 64) == 64)
+        stream->println("mA signal is outside of the allowed input range");
+    // b5
+    if ((bitmask & 32) == 32)
+        stream->println("Validation results are not available");
+    // b1
+    if ((bitmask & 2) == 2)
+        stream->println("Invalid probe/sensor; serial number of probe/sensor is different");
+    // b0
+    if ((bitmask & 1) == 1)
+        stream->println("No communication between probe/sensor and controller");
+}
 
-
-//----------------------------------------------------------------------------
-//                       ACTUAL SAMPLE TIMES AND VALUES
-//----------------------------------------------------------------------------
-
-// Last measurement time as a 64-bit count of seconds from Jan 1, 1970
-long scan::getSampleTime(int startIndex)
-{return false;}
-
-// This gets values back from the sensor and puts them into a previously
-// initialized float variable.  The actual return from the function is the
-// int which is a bit-mask describing the parameter status.
-int scan::getValue(int parmNumber, float &value1)
-{return false;}
-
-// This get up to 8 values back from the spectro::lyzer
-bool scan::getAllValues(float &value1, float &value2, float &value3, float &value4,
-                  float &value5, float &value6, float &value7, float &value8)
-{return false;}
 
 
 
@@ -1069,6 +1202,7 @@ bool scan::setRegisters(int16_t startRegister, int16_t numRegisters, byte value[
 };
 
 // This slices one array out of another
+// Used for slicing one or more registers out of a returned modbus frame
 void scan::sliceArray(byte inputArray[], byte outputArray[],
                 int start_index, int numBytes, bool reverseOrder)
 {
@@ -1113,25 +1247,27 @@ bool scan::dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
     byte outFrame[varLength] = {0,};
     if (endian == big) sliceArray(indata, outFrame, start_index, varLength, true);
     else sliceArray(indata, outFrame, start_index, varLength, false);
-
+    // Put it into a small-endian frame (the format of all arduino processors)
     SeFrame Sefram = {0,};
     memcpy(Sefram.Byte, outFrame, varLength);
 
     switch (regType)
     {
         case uint16:
+        {
+            outputVar = Sefram.Int16[0];
+            return true;
+        }
         case bitmask:
         {
             outputVar = Sefram.Int16[0];
             return true;
-            break;
         }
         case pointer:
         {
             Sefram.Byte[0] = indata[start_index + 1]>>2;  // Bit shift the address lower bits
             outputVar = Sefram.Int16[0];
             return true;
-            break;
         }
         case pointerType:
         {
@@ -1139,12 +1275,10 @@ bool scan::dataFromFrame(uint16_t &outputVar, dataTypes regType, byte indata[],
             uint8_t pointerRegType = outFrame[0] & 3;
             outputVar = pointerRegType;
             return true;
-            break;
         }
         default:
         {
             return false;
-            break;
         }
     }
 }

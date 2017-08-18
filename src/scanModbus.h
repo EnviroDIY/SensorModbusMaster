@@ -7,6 +7,11 @@
 
 #include <Arduino.h>
 
+
+//----------------------------------------------------------------------------
+//                        ENUMERATIONS FOR CONFIGURING DEVICE
+//----------------------------------------------------------------------------
+
 // The communcations modes
 typedef enum specCommMode
 {
@@ -43,11 +48,14 @@ typedef enum cleaningMode
 typedef enum dataTypes
 {
     uint16 = 0,
+    int16,
     pointer,
     pointerType,
     bitmask,
     character,
     float32,
+    uint32,
+    int32,
     tai64
 } dataTypes;
 
@@ -58,36 +66,94 @@ typedef enum endianness
     big
 } endianness;
 
+
+
+
+
+//*****************************************************************************
+//*****************************************************************************
+//*****************************The S::CAN class********************************
+//*****************************************************************************
+//*****************************************************************************
 class scan
 {
 
 public:
 
+//----------------------------------------------------------------------------
+//                          GENERAL USE FUNCTIONS
+//----------------------------------------------------------------------------
+
     // This function sets up the communication
     // It should be run during the arduino "setup" function.
     // The "stream" device must be initialized prior to running this.
+    // The default baud rate for a spectro::lyser or s::can controller is 34800
+    // The default parity is **ODD**
+    // Per modbus specifications, there is:
+    //    - 1 start bit
+    //    - 8 data bits, least significant bit sent first
+    //    - 1 stop bit if parity is used-2 bits if no parity
+    // Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
+    // will support the default odd parity!  This means you must either use a
+    // corretnly set up HARDWARE serial port on your Arduino or change the
+    // parity setting of the s::can using some other program before connecting
+    // it to your Arduino.
     bool begin(byte modbusSlaveID, Stream *stream, int enablePin = -1);
     bool begin(byte modbusSlaveID, Stream &stream, int enablePin = -1);
 
-    // This gets all of the setup information at once
-    bool getSetup(void);
+    // This prints out all of the setup information to the selected stream
+    bool printSetup(Stream *stream);
+    bool printSetup(Stream &stream);
 
     // This resets all settings to default
     // Please note that after this you will most likely have to re-begin
-    // your stream because your baud rate and parity will have changed.
+    // your stream and sensor after running this function because the
+    // baud rate and parity may have changed.  Again, keep in mind that the
+    // default parity is ODD, which is not supported by SoftwareSerial.
     bool resetSettings(void);
 
-    // This gets the modbus slave ID.  Not supported by many sensors.
-    byte getSlaveID(void);
+    // This just returns the slave ID that was entered in the begin function.
+    // If you don't know your slave ID, you must find it some other way
+    byte getSlaveID(void){return _slaveID;}
 
     // This sets a new modbus slave ID
     bool setSlaveID(byte newSlaveID);
 
+    // This returns the current device status as a bitmap
+    int getDeviceStatus(void);
+    // This parses the device status bitmap and prints the resuts to the stream
+    void printDeviceStatus(uint16_t bitmask, Stream *stream);
+    void printDeviceStatus(uint16_t bitmask, Stream &stream);
+
 
 
 //----------------------------------------------------------------------------
-//               SETUP INFORMATION FROM THE INPUT REGISTERS
+//           FUNCTIONS TO RETURN THE ACTUAL SAMPLE TIMES AND VALUES
 //----------------------------------------------------------------------------
+
+// Last measurement time as a 32-bit count of seconds from Jan 1, 1970
+long getSampleTime(int startIndex = 3);
+
+// This gets values back from the sensor and puts them into a previously
+// initialized float variable.  The actual return from the function is the
+// int which is a bit-mask describing the parameter status.
+int getValue(int parmNumber, float &value);
+// This parses the parameter status bitmap and prints the resuts to the stream
+void printParameterStatus(uint16_t bitmask, Stream *stream);
+
+// This get up to 8 values back from the spectro::lyzer
+bool getAllValues(float &value1, float &value2, float &value3, float &value4,
+                  float &value5, float &value6, float &value7, float &value8);
+
+
+
+
+//----------------------------------------------------------------------------
+//              FUNCTIONS TO GET AND CHANGE DEVICE CONFIGURATIONS
+//----------------------------------------------------------------------------
+// I cannot promise that your device will actually accept any changes from
+// these set commands.  It is better to use s::can's software to make any
+// changes to the logger configurations.
 
     // Functions for the communication mode
     int getCommunicationMode(int startIndex = 3);
@@ -162,9 +228,34 @@ public:
 
 
 
-    //----------------------------------------------------------------------------
-    //               SETUP INFORMATION FROM THE INPUT REGISTERS
-    //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+//           FUNCTIONS TO GET AND CHANGE PARAMETER CONFIGURATIONS
+//----------------------------------------------------------------------------
+// I cannot promise that your device will actually accept any changes from
+// these set commands.  It is better to use s::can's software to make any
+// changes to the logger configurations.
+
+    // This returns a pretty string with the parameter measured.
+    String getParameter(int parmNumber);
+
+    // This returns a pretty string with the measurement units.
+    String getUnits(int parmNumber);
+
+    // This gets the upper limit of the parameter
+    // The float variable must be initialized prior to calling this function.
+    float getUpperLimit(int parmNumber);
+
+    // This gets the lower limit of the parameter
+    // The float variable must be initialized prior to calling this function.
+    float getLowerLimit(int parmNumber);
+
+
+
+//----------------------------------------------------------------------------
+//               SETUP INFORMATION FROM THE INPUT REGISTERS
+//----------------------------------------------------------------------------
+// This information can be read, but cannot be changed
+
     // Get the version of the modbus mapping protocol
     float getModbusVersion(int startIndex = 3);
 
@@ -197,45 +288,22 @@ public:
 
 
 
-    //----------------------------------------------------------------------------
-    //             PARAMETER INFORMATION FROM THE HOLDING REGISTERS
-    //----------------------------------------------------------------------------
-
-    // This returns a pretty string with the parameter measured.
-    String getParameter(int parmNumber);
-
-    // This returns a pretty string with the measurement units.
-    String getUnits(int parmNumber);
-
-    // This gets the upper limit of the parameter
-    // The float variable must be initialized prior to calling this function.
-    float getUpperLimit(int parmNumber);
-
-    // This gets the lower limit of the parameter
-    // The float variable must be initialized prior to calling this function.
-    float getLowerLimit(int parmNumber);
-
-
-
-    //----------------------------------------------------------------------------
-    //                       ACTUAL SAMPLE TIMES AND VALUES
-    //----------------------------------------------------------------------------
-
-    // Last measurement time as a 64-bit count of seconds from Jan 1, 1970
-    long getSampleTime(int startIndex = 3);
-
-    // This gets values back from the sensor and puts them into a previously
-    // initialized float variable.  The actual return from the function is the
-    // int which is a bit-mask describing the parameter status.
-    int getValue(int parmNumber, float &value1);
-
-    // This get up to 8 values back from the spectro::lyzer
-    bool getAllValues(float &value1, float &value2, float &value3, float &value4,
-                      float &value5, float &value6, float &value7, float &value8);
+//----------------------------------------------------------------------------
+//                       PURELY DEBUGGING FUNCTIONS
+//----------------------------------------------------------------------------
 
     // This sets a stream for debugging information to go to;
     void setDebugStream(Stream *stream){_debugStream = stream;}
 
+    void printSystemStatus(uint16_t bitmask, Stream *stream);
+
+
+
+
+//----------------------------------------------------------------------------
+//                            PRIVATE FUNCTIONS
+//----------------------------------------------------------------------------
+//These more-or-less devine a fairly complete modbus library on their own.
 
 private:
 
@@ -248,10 +316,13 @@ private:
     // modbus..  S::CAN's version of modbus returns all values in big-endian
     // form, so you must reverse the byte order to make this work.
     union SeFrame {
-        byte Byte[4];       // occupies 4 bytes
-        float Float;        // occupies 4 bytes
-        uint32_t Int32;     // occupies 4 bytes
-        uint16_t Int16[2];  // occupies 4 bytes
+        byte Byte[4];        // occupies 4 bytes
+        float Float;         // occupies 4 bytes
+        int32_t Int32;       // occupies 4 bytes
+        uint32_t uInt32;     // occupies 4 bytes
+        int16_t Int16[2];    // occupies 4 bytes
+        uint16_t uInt16[2];  // occupies 4 bytes
+        char Char[4];        // occupies 4 bytes
     };
 
     // This flips the device/receive enable to DRIVER so the arduino can send text
