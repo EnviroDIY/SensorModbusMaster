@@ -54,7 +54,7 @@ void setup()
     sensor.begin(modbusAddress, &modbusSerial, DEREPin);
 
     // Turn on debugging
-    // sensor.setDebugStream(&Serial);
+    sensor.setDebugStream(&Serial);
 
     // Start up note
     Serial.println("S::CAN Spect::lyzer Test");
@@ -70,12 +70,21 @@ void setup()
     uint16_t status;
     status = sensor.getDeviceStatus();
     Serial.print("Current device status is: ");
-    Serial.print(status, BIN);
-    Serial.print(" (");
-    sensor.printParameterStatus(status, Serial);
-    Serial.println(")");
+    Serial.println(status, BIN);
+    sensor.printDeviceStatus(status, Serial);
     Serial.println("=======================");
     Serial.println("=======================");
+
+    // Set up and turn on logging
+    sensor.setCleaningMode(automatic);
+    sensor.setCleaningInterval(5);
+    sensor.setCleaningDuration(5);
+    sensor.setCleaningWait(20);
+    sensor.setLoggingInterval(150);
+    sensor.setLoggingMode(0);
+    Serial.println("=======================");
+    Serial.println("=======================");
+
 }
 
 // ---------------------------------------------------------------------------
@@ -87,10 +96,8 @@ void loop()
     uint16_t status;
     status = sensor.getDeviceStatus();
     Serial.print("Current device status is: ");
-    Serial.print(status, BIN);
-    Serial.print(" (");
-    sensor.printParameterStatus(status, Serial);
-    Serial.println(")");
+    Serial.println(status, BIN);
+    sensor.printDeviceStatus(status, Serial);
 
     Serial.print("Last sample was taken at ");
     Serial.print((unsigned long)(sensor.getSampleTime()));
@@ -102,6 +109,7 @@ void loop()
     // Get values one at a time
     for (int i = 1; i < 9; i++)
     {
+        Serial.println("----");
         status = sensor.getValue(i, value1);
         Serial.print("Value of parameter Number ");
         Serial.print(i);
@@ -110,10 +118,8 @@ void loop()
         Serial.print(" ");
         Serial.print(sensor.getUnits(i));
         Serial.print(" with status code: ");
-        Serial.print(status, BIN);
-        Serial.print(" (");
+        Serial.println(status, BIN);
         sensor.printParameterStatus(status, Serial);
-        Serial.println(")");
     }
 
     // Get all the values together

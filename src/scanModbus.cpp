@@ -132,10 +132,10 @@ bool scan::printSetup(Stream *stream)
         stream->print(getParameter(i));
         stream->print(" and has units of ");
         stream->print(getUnits(i));
-        stream->print(". The upper limit is ");
-        stream->print(getUpperLimit(i));
-        stream->print(" and the lower limit is ");
+        stream->print(". The lower limit is ");
         stream->print(getLowerLimit(i));
+        stream->print(" and the upper limit is ");
+        stream->print(getUpperLimit(i));
         stream->println(".");
     }
 
@@ -287,7 +287,7 @@ long scan::getSampleTime(void)
 // int which is a bit-mask describing the parameter status.
 int scan::getValue(int parmNumber, float &value)
 {
-    int regNumber = 12 + 8*parmNumber;
+    int regNumber = 120 + 8*parmNumber;
     // Get the register data
     getRegisters(0x04, regNumber, 8);
 
@@ -306,6 +306,9 @@ void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
     // b13
     if ((bitmask & 8192) == 8192)
         stream->println("Status of alarm paramter is 'ALARM'");
+    // b11
+    if ((bitmask & 2048) == 2048)
+        stream->println("Maintenance necessary");
     // b5
     if ((bitmask & 32) == 32)
         stream->println("Parameter not ready or not available");
@@ -323,7 +326,7 @@ void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
         stream->println("Parameter error, hardware error");
     // b0
     if ((bitmask & 1) == 1)
-        stream->println("Genereal parameter error, at least one internal parameter check failed");
+        stream->println("General parameter error, at least one internal parameter check failed");
     // No Codes
     if (bitmask == 0)
         stream->println("Parameter is operating normally");
@@ -1075,12 +1078,12 @@ uint16_t scan::pointerFromFrame(endianness endian, int start_index, byte indata[
     leFrame fram;
     if (endian == bigEndian)
     {
-        fram.Byte[0] = indata[start_index + 1]>>2;  // Bit shift the address lower bits
+        fram.Byte[0] = indata[start_index + 1]<<2;  // Shift the lower address bit UP two
         fram.Byte[1] = indata[start_index];
     }
     else
     {
-        fram.Byte[0] = indata[start_index]>>2;  // Bit shift the address lower bits
+        fram.Byte[0] = indata[start_index]<<2;  // Shift the lower address bit UP two
         fram.Byte[1] = indata[start_index + 1];
     }
     return fram.Int16[0];
