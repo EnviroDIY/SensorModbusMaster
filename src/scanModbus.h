@@ -309,6 +309,20 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 
 
 
+    // These functions return a variety of data from a data register
+    uint16_t bitmaskFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint16_t uint16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int16_t int16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    float float32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint32_t uint32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int32_t int32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint32_t tai64FromRegister(byte regType, int regNum);
+    String StringFromRegister(byte regType, int regNum, int charLength);
+    void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
+
+
 
 //----------------------------------------------------------------------------
 //                            PRIVATE FUNCTIONS
@@ -330,7 +344,8 @@ private:
     void printFrameHex(byte modbusFrame[], int frameLength);
 
     // Calculates a Modbus RTC cyclical redudancy code (CRC)
-    // and adds it to the last two bytes of a frame
+    void calculateCRC(byte modbusFrame[], int frameLength);
+    // Adds the CRC to a modbus frame
     void insertCRC(byte modbusFrame[], int frameLength);
 
     // This sends a command to the sensor bus and listens for a response
@@ -391,7 +406,6 @@ private:
                        int start_index=3,
                        byte indata[]=responseBuffer);
 
-
     // This sends three requests for a single register
     // If the spectro::lyzer is sleeping, it will not respond until the third one
     bool wakeSpec(void);
@@ -419,6 +433,7 @@ private:
     // For 8 parameters with 8 registers each:
     // 64 registers * 2 bytes per register + 5 frame bytes
     static byte responseBuffer[MAX_RESPONSE_SIZE];
+    static byte crcFrame[2];
 
     // The modbus protocol defines that there can be no more than 1.5 characters
     // of silence between characters in a frame and any space over 3.5 characters
@@ -427,7 +442,7 @@ private:
     // (the transmission mode for the S::CAN spectro::lyzer) 1 character takes ~0.286ms
     // So the readBytes() command should time out within 1ms
     const uint32_t modbusTimeout = 500;  // The time to wait for response after a command (in ms)
-    const int modbusFrameTimeout = 1;  // the time to wait between characters within a frame (in ms)
+    const int modbusFrameTimeout = 4;  // the time to wait between characters within a frame (in ms)
 
     static float junk_val;
     static byte junk_byte;

@@ -6,6 +6,7 @@
 
 // initialize the response buffer
 byte scan::responseBuffer[MAX_RESPONSE_SIZE] = {0x00,};
+byte scan::crcFrame[2] = {0x00,};
 
 //----------------------------------------------------------------------------
 //                          GENERAL USE FUNCTIONS
@@ -209,8 +210,7 @@ bool scan::setSlaveID(byte newSlaveID)
 // This returns the current device status as a bitmap
 int scan::getDeviceStatus(void)
 {
-    getRegisters(0x04, 120, 1);
-    return bitmaskFromFrame();
+    return bitmaskFromRegister(0x04, 120);
 }
 // This parses the device status bitmask and prints out from the codes
 void scan::printDeviceStatus(uint16_t bitmask, Stream *stream)
@@ -278,8 +278,7 @@ void scan::printSystemStatus(uint16_t bitmask, Stream &stream)
 // (64-bit timestamp in TAI64 format + padding)
 long scan::getSampleTime(void)
 {
-    getRegisters(0x04, 104, 6);
-    return tai64FromFrame();
+    return tai64FromRegister(0x04, 104);
 }
 
 // This gets values back from the sensor and puts them into a previously
@@ -364,8 +363,7 @@ bool scan::getAllValues(float &value1, float &value2, float &value3, float &valu
 // The Communication mode is in holding register 1 (1 uint16 register)
 int scan::getCommunicationMode(void)
 {
-    getRegisters(0x03, 1, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 1);
 }
 bool scan::setCommunicationMode(specCommMode mode)
 {
@@ -390,8 +388,7 @@ String scan::parseCommunicationMode(uint16_t code)
 // Baud rate is in holding register 2 (1 uint16 register)
 int scan::getBaudRate(void)
 {
-    getRegisters(0x03, 2, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 2);
 }
 bool scan::setBaudRate(specBaudRate baud)
 {
@@ -419,8 +416,7 @@ uint16_t scan::parseBaudRate(uint16_t code)
 // Parity is in holding register 3 (1 uint16 register)
 int scan::getParity(void)
 {
-    getRegisters(0x03, 3, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 3);
 }
 bool scan::setParity(specParity parity)
 {
@@ -445,8 +441,7 @@ String scan::parseParity(uint16_t code)
 // This is read only
 int scan::getprivateConfigRegister(void)
 {
-    getRegisters(0x03, 5, 1);
-    return pointerFromFrame();
+    return pointerFromRegister(0x03, 5);
 }
 String scan::parseRegisterType(uint16_t code)
 {
@@ -466,8 +461,7 @@ String scan::parseRegisterType(uint16_t code)
 // This is read only
 String scan::getScanPoint(void)
 {
-    getRegisters(0x03, 6, 6);
-    return StringFromFrame(12);
+    return StringFromRegister(0x03, 6, 12);
 }
 bool scan::setScanPoint(char charScanPoint[12])
 {
@@ -481,8 +475,7 @@ bool scan::setScanPoint(char charScanPoint[12])
 // Cleaning mode is in holding register 12 (1 uint16 register)
 int scan::getCleaningMode(void)
 {
-    getRegisters(0x03, 12, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 12);
 }
 bool scan::setCleaningMode(cleaningMode mode)
 {
@@ -507,8 +500,7 @@ String scan::parseCleaningMode(uint16_t code)
 // Cleaning interval is in holding register 13 (1 uint16 register)
 int scan::getCleaningInterval(void)
 {
-    getRegisters(0x03, 13, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 13);
 }
 bool scan::setCleaningInterval(uint16_t intervalSamples)
 {
@@ -525,8 +517,7 @@ bool scan::setCleaningInterval(uint16_t intervalSamples)
 // Cleaning duration is in holding register 14 (1 uint16 register)
 int scan::getCleaningDuration(void)
 {
-    getRegisters(0x03, 14, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 14);
 }
 bool scan::setCleaningDuration(uint16_t secDuration)
 {
@@ -544,8 +535,7 @@ bool scan::setCleaningDuration(uint16_t secDuration)
 // Cleaning wait time is in holding register 15 (1 uint16 register)
 int scan::getCleaningWait(void)
 {
-    getRegisters(0x03, 15, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 15);
 }
 bool scan::setCleaningWait(uint16_t secDuration)
 {
@@ -563,8 +553,7 @@ bool scan::setCleaningWait(uint16_t secDuration)
 // (64-bit timestamp in TAI64 format + padding)
 long scan::getSystemTime(void)
 {
-    getRegisters(0x03, 16, 6);
-    return tai64FromFrame();
+    return tai64FromRegister(0x03, 16);
 }
 bool scan::setSystemTime(long currentUnixTime)
 {
@@ -584,8 +573,7 @@ bool scan::setSystemTime(long currentUnixTime)
 // Measurement interval is in holding register 22 (1 uint16 register)
 int scan::getMeasInterval(void)
 {
-    getRegisters(0x03, 22, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 22);
 }
 bool scan::setMeasInterval(uint16_t secBetween)
 {
@@ -602,8 +590,7 @@ bool scan::setMeasInterval(uint16_t secBetween)
 // Logging Mode (0 = on; 1 = off) is in holding register 23 (1 uint16 register)
 int scan::getLoggingMode(void)
 {
-    getRegisters(0x03, 23, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 23);
 }
 bool scan::setLoggingMode(uint8_t mode)
 {
@@ -627,8 +614,7 @@ String scan::parseLoggingMode(uint16_t code)
 // Logging interval is in holding register 24 (1 uint16 register)
 int scan::getLoggingInterval(void)
 {
-    getRegisters(0x03, 24, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 24);
 }
 bool scan::setLoggingInterval(uint16_t interval)
 {
@@ -645,8 +631,7 @@ bool scan::setLoggingInterval(uint16_t interval)
 // Available number of logged results is in holding register 25 (1 uint16 register)
 int scan::getNumLoggedResults(void)
 {
-    getRegisters(0x03, 25, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 25);
 }
 
 // "Index device status public + private & parameter results from logger
@@ -656,8 +641,7 @@ int scan::getNumLoggedResults(void)
 // "Index device status" is in holding register 26 (1 uint16 register)
 int scan::getIndexLogResult(void)
 {
-    getRegisters(0x03, 26, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x03, 26);
 }
 
 
@@ -690,8 +674,7 @@ String scan::getUnits(int parmNumber)
 float scan::getUpperLimit(int parmNumber)
 {
     int regNumber = 120*parmNumber + 8;
-    getRegisters(0x03, regNumber, 2);
-    return float32FromFrame();
+    return float32FromRegister(0x03, regNumber);
 }
 
 // This gets the lower limit of the parameter
@@ -699,8 +682,7 @@ float scan::getUpperLimit(int parmNumber)
 float scan::getLowerLimit(int parmNumber)
 {
     int regNumber = 120*parmNumber + 10;
-    getRegisters(0x03, regNumber, 2);
-    return float32FromFrame();
+    return float32FromRegister(0x03, regNumber);
 }
 
 
@@ -763,23 +745,20 @@ float scan::getSWVersion(void)
 // (Device rebooter counter)
 int scan::getHWStarts(void)
 {
-    getRegisters(0x04, 21, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x04, 21);
 }
 
 // This gets the number of parameters the spectro::lyzer is set to measure
 int scan::getParameterCount(void)
 {
-    getRegisters(0x04, 22, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x04, 22);
 }
 
 // This gets the datatype of the parameters and parameter limits
 // This is a check for compatibility
 int scan::getParamterType(void)
 {
-    getRegisters(0x04, 23, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x04, 23);
 }
 String scan::parseParamterType(uint16_t code)
 {
@@ -797,8 +776,7 @@ String scan::parseParamterType(uint16_t code)
 // This gets the scaling factor for all parameters which depend on eParameterType
 int scan::getParameterScale(void)
 {
-    getRegisters(0x04, 24, 1);
-    return uint16FromFrame();
+    return uint16FromRegister(0x04, 24);
 }
 
 
@@ -858,8 +836,11 @@ void scan::printFrameHex(byte modbusFrame[], int frameLength)
 // and adds it to the last two bytes of a frame
 // From: https://ctlsys.com/support/how_to_compute_the_modbus_rtu_message_crc/
 // and: https://stackoverflow.com/questions/19347685/calculating-modbus-rtu-crc-16
-void scan::insertCRC(byte modbusFrame[], int frameLength)
+//
+void scan::calculateCRC(byte modbusFrame[], int frameLength)
 {
+    // Reset the CRC frame
+    crcFrame[2] = {0,};
     uint16_t crc = 0xFFFF;
     for (int pos = 0; pos < frameLength - 2; pos++)
     {
@@ -880,8 +861,17 @@ void scan::insertCRC(byte modbusFrame[], int frameLength)
     byte crcHigh = crc >> 8;
 
     // Append the bytes to the end of the frame
-    modbusFrame[frameLength - 2] = crcLow;
-    modbusFrame[frameLength - 1] = crcHigh;
+    crcFrame[0] = crcLow;
+    crcFrame[1] = crcHigh;
+}
+void scan::insertCRC(byte modbusFrame[], int frameLength)
+{
+    // Calculate the CRC
+    calculateCRC(modbusFrame, frameLength);
+
+    // Append the bytes to the end of the frame
+    modbusFrame[frameLength - 2] = crcFrame[0];
+    modbusFrame[frameLength - 1] = crcFrame[1];
 }
 
 // This sends a command to the sensor bus and listens for a response
@@ -917,6 +907,17 @@ int scan::sendCommand(byte command[], int commandLength)
         _debugStream->print(" bytes): ");
         printFrameHex(responseBuffer, bytesRead);
 
+        // Verify that the values match with the commands
+        if (responseBuffer[0] != _slaveID)
+            _debugStream->println("Response is not from the correct modbus slave!");
+
+        // Verify that the CRC is correct
+        calculateCRC(responseBuffer, bytesRead);
+        if (crcFrame[0] != responseBuffer[bytesRead-2] || crcFrame[1] != responseBuffer[bytesRead-1])
+            _debugStream->println("CRC of response is not correct!");
+
+        // I'm still going to return as if things are fine even if the CRC doesn't
+        // match or the slave id is wrong because of the flakiness of SoftwareSerial
         return bytesRead;
     }
     else return 0;
@@ -1154,8 +1155,69 @@ void scan::charFromFrame(char outChar[], int charLength, int start_index, byte i
 }
 
 
+// These functions return a variety of data from a data register
+uint16_t scan::bitmaskFromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 1);
+    return bitmaskFromFrame(endian);
+}
+uint16_t scan::uint16FromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 1);
+    return uint16FromFrame(endian);
+}
+int16_t scan::int16FromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 1);
+    return int16FromFrame(endian);
+}
+uint16_t scan::pointerFromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 1);
+    return pointerFromFrame(endian);
+}
+int8_t scan::pointerTypeFromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 1);
+    return pointerTypeFromFrame(endian);
+}
+float scan::float32FromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 2);
+    return float32FromFrame(endian);
+}
+uint32_t scan::uint32FromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 2);
+    return uint32FromFrame(endian);
+}
+int32_t scan::int32FromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, 2);
+    return int32FromFrame(endian);
+}
+uint32_t scan::tai64FromRegister(byte regType, int regNum)
+{
+    getRegisters(regType, regNum, 4);
+    return tai64FromFrame();
+}
+String scan::StringFromRegister(byte regType, int regNum, int charLength)
+{
+    getRegisters(regType, regNum, charLength/2);
+    return StringFromFrame(charLength);
+}
+void scan::charFromRegister(byte regType, int regNum, char outChar[], int charLength)
+{
+    getRegisters(regType, regNum, charLength/2);
+    charFromFrame(outChar, charLength);
+}
+
+
 // This sends three requests for a single register
 // If the spectro::lyzer is sleeping, it will not respond until the third one
+// Alternately, we could send " Weckzeichen" (German for "Ringtone") three
+// times before each command, which is what ana::lyte and ana::pro do.
+// " Weckzeichen" = 0x20, 0x57, 0x65, 0x63, 0x6b, 0x7a, 0x65, 0x69, 0x63, 0x68, 0x65, 0x6e
 bool scan::wakeSpec(void)
 {
     _debugStream->println("------>Checking if spectro::lyzer is awake.<------");
