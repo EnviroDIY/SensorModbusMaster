@@ -49,6 +49,19 @@ typedef enum cleaningMode
     automatic
 } cleaningMode;
 
+// The possible spectral sources
+typedef enum spectralSource
+{
+    fingerprint = 0,  // The absorption spectrum as it is measured (fingerprint)[Abs/m]
+    compensFP,  // The turbidity-compensated fingerprint [Abs/m]
+    derivFP,  // The first derivative of the measured fingerprint (i.e. gradient)[Abs/m]
+    diff2oldorgFP,  // The difference between the current fingerprint and the previous one in memory [Abs/m]
+    transmission,  // The percent transmission - NOT linear wrt concentrations [%/cm2]
+    derivcompFP,  // The first derivative of the turbidity-compensated fingerprint [Abs/m]
+    transmission10,  // The percent transmission per 10 cm2 [%/10cm2]
+    other  // I don't know what this is, but the modbus registers on the spec have 8 groups of fingerprints..
+} spectralSource;
+
 // The "endianness" of returned values
 typedef enum endianness
 {
@@ -137,7 +150,8 @@ public:
     void printSystemStatus(uint16_t bitmask, Stream *stream);
     void printSystemStatus(uint16_t bitmask, Stream &stream);
 
-
+    // This "wakes" the spectro::lyzer so it's ready to communicate"
+    bool wakeSpec(void);
 
 //----------------------------------------------------------------------------
 //           FUNCTIONS TO RETURN THE ACTUAL SAMPLE TIMES AND VALUES
@@ -147,16 +161,23 @@ public:
 long getSampleTime(void);
 
 // This gets values back from the sensor and puts them into a previously
-// initialized float variable.  The actual return from the function is the
-// int which is a bit-mask describing the parameter status.
-int getValue(int parmNumber, float &value);
+// initialized float variable.  The actual return from the function is an
+// integer which is a bit-mask describing the parameter status.
+int getParameterValue(int parmNumber, float &value);
 // This parses the parameter status bitmap and prints the resuts to the stream
 void printParameterStatus(uint16_t bitmask, Stream *stream);
 void printParameterStatus(uint16_t bitmask, Stream &stream);
 
 // This get up to 8 values back from the spectro::lyzer
-bool getAllValues(float &value1, float &value2, float &value3, float &value4,
+bool getAllParameterValues(float &value1, float &value2, float &value3, float &value4,
                   float &value5, float &value6, float &value7, float &value8);
+
+// This gets spectral values from the sensor and puts them into a previously
+// initialized float array.  The array must have space for 200 values!
+// The actual return from the function is an integer which is a bit-mask
+// describing the fingerprint status (or, well, it would be if I could figure
+//  out which register that value lived in).
+int getFingerprintData(float fpArray[], spectralSource source=fingerprint);
 
 
 
@@ -309,25 +330,10 @@ bool getAllValues(float &value1, float &value2, float &value3, float &value4,
 
 
 
-    // These functions return a variety of data from a data register
-    uint16_t bitmaskFromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    uint16_t uint16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    int16_t int16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    float float32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    uint32_t uint32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    int32_t int32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    uint32_t tai64FromRegister(byte regType, int regNum);
-    String StringFromRegister(byte regType, int regNum, int charLength);
-    void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
-
-
-
 //----------------------------------------------------------------------------
 //                            PRIVATE FUNCTIONS
 //----------------------------------------------------------------------------
-//These more-or-less devine a fairly complete modbus library on their own.
+//These more-or-less define a fairly complete modbus library on their own.
 
 private:
     // This flips the device/receive enable to DRIVER so the arduino can send text
@@ -406,9 +412,18 @@ private:
                        int start_index=3,
                        byte indata[]=responseBuffer);
 
-    // This sends three requests for a single register
-    // If the spectro::lyzer is sleeping, it will not respond until the third one
-    bool wakeSpec(void);
+    // These functions return a variety of data from a data register
+    uint16_t bitmaskFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint16_t uint16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int16_t int16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    float float32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint32_t uint32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int32_t int32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    uint32_t tai64FromRegister(byte regType, int regNum);
+    String StringFromRegister(byte regType, int regNum, int charLength);
+    void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
 
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485

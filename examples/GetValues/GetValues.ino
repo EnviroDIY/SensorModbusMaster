@@ -1,5 +1,5 @@
 /*****************************************************************************
-GetValues.ino
+getParameterValues.ino
 
 This prints basic meta-data about a sensor to the first serial port and then
 begins taking measurements from the sensor.
@@ -110,7 +110,7 @@ void loop()
     for (int i = 1; i < 9; i++)
     {
         Serial.println("----");
-        status = sensor.getValue(i, value1);
+        status = sensor.getParameterValue(i, value1);
         Serial.print("Value of parameter Number ");
         Serial.print(i);
         Serial.print(" is: ");
@@ -123,7 +123,7 @@ void loop()
     }
 
     // Get all the values together
-    sensor.getAllValues(value1, value2, value3, value4, value5, value6, value7, value8);
+    sensor.getAllParameterValues(value1, value2, value3, value4, value5, value6, value7, value8);
     Serial.println("Value1, value2, value3, value4, value5, value6, value7, value8");
     Serial.print(value1);
     Serial.print(", ");

@@ -266,6 +266,36 @@ void scan::printSystemStatus(uint16_t bitmask, Stream &stream)
 {printSystemStatus(bitmask, &stream);}
 
 
+// This sends three requests for a single register
+// If the spectro::lyzer is sleeping, it will not respond until the third one
+// Alternately, we could send " Weckzeichen" (German for "Ringtone") three
+// times before each command, which is what ana::lyte and ana::pro do.
+// " Weckzeichen" = 0x20, 0x57, 0x65, 0x63, 0x6b, 0x7a, 0x65, 0x69, 0x63, 0x68, 0x65, 0x6e
+bool scan::wakeSpec(void)
+{
+    _debugStream->println("------>Checking if spectro::lyzer is awake.<------");
+    byte get1Register[8] = {_slaveID, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00};
+                          // Address, Read,   Reg 0,    1 Register,   CRC
+                          //
+    uint8_t attempts = 0;
+    int respSize = 0;
+    while (attempts < 3 and respSize < 7)
+    {
+        respSize = respSize + sendCommand(get1Register, 8);
+        attempts ++;
+    }
+    if (respSize < 7)
+    {
+        _debugStream->println("------>No response from spectro::lyzer!<------");
+        return false;
+    }
+    else
+    {
+        _debugStream->println("------>Spectro::lyser is now awake.<------");
+        return true;
+    }
+}
+
 
 
 
@@ -284,7 +314,7 @@ long scan::getSampleTime(void)
 // This gets values back from the sensor and puts them into a previously
 // initialized float variable.  The actual return from the function is the
 // int which is a bit-mask describing the parameter status.
-int scan::getValue(int parmNumber, float &value)
+int scan::getParameterValue(int parmNumber, float &value)
 {
     int regNumber = 120 + 8*parmNumber;
     // Get the register data
@@ -334,7 +364,7 @@ void scan::printParameterStatus(uint16_t bitmask, Stream &stream)
 {printParameterStatus(bitmask, &stream);}
 
 // This get up to 8 values back from the spectro::lyzer
-bool scan::getAllValues(float &value1, float &value2, float &value3, float &value4,
+bool scan::getAllParameterValues(float &value1, float &value2, float &value3, float &value4,
                   float &value5, float &value6, float &value7, float &value8)
 {
     // Get the register data
@@ -1210,35 +1240,4 @@ void scan::charFromRegister(byte regType, int regNum, char outChar[], int charLe
 {
     getRegisters(regType, regNum, charLength/2);
     charFromFrame(outChar, charLength);
-}
-
-
-// This sends three requests for a single register
-// If the spectro::lyzer is sleeping, it will not respond until the third one
-// Alternately, we could send " Weckzeichen" (German for "Ringtone") three
-// times before each command, which is what ana::lyte and ana::pro do.
-// " Weckzeichen" = 0x20, 0x57, 0x65, 0x63, 0x6b, 0x7a, 0x65, 0x69, 0x63, 0x68, 0x65, 0x6e
-bool scan::wakeSpec(void)
-{
-    _debugStream->println("------>Checking if spectro::lyzer is awake.<------");
-    byte get1Register[8] = {_slaveID, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00};
-                          // Address, Read,   Reg 0,    1 Register,   CRC
-                          //
-    uint8_t attempts = 0;
-    int respSize = 0;
-    while (attempts < 3 and respSize < 7)
-    {
-        respSize = respSize + sendCommand(get1Register, 8);
-        attempts ++;
-    }
-    if (respSize < 7)
-    {
-        _debugStream->println("------>No response from spectro::lyzer!<------");
-        return false;
-    }
-    else
-    {
-        _debugStream->println("------>Spectro::lyser is now awake.<------");
-        return true;
-    }
 }
