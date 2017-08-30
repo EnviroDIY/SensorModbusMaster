@@ -158,6 +158,7 @@ public:
 //----------------------------------------------------------------------------
 
     // Last measurement time as a 32-bit count of seconds from Jan 1, 1970
+    // TODO:  Figure out if times are different for params and different spectral sources
     long getSampleTime(void);
 
     // This gets values back from the sensor and puts them into a previously
@@ -167,11 +168,7 @@ public:
     // This parses the parameter status bitmap and prints the resuts to the stream
     void printParameterStatus(uint16_t bitmask, Stream *stream);
     void printParameterStatus(uint16_t bitmask, Stream &stream);
-
-    // This get up to 8 values back from the spectro::lyzer
-    bool getAllParameterValues(float &value1, float &value2, float &value3, float &value4,
-                      float &value5, float &value6, float &value7, float &value8);
-    // This prints the parameter data as **TAB** separated data to a stream
+    // This prints the data from ALL parameters as **TAB** separated data to a stream
     // NB:  You can use this to print to a file on a SD card!
     void printParameterData(Stream *stream);
     void printParameterData(Stream &stream);
@@ -180,8 +177,12 @@ public:
     // initialized float array.  The array must have space for 200 values!
     // The actual return from the function is an integer which is a bit-mask
     // describing the fingerprint status (or, well, it would be if I could figure
-    //  out which register that value lived in).
+    // out which register that value lived in).
     int getFingerprintData(float fpArray[], spectralSource source=fingerprint);
+    // This parses the parameter status bitmap and prints the resuts to the stream
+    // That is, pending me figuring out the right register for that data...
+    void printFingerprintStatus(uint16_t bitmask, Stream *stream);
+    void printFingerprintStatus(uint16_t bitmask, Stream &stream);
     // This prints the fingerprint data as **TAB** separated data to a stream
     // NB:  You can use this to print to a file on a SD card!
     void printFingerprintData(Stream *stream, spectralSource source=fingerprint);
