@@ -13,9 +13,12 @@
 //----------------------------------------------------------------------------
 
 // This needs to be bigger than the largest response
-// For 8 parameters with 8 registers each:
-// 64 registers * 2 bytes per register + 5 frame
-#define MAX_RESPONSE_SIZE 136
+// Pet the Specification and Implementation Guide for MODBUS over serial line,
+// this value is 256 bytes.  (This translates into a maximum of 125 registers
+// to be read via Modbus/RTU and 123 by Modbus/TCP.)
+// If you know you will never make any modbus calls longer than this, decrease
+// this number to save memory space.
+#define MAX_RESPONSE_SIZE 256
 
 // The communcations modes
 typedef enum specCommMode
@@ -53,13 +56,13 @@ typedef enum cleaningMode
 typedef enum spectralSource
 {
     fingerprint = 0,  // The absorption spectrum as it is measured (fingerprint)[Abs/m]
-    compensFP,  // The turbidity-compensated fingerprint [Abs/m]
-    derivFP,  // The first derivative of the measured fingerprint (i.e. gradient)[Abs/m]
-    diff2oldorgFP,  // The difference between the current fingerprint and the previous one in memory [Abs/m]
-    transmission,  // The percent transmission - NOT linear wrt concentrations [%/cm2]
-    derivcompFP,  // The first derivative of the turbidity-compensated fingerprint [Abs/m]
-    transmission10,  // The percent transmission per 10 cm2 [%/10cm2]
-    other  // I don't know what this is, but the modbus registers on the spec have 8 groups of fingerprints..
+    compensFP = 1,  // The turbidity-compensated fingerprint [Abs/m]
+    derivFP = 2,  // The first derivative of the measured fingerprint (i.e. gradient)[Abs/m]
+    diff2oldorgFP = 3,  // The difference between the current fingerprint and the previous one in memory [Abs/m]
+    transmission = 4,  // The percent transmission - NOT linear wrt concentrations [%/cm2]
+    derivcompFP = 5,  // The first derivative of the turbidity-compensated fingerprint [Abs/m]
+    transmission10 = 6,  // The percent transmission per 10 cm2 [%/10cm2]
+    other = 7  // I don't know what this is, but the modbus registers on the spec have 8 groups of fingerprints..
 } spectralSource;
 
 // The "endianness" of returned values
@@ -71,13 +74,12 @@ typedef enum endianness
 
 
 // Define a little-endian frame as a union - that is a special class type that
-// can hold only one of its non-static data members at a time, in this case,
-// either 4-bytes OR a single float OR a 32 bit interger
+// can hold only one of its non-static data members at a time.
 // With avr-gcc (Arduino's compiler), integer and floating point variables are
 // all physically stored in memory in little-endian byte order, so this union
-// is all that is needed to get the correct float value from a little-endian
-// modbus..  S::CAN's version of modbus returns all values in big-endian
-// form, so you must reverse the byte order to make this work.
+// is all that is needed to translate modbus byte data into the other data forms.
+// NB: The byte order of big-endian data must be reversed when it is put in this
+// frame format.
 typedef union leFrame {
     byte Byte[4];        // occupies 4 bytes
     float Float;         // occupies 4 bytes
@@ -145,8 +147,10 @@ public:
     void printDeviceStatus(uint16_t bitmask, Stream *stream);
     void printDeviceStatus(uint16_t bitmask, Stream &stream);
 
+    // This returns the current system status as a bitmap
+    // It would be nice if I knew what register this data was in...
+    int getSystemStatus(void){return 0;}
     // Prints out the current system status
-    // It would be nice if there were a way to actually get it...
     void printSystemStatus(uint16_t bitmask, Stream *stream);
     void printSystemStatus(uint16_t bitmask, Stream &stream);
 
@@ -158,8 +162,10 @@ public:
 //----------------------------------------------------------------------------
 
     // Last measurement time as a 32-bit count of seconds from Jan 1, 1970
-    // TODO:  Figure out if times are different for params and different spectral sources
-    long getSampleTime(void);
+    uint32_t getSampleTime(void);
+    // This prints out the sample time, formatted as YYYY.MM.DD hh:mm:ss
+    void printSampleTime(Stream *stream, bool addNL=true);
+    void printSampleTime(Stream &stream, bool addNL=true);
 
     // This gets values back from the sensor and puts them into a previously
     // initialized float variable.  The actual return from the function is an
@@ -168,10 +174,12 @@ public:
     // This parses the parameter status bitmap and prints the resuts to the stream
     void printParameterStatus(uint16_t bitmask, Stream *stream);
     void printParameterStatus(uint16_t bitmask, Stream &stream);
-    // This prints the data from ALL parameters as **TAB** separated data to a stream
+    // This prints the data from ALL parameters as delimeter separated data.
+    // By default, the delimeter is a TAB (\t, 0x09), as expected by the s::can/ana::xxx software.
+    // This includes the parameter timestamp and status.
     // NB:  You can use this to print to a file on a SD card!
-    void printParameterData(Stream *stream);
-    void printParameterData(Stream &stream);
+    void printParameterData(Stream *stream, const char *dlm="    ");
+    void printParameterData(Stream &stream, const char *dlm="    ");
 
     // This gets spectral values from the sensor and puts them into a previously
     // initialized float array.  The array must have space for 200 values!
@@ -183,19 +191,28 @@ public:
     // That is, pending me figuring out the right register for that data...
     void printFingerprintStatus(uint16_t bitmask, Stream *stream);
     void printFingerprintStatus(uint16_t bitmask, Stream &stream);
-    // This prints the fingerprint data as **TAB** separated data to a stream
+    // This prints the fingerprint data as delimeter separated data.
+    // By default, the delimeter is a TAB (\t, 0x09), as expected by the s::can/ana::xxx software.
+    // This includes the fingerprint timestamp and status
     // NB:  You can use this to print to a file on a SD card!
-    void printFingerprintData(Stream *stream, spectralSource source=fingerprint);
-    void printFingerprintData(Stream &stream, spectralSource source=fingerprint);
+    void printFingerprintData(Stream *stream, const char *dlm="    ",
+                              spectralSource source=fingerprint);
+    void printFingerprintData(Stream &stream, const char *dlm="    ",
+                              spectralSource source=fingerprint);
 
+    // This is for the first line of both headers (below)
+    void printHeader(Stream *stream);
+    void printHeader(Stream &stream);
     // This prints out a header for a "par" file ini the format that the
     // s::can/ana::xxx software is expecting
-    void printParameterHeader(Stream *stream);
-    void printParameterHeader(Stream &stream);
+    // The delimeter is changable, but if you use anything other than the
+    // default TAB (\t, 0x09) the s::can/ana::xxx software will not read it.
+    void printParameterHeader(Stream *stream, const char *dlm="    ");
+    void printParameterHeader(Stream &stream, const char *dlm="    ");
     // This prints out a header for a "fp" file ini the format that the
     // s::can/ana::xxx software is expecting
-    void printFingerprintHeader(Stream *stream);
-    void printFingerprintHeader(Stream &stream);
+    void printFingerprintHeader(Stream *stream, const char *dlm="    ", spectralSource source=fingerprint);
+    void printFingerprintHeader(Stream &stream, const char *dlm="    ", spectralSource source=fingerprint);
 
 
 
@@ -225,18 +242,25 @@ public:
 
     // Functions for the pointer to the private configuration register
     int getprivateConfigRegister(void);
+    int getprivateConfigRegisterType(void);
     String parseRegisterType(uint16_t code);
+
+    // This reads the global calibration name from the private registers
+    // NB This is NOT documented
+    String getGlobalCal(void);
 
     // Functions for the "s::canpoint" of the device
     String getScanPoint(void);
     bool setScanPoint(char charScanPoint[12]);
 
     // Functions for the cleaning mode configuration
+    // My spec is not responding to the set command at this time
     int getCleaningMode(void);
     bool setCleaningMode(cleaningMode mode);
     String parseCleaningMode(uint16_t code);
 
     // Functions for the cleaning interval (ie, number of samples between cleanings)
+    // My spec is not responding to the set command at this time
     int getCleaningInterval(void);
     bool setCleaningInterval(uint16_t intervalSamples);
 
@@ -250,8 +274,8 @@ public:
     bool setCleaningWait(uint16_t secDuration);
 
     // Functions for the current system time in seconds from Jan 1, 1970
-    long getSystemTime(void);
-    bool setSystemTime(long currentUnixTime);
+    uint32_t getSystemTime(void);
+    bool setSystemTime(uint32_t currentUnixTime);
 
     // Functions for the measurement interval in seconds
     // (0 - as fast as possible)
@@ -265,6 +289,7 @@ public:
 
     // Functions for the ogging interval for data logger in minutes
     // (0 = no logging active)
+    // My spec is not responding to the set command at this time
     int getLoggingInterval(void);
     bool setLoggingInterval(uint16_t interval);
 
@@ -310,6 +335,9 @@ public:
     // Get the version of the modbus mapping protocol
     float getModbusVersion(void);
 
+    // This returns a byte with the model type
+    uint16_t getModelType(void);
+
     // This returns a pretty string with the model information
     String getModel(void);
 
@@ -331,11 +359,15 @@ public:
 
     // This gets the datatype of the parameters and parameter limits
     // This is a check for compatibility
-    int getParamterType(void);
-    String parseParamterType(uint16_t code);
+    int getParameterType(void);
+    String parseParameterType(uint16_t code);
 
     // This gets the scaling factor for all parameters which depend on eParameterType
     int getParameterScale(void);
+
+    // This returns the spectral path length in mm
+    // NB This is not documented - I'm guessing based on register VALUES
+    float getPathLength(void);
 
 
 
@@ -345,6 +377,11 @@ public:
 
     // This sets a stream for debugging information to go to;
     void setDebugStream(Stream *stream){_debugStream = stream;}
+
+    // This sets a stream for debugging information to go to;
+    void stopDebugging(void){_debugStream = &nullstream;}
+
+
 
 
 

@@ -1,0 +1,28 @@
+{
+    "name": "scanModbus",
+    "version": "0.0.1",
+    "keywords": "s::can, spectro::lyzer, spectrolyzer, spec, modbus",
+    "description": "Arduino library for communicating with S::CAN instruments, either directly with a spectro::lyzer or to any instrument via ana::gate.",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/StroudCenter/S-CAN-Modbus.git"
+    },
+    "authors":
+    [
+        {
+            "name": "Sara Damiano",
+            "email": "sdamiano@stroudcenter.org",
+            "maintainer": true
+        }
+    ],
+    "license": "BSD-3-Clause",
+    "frameworks": "arduino",
+    "platforms": "atmelavr, atmelsam",
+    "dependencies":
+    [
+        {
+            "name": "Time"
+        }
+    ]
+}

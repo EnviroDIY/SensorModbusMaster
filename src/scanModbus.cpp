@@ -3,6 +3,7 @@
 */
 
 #include "scanModbus.h"
+#include <TimeLib.h>  // for dealing with the unix time
 
 // initialize the response buffer
 byte scan::responseBuffer[MAX_RESPONSE_SIZE] = {0x00,};
@@ -98,7 +99,7 @@ bool scan::printSetup(Stream *stream)
         stream->println(" seconds");
 
         stream->print("Current System Time is: ");
-        stream->print((unsigned long)(tai64FromFrame(35)));
+        stream->print((uint32_t)(tai64FromFrame(35)));
         stream->println(" seconds past Jan 1, 1970");
 
         stream->print("Measurement interval is: ");
@@ -123,23 +124,6 @@ bool scan::printSetup(Stream *stream)
     }
     else return false;
 
-    // Get the parameter info
-    for (int i = 1; i <9; i++)
-    {
-        stream->println("------------------------------------------");
-        stream->print("Parameter Number ");
-        stream->print(i);
-        stream->print(" is ");
-        stream->print(getParameter(i));
-        stream->print(" and has units of ");
-        stream->print(getUnits(i));
-        stream->print(". The lower limit is ");
-        stream->print(getLowerLimit(i));
-        stream->print(" and the upper limit is ");
-        stream->print(getUpperLimit(i));
-        stream->println(".");
-    }
-
     // Get some of the register input that it's a pain to pull up separtely
     stream->println("------------------------------------------");
 
@@ -151,6 +135,7 @@ bool scan::printSetup(Stream *stream)
     stream->println(getSWVersion());
 
     // Get rest of the input registers
+    int parmCount;
     if (getRegisters(0x04, 0, 25))
     {
         // Setup information from input registers
@@ -166,19 +151,37 @@ bool scan::printSetup(Stream *stream)
         stream->println(" times");
 
         stream->print("There are ");
-        stream->print(int16FromFrame(bigEndian, 47));
+        parmCount = int16FromFrame(bigEndian, 47);
+        stream->print(parmCount);
         stream->println(" parameters being measured");
 
         stream->print("The data type of the parameters is: ");
         stream->print(uint16FromFrame(bigEndian, 49));
         stream->print(" (");
-        stream->print(parseParamterType(uint16FromFrame(bigEndian, 49)));
+        stream->print(parseParameterType(uint16FromFrame(bigEndian, 49)));
         stream->println(")");
 
         stream->print("The parameter scale factor is: ");
         stream->println(uint16FromFrame(bigEndian, 51));
     }
     else return false;
+
+    // Get the parameter info
+    for (int i = 1; i < parmCount+1; i++)
+    {
+        stream->println("------------------------------------------");
+        stream->print("Parameter Number ");
+        stream->print(i);
+        stream->print(" is ");
+        stream->print(getParameter(i));
+        stream->print(" and has units of ");
+        stream->print(getUnits(i));
+        stream->print(". The lower limit is ");
+        stream->print(getLowerLimit(i));
+        stream->print(" and the upper limit is ");
+        stream->print(getUpperLimit(i));
+        stream->println(".");
+    }
 
     // if all passed, return true
     stream->println("------------------------------------------");
@@ -305,11 +308,56 @@ bool scan::wakeSpec(void)
 
 // Last measurement time as a 32-bit count of seconds from Jan 1, 1970
 // System time is in input registers 104-109
-// (64-bit timestamp in TAI64 format + padding)
-long scan::getSampleTime(void)
+// (96-bit timestamp in TAI64N format - in this case, ignoring the nanoseconds)
+uint32_t scan::getSampleTime(void)
 {
     return tai64FromRegister(0x04, 104);
 }
+// This prints out the sample time, formatted as YYYY.MM.DD hh:mm:ss
+void scan::printSampleTime(Stream *stream, bool addNL)
+{
+    // Get the sample timestamp
+    uint32_t ts = getSampleTime();
+    // Print it out in the right format
+    stream->print(year(ts));
+    stream->print(".");
+    stream->print(month(ts));
+    stream->print(".");
+    stream->print(day(ts));
+    if (hour(ts) < 10)
+    {
+        stream->print(" 0");
+        stream->print(hour(ts));
+    }
+    else
+    {
+        stream->print(" ");
+        stream->print(hour(ts));
+    }
+    if (minute(ts) < 10)
+    {
+        stream->print(":0");
+        stream->print(minute(ts));
+    }
+    else
+    {
+        stream->print(":");
+        stream->print(minute(ts));
+    }
+    if (second(ts) < 10)
+    {
+        stream->print(":0");
+        stream->print(second(ts));
+    }
+    else
+    {
+        stream->print(":");
+        stream->print(second(ts));
+    }
+    if (addNL) stream->println();
+}
+void scan::printSampleTime(Stream &stream, bool addNL)
+{printSampleTime(&stream, addNL);}
 
 // This gets values back from the sensor and puts them into a previously
 // initialized float variable.  The actual return from the function is the
@@ -331,10 +379,10 @@ void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
         stream->println("Parameter reading out of measuring range");
     // b14
     if ((bitmask & 16384) == 16384)
-        stream->println("Status of alarm paramter is 'WARNING'");
+        stream->println("Status of alarm Parameter is 'WARNING'");
     // b13
     if ((bitmask & 8192) == 8192)
-        stream->println("Status of alarm paramter is 'ALARM'");
+        stream->println("Status of alarm Parameter is 'ALARM'");
     // b11
     if ((bitmask & 2048) == 2048)
         stream->println("Maintenance necessary");
@@ -362,26 +410,179 @@ void scan::printParameterStatus(uint16_t bitmask, Stream *stream)
 }
 void scan::printParameterStatus(uint16_t bitmask, Stream &stream)
 {printParameterStatus(bitmask, &stream);}
-
-// This get up to 8 values back from the spectro::lyzer
-bool scan::getAllParameterValues(float &value1, float &value2, float &value3, float &value4,
-                  float &value5, float &value6, float &value7, float &value8)
+// This prints the data from ALL parameters as delimeter separated data.
+// By default, the delimeter is a TAB (\t, 0x09), as expected by the s::can/ana::xxx software.
+// This includes the parameter timestamp and status.
+// NB:  You can use this to print to a file on a SD card!
+void scan::printParameterData(Stream *stream, const char *dlm)
 {
-    // Get the register data
-    if (getRegisters(0x04, 128, 64))
+    // Print out the timestamp
+    printSampleTime(stream, false);
+    stream->print(dlm);
+    // Get and print the system status
+    int sysStat = getSystemStatus();
+    if (sysStat == 0) {stream->print("Ok"); stream->print(dlm);}
+    else {stream->print("Error"); stream->print(dlm);}
+    // Get the number of parameters that are being recorded
+    int nparms = getParameterCount();
+    for (int i = 0; i < nparms; i++)
     {
-        value1 = float32FromFrame(bigEndian, 7);
-        value2 = float32FromFrame(bigEndian, 23);
-        value3 = float32FromFrame(bigEndian, 39);
-        value4 = float32FromFrame(bigEndian, 55);
-        value5 = float32FromFrame(bigEndian, 71);
-        value6 = float32FromFrame(bigEndian, 87);
-        value7 = float32FromFrame(bigEndian, 103);
-        value8 = float32FromFrame(bigEndian, 119);
-        return true;
+        float value;
+        getParameterValue(i+1, value);
+        stream->print(value, 3);
+        stream->print(dlm);
+        stream->print(sysStat);
+        if (i < nparms-1) stream->print(dlm);
     }
-    else return false;
+    stream->println();
 }
+void scan::printParameterData(Stream &stream, const char *dlm)
+{printParameterData(&stream, dlm);}
+
+
+// This gets spectral values from the sensor and puts them into a previously
+// initialized float array.  The array must have space for 200 values!
+// The actual return from the function is an integer which is a bit-mask
+// describing the fingerprint status (or, well, it would be if I could figure
+// out which register that value lived in).
+int scan::getFingerprintData(float fpArray[], spectralSource source)
+{
+    int startingReg = 522 + 512*source;
+
+    // Get the register data in 4 batches
+    // This could be done using 221 modbus calls each returning 2 registers,
+    // but I think it would be better to reduce the serial traffic and make
+    // only 4 modbus calls each returning the maximum number of registers.
+
+    // Registers 522-645 (+512*source)
+    getRegisters(0x04, startingReg, 124);
+    for (int i = 0; i < 62; i++)
+    {
+        fpArray[i] = float32FromFrame(bigEndian, (i*2 + 3));
+    }
+    // Registers 646-769 (+512*source)
+    getRegisters(0x04, startingReg+124, 124);
+    for (int i = 0; i < 62; i++)
+    {
+        fpArray[i+62] = float32FromFrame(bigEndian, (i*2 + 3));
+    }
+    // Registers 770-893 (+512*source)
+    getRegisters(0x04, startingReg+248, 124);
+    for (int i = 0; i < 62; i++)
+    {
+        fpArray[i+124] = float32FromFrame(bigEndian, (i*2 + 3));
+    }
+    // Registers 894-963 (+512*source)
+    getRegisters(0x04, startingReg+248, 70);
+    for (int i = 0; i < 35; i++)
+    {
+        fpArray[i+186] = float32FromFrame(bigEndian, (i*2 + 3));
+    }
+
+    // A total and complete WAG as to the location of the status (521)
+    // My other guess is that the status is in 508 (startingReg-14)
+    return bitmaskFromRegister(0x04, startingReg-1, bigEndian);
+}
+// This parses the parameter status bitmap and prints the resuts to the stream
+// That is, pending me figuring out the right register for that data...
+void scan::printFingerprintStatus(uint16_t bitmask, Stream *stream)
+{printParameterStatus(bitmask, stream);}
+void scan::printFingerprintStatus(uint16_t bitmask, Stream &stream)
+{printParameterStatus(bitmask, &stream);}
+// This prints the fingerprint data as delimeter separated data.
+// By default, the delimeter is a TAB (\t, 0x09), as expected by the s::can/ana::xxx software.
+// This includes the fingerprint timestamp and status
+// NB:  You can use this to print to a file on a SD card!
+void scan::printFingerprintData(Stream *stream, const char *dlm, spectralSource source)
+{
+    // Print out the timestamp
+    printSampleTime(stream, false);
+    stream->print(dlm);
+    // Get and print the system status
+    if (getSystemStatus() == 0) {stream->print("Ok"); stream->print(dlm);}
+    else {stream->print("Error"); stream->print(dlm);}
+    // Get the fingerprint values
+    float fp[221] = {0,};
+    for (int i = 0; i < 221; i++)
+    {
+        stream->print(fp[i], 4);
+        if (i < 220) stream->print(dlm);
+    }
+}
+void scan::printFingerprintData(Stream &stream, const char *dlm, spectralSource source)
+{printFingerprintData(&stream, dlm, source);}
+
+
+// This prints out a header for a "par" file in the format that the
+// s::can/ana::xxx software is expecting
+// The delimeter is changable, but if you use anything other than the
+// default TAB (\t, 0x09) the s::can/ana::xxx software will not read it.
+void scan::printHeader(Stream *stream)
+{
+    stream->print(getSerialNumber());
+    stream->print("_");
+    stream->print(getPathLength()*10, 0);
+    stream->print("_0x0");
+    stream->print(getModelType(), HEX);
+    stream->print("_");
+    stream->print(getModel());
+    stream->print("_");
+    stream->print(getGlobalCal());
+    stream->println("	This file contains data of the current measurement.");
+
+}
+void scan::printHeader(Stream &stream){printHeader(&stream);}
+void scan::printParameterHeader(Stream *stream, const char *dlm)
+{
+    printHeader(stream);
+    stream->print("Date/Time");
+    stream->print(dlm);
+    stream->print("Status");
+    stream->print(dlm);
+    int nparms = getParameterCount();
+    for (int i = 0; i < nparms; i++)
+    {
+        stream->print(getParameter(i+1));
+        stream->print("[");
+        stream->print(getUnits(i+1));
+        stream->print("]");
+        stream->print(getLowerLimit(i+1));
+        stream->print("-");
+        stream->print(getUpperLimit(i+1));
+        stream->print("_1");  // This is nominally supposed to be the precision
+        // of the measurement, but I don't know how to get that so I'm saying
+        // "1", which seems to be the value in many of my files
+        stream->print(dlm);
+        stream->print(getParameter(i+1));
+        stream->print("_0.0_1.0_0.0_0.0");  // These should be the calibration
+        // slope and offset for a local cal, but I have no idea how to get those
+        // values, so I'm just setting to the global cal.
+        if (i < nparms-1) stream->print(dlm);
+    }
+    stream->println();
+}
+void scan::printParameterHeader(Stream &stream, const char *dlm)
+{printParameterHeader(&stream, dlm);}
+
+// This prints out a header for a "fp" file in the format that the
+// s::can/ana::xxx software is expecting
+void scan::printFingerprintHeader(Stream *stream, const char *dlm, spectralSource source)
+{
+    printHeader(stream);
+    stream->print("Date/Time");
+    stream->print(dlm);
+    stream->print("Status");
+    stream->print("_");
+    stream->print(source);
+    for (float i = 200.00; i <= 750.00; i+=2.5)
+    {
+        stream->print(dlm);
+        stream->print(i, 2);
+    }
+}
+void scan::printFingerprintHeader(Stream &stream, const char *dlm, spectralSource source)
+{printFingerprintHeader(&stream, dlm, source);}
+
 
 
 
@@ -473,6 +674,10 @@ int scan::getprivateConfigRegister(void)
 {
     return pointerFromRegister(0x03, 5);
 }
+int scan::getprivateConfigRegisterType(void)
+{
+    return pointerTypeFromRegister(0x03, 5);
+}
 String scan::parseRegisterType(uint16_t code)
 {
     switch (code)
@@ -483,6 +688,33 @@ String scan::parseRegisterType(uint16_t code)
         case 3: return "Coil";  // 0b10) - read by command 0x01, written by 0x05
         default: return "Unknown";
     }
+}
+
+// This reads the global calibration name from the private registers
+// NB This is NOT documented
+String scan::getGlobalCal(void)
+{
+    int regNum = getprivateConfigRegister();
+    byte regType;
+    switch (getprivateConfigRegisterType())
+    {
+        case 0: regType = 0x03; break;
+        case 1: regType = 0x04; break;
+        case 2: regType = 0x02; break;
+        case 3: regType = 0x05; break;
+        default: regType = 0x00; break;
+    }
+    // Because the address of the private config could be shifted, we have to
+    // search for the actual start of the global calibration name
+    int testVal;
+    int actualReg;
+    for (int i = 0; i < 256; i++)
+    {
+        actualReg = regNum + i;
+        testVal = uint16FromRegister(regType, actualReg);
+        if (testVal != 0) break;
+    }
+    return StringFromRegister(regType, actualReg, 12);
 }
 
 
@@ -580,12 +812,12 @@ bool scan::setCleaningWait(uint16_t secDuration)
 
 // Functions for the current system time in seconds from Jan 1, 1970
 // System time is in holding registers 16-21
-// (64-bit timestamp in TAI64 format + padding)
-long scan::getSystemTime(void)
+// (64-bit timestamp in  in TAI64N format - in this case, ignoring the nanoseconds)
+uint32_t scan::getSystemTime(void)
 {
     return tai64FromRegister(0x03, 16);
 }
-bool scan::setSystemTime(long currentUnixTime)
+bool scan::setSystemTime(uint32_t currentUnixTime)
 {
     // Using a little-endian frame to get into bytes and then reverse the order
     leFrame fram;
@@ -735,6 +967,12 @@ float scan::getModbusVersion(void)
     return version;
 }
 
+// This returns a byte with the model type
+uint16_t scan::getModelType(void)
+{
+    return uint16FromRegister(0x04, 2);
+}
+
 // This returns a pretty string with the model information
 String scan::getModel(void)
 {
@@ -786,11 +1024,11 @@ int scan::getParameterCount(void)
 
 // This gets the datatype of the parameters and parameter limits
 // This is a check for compatibility
-int scan::getParamterType(void)
+int scan::getParameterType(void)
 {
     return uint16FromRegister(0x04, 23);
 }
-String scan::parseParamterType(uint16_t code)
+String scan::parseParameterType(uint16_t code)
 {
     switch (code)
     {
@@ -807,6 +1045,15 @@ String scan::parseParamterType(uint16_t code)
 int scan::getParameterScale(void)
 {
     return uint16FromRegister(0x04, 24);
+}
+
+// This returns the spectral path length in mm
+// NB This is not documented - I'm guessing based on register VALUES
+float scan::getPathLength(void)
+{
+    int path = uint16FromRegister(0x04, 520);
+    float pathmm = path/10;  // Convert to mm
+    return pathmm;
 }
 
 
@@ -915,7 +1162,7 @@ int scan::sendCommand(byte command[], int commandLength)
     _stream->write(command, commandLength);
     _stream->flush();
     // Print the raw send (for debugging)
-    _debugStream->print("Raw Request: ");
+    _debugStream->print("Raw Request >>> ");
     printFrameHex(command, commandLength);
 
     // Listen for a response
@@ -934,20 +1181,43 @@ int scan::sendCommand(byte command[], int commandLength)
         // Print the raw response (for debugging)
         _debugStream->print("Raw Response (");
         _debugStream->print(bytesRead);
-        _debugStream->print(" bytes): ");
+        _debugStream->print(" bytes) <<< ");
         printFrameHex(responseBuffer, bytesRead);
 
         // Verify that the values match with the commands
         if (responseBuffer[0] != _slaveID)
+        {
             _debugStream->println("Response is not from the correct modbus slave!");
+            return 0;
+        }
 
         // Verify that the CRC is correct
         calculateCRC(responseBuffer, bytesRead);
         if (crcFrame[0] != responseBuffer[bytesRead-2] || crcFrame[1] != responseBuffer[bytesRead-1])
+        {
             _debugStream->println("CRC of response is not correct!");
+            return 0;
+        }
 
-        // I'm still going to return as if things are fine even if the CRC doesn't
-        // match or the slave id is wrong because of the flakiness of SoftwareSerial
+        // Check for exception response
+        // An execption response sets the highest bit of the function code in the response.
+        if ((responseBuffer[1] & 0b10000000) ==  0b10000000)
+        {
+            _debugStream->print("Exception:  ");
+            if (responseBuffer[2] == 0x01)_debugStream->println("Illegal Function!");
+            if (responseBuffer[2] == 0x02)_debugStream->println("Illegal Data Address!");
+            if (responseBuffer[2] == 0x03)_debugStream->println("Illegal Data Value!");
+            if (responseBuffer[2] == 0x04)_debugStream->println("Slave Device Failure!");
+            if (responseBuffer[2] == 0x05)_debugStream->println("Acknowledge...");
+            if (responseBuffer[2] == 0x06)_debugStream->println("Slave Device Busy!");
+            if (responseBuffer[2] == 0x07)_debugStream->println("Negative Acknowledge!");
+            if (responseBuffer[2] == 0x08)_debugStream->println("Memory Parity Error!");
+            if (responseBuffer[2] == 0x0A)_debugStream->println("Gateway Path Unavailable!");
+            if (responseBuffer[2] == 0x0B)_debugStream->println("Gateway Target Device Failed to Respond!");
+            return 0;
+        }
+
+        // If everything passes, return the number of bytes
         return bytesRead;
     }
     else return 0;
@@ -976,12 +1246,22 @@ bool scan::getRegisters(byte readCommand, int16_t startRegister, int16_t numRegi
     command[4] = fram.Byte[3];
     command[5] = fram.Byte[2];
 
-    // Send out the command (this adds the CRC)
-    int16_t respSize = sendCommand(command, 8);
-
     // The size of the returned frame should be:
     // # Registers X 2 bytes/register + 5 bytes of modbus frame
-    if (respSize == (numRegisters*2 + 5) && responseBuffer[0] == _slaveID)
+
+    // Try up to 10 times to get the right results
+    int tries = 0;
+    int16_t respSize = 0;
+    while ((respSize != (numRegisters*2 + 5) && tries < 10))
+    {
+        // Send out the command (this adds the CRC)
+        respSize = sendCommand(command, 8);
+        tries++;
+
+        delay(25);
+    }
+
+    if (respSize == (numRegisters*2 + 5))
         return true;
     else return false;
 };
@@ -1027,15 +1307,29 @@ bool scan::setRegisters(int16_t startRegister, int16_t numRegisters, byte value[
         for (int i = 4; i < numRegisters*2 + 4; i++) command[i] = value[i-4];
     }
 
-    // Send out the command (this adds the CRC)
-    // printFrameHex(command,commandLength);
-    int16_t respSize = sendCommand(command, commandLength);
+    // Try up to 10 times to get the right results
+    int tries = 0;
+    int16_t respSize = 0;
+    bool success = false;
+    while ((!success && tries < 10))
+    {
+        // Send out the command (this adds the CRC)
+        respSize = sendCommand(command, commandLength);
+        // The structure of the response for 0x10 should be:
+        // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
+        if (numRegisters > 1 && respSize == 8 && int16FromFrame(bigEndian, 4) == numRegisters)
+            success = true;
+        // The structure of the response for 0x06 should be:
+        // {slaveID, fxnCode, Address of 1st register, Value written, CRC}
+        if (numRegisters == 1 && respSize == 8 && responseBuffer[4] == value[0]
+            && responseBuffer[5] == value[1])
+            success = true;
+        tries++;
 
-    // The structure of the response should be:
-    // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
-    if (respSize == 8 && responseBuffer[0] == _slaveID && responseBuffer[5] == numRegisters)
-        return true;
-    else return false;
+        delay(25);
+    }
+
+    return success;
 };
 
 
@@ -1109,12 +1403,12 @@ uint16_t scan::pointerFromFrame(endianness endian, int start_index, byte indata[
     leFrame fram;
     if (endian == bigEndian)
     {
-        fram.Byte[0] = indata[start_index + 1]<<2;  // Shift the lower address bit UP two
+        fram.Byte[0] = indata[start_index + 1]>>2;  // Shift the lower address bit DOWN two
         fram.Byte[1] = indata[start_index];
     }
     else
     {
-        fram.Byte[0] = indata[start_index]<<2;  // Shift the lower address bit UP two
+        fram.Byte[0] = indata[start_index]>>2;  // Shift the lower address bit DOWN two
         fram.Byte[1] = indata[start_index + 1];
     }
     return fram.Int16[0];
@@ -1149,12 +1443,14 @@ int32_t scan::int32FromFrame(endianness endian, int start_index, byte indata[])
 
 uint32_t scan::tai64FromFrame(int start_index, byte indata[])
 {
-    // This is a 6-register data type BUT:
-    // The first two registers will be 0x4000 0000 until the year 2106;
-    // I'm ignoring it for the next 90 years to avoid using 64bit math
-    // The next two registers will have the actual seconds past Jan 1, 1970
-    // The last two registers are just 0's and can be ignored.
-    // Per the TAI61 standard, this value is always big-endian
+    // This is a 64 bit (4 register) data type BUT:
+    // The first 32 bits (two registers) will be 0x4000 0000 until the year 2106;
+    // I'm ignoring it for the next 90 years to avoid using 64 bit math
+    // The next 32 bits (two registers) have the actual seconds past Jan 1, 1970
+    // In the case of TAI64N data there will be an additional 32 bits (two
+    // registers) of data representing the nanosecond portion of the time.  This
+    // data type does *not* deal with that.
+    // Per the TAI64 standard, this value is always big-endian
     // https://www.tai64.com/
     int varLength = 4;
     return leFrameFromRegister(varLength, bigEndian, start_index+4, indata).uInt32;

@@ -47,14 +47,16 @@ void setup()
     if (DEREPin > 0) pinMode(DEREPin, OUTPUT);
 
     Serial.begin(57600);  // Main serial port for debugging via USB Serial Monitor
-    modbusSerial.begin(38400);  // The modbus serial stream
+    Serial1.begin(38400, SERIAL_8N2);
+    // modbusSerial.begin(38400);  // The modbus serial stream
     // The default baud rate for the spectro::lyzer is 38400
 
     // Start up the sensor
-    sensor.begin(modbusAddress, &modbusSerial, DEREPin);
+    // sensor.begin(modbusAddress, &modbusSerial, DEREPin);
+    sensor.begin(modbusAddress, Serial1, DEREPin);
 
     // Turn on debugging
-    sensor.setDebugStream(&Serial);
+    // sensor.setDebugStream(&Serial);
 
     // Start up note
     Serial.println("S::CAN Spect::lyzer Test");
@@ -64,6 +66,7 @@ void setup()
     delay(500);
 
     // Print out all of the setup information
+    sensor.setLoggingMode(1);
     sensor.printSetup(Serial);
 
     // Print out the device status
@@ -76,15 +79,54 @@ void setup()
     Serial.println("=======================");
 
     // Set up and turn on logging
-    sensor.setCleaningMode(automatic);
-    sensor.setCleaningInterval(5);
-    sensor.setCleaningDuration(5);
-    sensor.setCleaningWait(20);
-    sensor.setLoggingInterval(150);
-    sensor.setLoggingMode(0);
-    Serial.println("=======================");
-    Serial.println("=======================");
+    // sensor.setDebugStream(&Serial);
 
+    Serial.println("Turn on Logging");
+    sensor.setLoggingMode(0);
+    Serial.print("Current logging mode is: ");
+    Serial.println(sensor.getLoggingMode());
+
+    Serial.println("Set cleaning to automatic (2)");
+    sensor.setCleaningMode(automatic);
+    Serial.print("Current cleaning mode is: ");
+    Serial.println(sensor.getCleaningMode());
+
+    Serial.println("Set the cleaning interval to every 11 readings");
+    sensor.setCleaningInterval(11);
+    Serial.print("Current cleaning interval is: ");
+    Serial.println(sensor.getCleaningInterval());
+
+    Serial.println("Set the cleaning duration to 4 seconds");
+    sensor.setCleaningDuration(4);
+    Serial.print("Current cleaning duration is: ");
+    Serial.println(sensor.getCleaningDuration());
+
+    Serial.println("Set the wait period after cleaning to 10 seconds");
+    sensor.setCleaningWait(10);
+    Serial.print("Current wait period after cleaning is: ");
+    Serial.println(sensor.getCleaningWait());
+
+    Serial.println("Set the measurement interval to 5*60 seconds");
+    sensor.setMeasInterval(5*60);
+    Serial.print("Current measurement interval is: ");
+    Serial.println(sensor.getMeasInterval());
+
+    Serial.println("Set the logging interval to 5 minutes");
+    sensor.setLoggingInterval(5);
+    Serial.print("Current logging interval is: ");
+    Serial.println(sensor.getLoggingInterval());
+
+    // sensor.stopDebugging();
+
+    // Print out all of the setup information again
+    // sensor.printSetup(Serial);
+
+    // sensor.setDebugStream(&Serial);
+    sensor.printParameterHeader(Serial);
+    // sensor.stopDebugging();
+
+    // Wait to allow spec to take data and put it into registers
+    delay(35000);
 }
 
 // ---------------------------------------------------------------------------
@@ -92,6 +134,7 @@ void setup()
 // ---------------------------------------------------------------------------
 void loop()
 {
+
     // Print out the device status
     uint16_t status;
     status = sensor.getDeviceStatus();
@@ -104,17 +147,17 @@ void loop()
     Serial.println(" seconds past Jan 1, 1970");
 
     // set up the values
-    float value1, value2, value3, value4, value5, value6, value7, value8;
+    float value;
 
     // Get values one at a time
-    for (int i = 1; i < 9; i++)
+    for (int i = 1; i < sensor.getParameterCount()+1; i++)
     {
         Serial.println("----");
-        status = sensor.getParameterValue(i, value1);
+        status = sensor.getParameterValue(i, value);
         Serial.print("Value of parameter Number ");
         Serial.print(i);
         Serial.print(" is: ");
-        Serial.print(value1);
+        Serial.print(value);
         Serial.print(" ");
         Serial.print(sensor.getUnits(i));
         Serial.print(" with status code: ");
@@ -122,25 +165,8 @@ void loop()
         sensor.printParameterStatus(status, Serial);
     }
 
-    // Get all the values together
-    sensor.getAllParameterValues(value1, value2, value3, value4, value5, value6, value7, value8);
-    Serial.println("Value1, value2, value3, value4, value5, value6, value7, value8");
-    Serial.print(value1);
-    Serial.print(", ");
-    Serial.print(value2);
-    Serial.print(", ");
-    Serial.print(value3);
-    Serial.print(", ");
-    Serial.print(value4);
-    Serial.print(", ");
-    Serial.print(value5);
-    Serial.print(", ");
-    Serial.print(value6);
-    Serial.print(", ");
-    Serial.print(value7);
-    Serial.print(", ");
-    Serial.println(value8);
+    // sensor.printParameterData(Serial);
 
-    // Wait 5 minutes
-    delay(300000L);
+    // Wait 2 minutes
+    delay(120000);
 }

@@ -1,0 +1,76 @@
+
+# Syntax Coloring Map for SDI12 when
+# using the Arduino IDE.
+### Classes (KEYWORD1)
+
+scan	KEYWORD1
+
+### Methods and Functions (KEYWORD2)
+
+begin	KEYWORD2
+printSetup	KEYWORD2
+resetSettings	KEYWORD2
+getSlaveID	KEYWORD2
+setSlaveID	KEYWORD2
+getDeviceStatus	KEYWORD2
+printDeviceStatus	KEYWORD2
+getSystemStatus	KEYWORD2
+printSystemStatus	KEYWORD2
+wakeSpec	KEYWORD2
+getSampleTime	KEYWORD2
+printSampleTime	KEYWORD2
+getParameterValue	KEYWORD2
+printParameterStatus	KEYWORD2
+printParameterData	KEYWORD2
+getFingerprintData	KEYWORD2
+printFingerprintData	KEYWORD2
+printParameterHeader	KEYWORD2
+printFingerprintHeader	KEYWORD2
+getCommunicationMode	KEYWORD2
+setCommunicationMode	KEYWORD2
+parseCommunicationMode	KEYWORD2
+getBaudRate	KEYWORD2
+setBaudRate	KEYWORD2
+parseBaudRate	KEYWORD2
+getParity	KEYWORD2
+setParity	KEYWORD2
+parseParity	KEYWORD2
+getprivateConfigRegister	KEYWORD2
+parseRegisterType	KEYWORD2
+getScanPoint	KEYWORD2
+setScanPoint	KEYWORD2
+getCleaningMode	KEYWORD2
+setCleaningMode	KEYWORD2
+parseCleaningMode	KEYWORD2
+getCleaningInterval	KEYWORD2
+setCleaningInterval	KEYWORD2
+getCleaningDuration	KEYWORD2
+setCleaningDuration	KEYWORD2
+getCleaningWait	KEYWORD2
+setCleaningWait	KEYWORD2
+uint32_t getSystemTime	KEYWORD2
+setSystemTime	KEYWORD2
+getMeasInterval	KEYWORD2
+setMeasInterval	KEYWORD2
+getLoggingMode	KEYWORD2
+setLoggingMode	KEYWORD2
+parseLoggingMode	KEYWORD2
+getLoggingInterval	KEYWORD2
+setLoggingInterval	KEYWORD2
+getNumLoggedResults	KEYWORD2
+getIndexLogResult	KEYWORD2
+getParameter	KEYWORD2
+getUnits	KEYWORD2
+getUpperLimit	KEYWORD2
+getLowerLimit	KEYWORD2
+getModbusVersion	KEYWORD2
+getModel	KEYWORD2
+getSerialNumber	KEYWORD2
+getHWVersion	KEYWORD2
+getSWVersion	KEYWORD2
+getHWStarts	KEYWORD2
+getParameterCount	KEYWORD2
+getParameterType	KEYWORD2
+parseParameterType	KEYWORD2
+getParameterScale	KEYWORD2
+setDebugStream	KEYWORD2
