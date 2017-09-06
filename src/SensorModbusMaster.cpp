@@ -90,6 +90,12 @@ void modbusMaster::charFromRegister(byte regType, int regNum, char outChar[], in
     getRegisters(regType, regNum, charLength/2);
     charFromFrame(outChar, charLength);
 }
+byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
+{
+    getRegisters(regType, regNum, 1);
+    if (byteNum == 1) return byteFromFrame();
+    else return byteFromFrame(4);
+}
 
 
 //----------------------------------------------------------------------------
@@ -196,6 +202,11 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
         outChar[j] = responseBuffer[i];  // converts from "byte" type to "char" type
         j++;
     }
+}
+
+byte modbusMaster::byteFromFrame(int start_index)
+{
+    return responseBuffer[start_index];
 }
 
 

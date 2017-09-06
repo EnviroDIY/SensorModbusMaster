@@ -80,6 +80,7 @@ public:
     uint32_t tai64FromRegister(byte regType, int regNum);
     String StringFromRegister(byte regType, int regNum, int charLength);
     void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
+    byte byteFromRegister(byte regType, int regNum, int byteNum);
 
     // These mid-level functions return a variety of data from an input "frame"
     // By default the frame is the response buffer
@@ -97,6 +98,7 @@ public:
     uint32_t tai64FromFrame(int start_index=3);
     String StringFromFrame(int charLength, int start_index=3);
     void charFromFrame(char outChar[], int charLength, int start_index=3);
+    byte byteFromFrame(int start_index=3);
 
     // This gets data from either a holding or input register
     // For a holding register readCommand = 0x03

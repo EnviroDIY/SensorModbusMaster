@@ -9,7 +9,6 @@ holding registers.
 // Include the base required libraries
 // ---------------------------------------------------------------------------
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 #include <SensorModbusMaster.h>
 
 // ---------------------------------------------------------------------------
@@ -30,7 +29,10 @@ const int SSRxPin = 10;  // Recieve pin for software serial (Rx on RS485 adapter
 const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 
 // Construct software serial object for Modbus
-// SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
+#if defined(ARDUINO_AVR_UNO)
+    #include <SoftwareSerial.h>
+    SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
+#endif
 
 // AltSoftSerial object for Modbus
 // #include <AltSoftSerial.h>  // include the AltSoftSerial library
@@ -93,19 +95,20 @@ void setup()
     if (DEREPin > 0) pinMode(DEREPin, OUTPUT);
 
     Serial.begin(57600);  // Main serial port for debugging via USB Serial Monitor
-    // modbusSerial.begin(38400);  // The modbus serial stream
-    // modbusSerial.begin(38400);  // The modbus serial stream
-    Serial1.begin(38400, SERIAL_8N2);
-    // The default baud rate for the spectro::lyzer is 38400
 
-    // Start up the sensor
-    sensor.begin(modbusAddress, &Serial1, DEREPin);
+    #if defined(ARDUINO_AVR_UNO)
+        modbusSerial.begin(38400);  // port for communicating with sensor
+        sensor.begin(modbusAddress, modbusSerial, DEREPin);
+    #else
+        Serial1.begin(38400, SERIAL_8N2);  // port for communicating with sensor
+        sensor.begin(modbusAddress, &Serial1, DEREPin);
+    #endif    
 
     // Turn on debugging
     // sensor.setDebugStream(&Serial);
 
     // Start up note
-    Serial.println("S::CAN Spect::lyzer Test");
+    Serial.println("Full scan of all input and holding registers");
 
     // Allow the sensor and converter to warm up
     Serial.println("Waiting for sensor and adapter to be ready.");
