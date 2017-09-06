@@ -1,12 +1,12 @@
 {
-    "name": "scanModbus",
+    "name": "SensorModbusMaster",
     "version": "0.0.1",
-    "keywords": "s::can, spectro::lyzer, spectrolyzer, spec, modbus",
-    "description": "Arduino library for communicating with S::CAN instruments, either directly with a spectro::lyzer or to any instrument via ana::gate.",
+    "keywords": "sensor, modbus",
+    "description": "Arduino library for communicating via modbus with the Arduino acting as master",
     "repository":
     {
         "type": "git",
-        "url": "https://github.com/StroudCenter/S-CAN-Modbus.git"
+        "url": "https://github.com/EnviroDIY/SensorModbusMaster.git"
     },
     "authors":
     [
@@ -18,11 +18,5 @@
     ],
     "license": "BSD-3-Clause",
     "frameworks": "arduino",
-    "platforms": "atmelavr, atmelsam",
-    "dependencies":
-    [
-        {
-            "name": "Time"
-        }
-    ]
+    "platforms": "atmelavr, atmelsam"
 }
