@@ -141,6 +141,12 @@ public:
     void stopDebugging(void){_debugStream = &nullstream;}
 
 
+    // This needs to be bigger than the largest response
+    // For 8 parameters with 8 registers each:
+    // 64 registers * 2 bytes per register + 5 frame bytes
+    static byte responseBuffer[RESPONSE_BUFFER_SIZE];
+
+
 
 //----------------------------------------------------------------------------
 //                            PRIVATE FUNCTIONS
@@ -194,10 +200,6 @@ void printFrameHex(byte modbusFrame[], int frameLength);
     NullStream nullstream;
     Stream *_debugStream = &nullstream;  // The stream instance (serial port) for debugging
 
-    // This needs to be bigger than the largest response
-    // For 8 parameters with 8 registers each:
-    // 64 registers * 2 bytes per register + 5 frame bytes
-    static byte responseBuffer[RESPONSE_BUFFER_SIZE];
     static byte crcFrame[2];
 
     // The modbus protocol defines that there can be no more than 1.5 characters
