@@ -31,6 +31,15 @@ typedef enum endianness
     bigEndian
 } endianness;
 
+// The types of "pointers" to other modbus addresses
+typedef enum pointerType
+{
+    holdingRegister = 0,
+    inputRegister,
+    inputContacts,
+    outputCoil
+} pointerType;
+
 
 // Define a little-endian frame as a union - that is a special class type that
 // can hold only one of its non-static data members at a time.
@@ -41,15 +50,33 @@ typedef enum endianness
 // frame format.
 typedef union leFrame {
     byte Byte[4];        // 4 bytes will occupy 4 bytes
-    float Float;         // a single float occupies 4 bytes
-    int32_t Int32;       // a single 32bit interger occupies 4 bytes
-    uint32_t uInt32;     // a single 32bit interger occupies 4 bytes
-    int16_t Int16[2];    // 2 16bit intergers will occupy 4 bytes
-    uint16_t uInt16[2];  // 2 16bit intergers will occupy 4 bytes
     char Char[4];        // 4 characters will occupy 4 bytes
+    uint16_t uInt16[2];  // 2 16bit unsigned intergers will occupy 4 bytes
+    int16_t Int16[2];    // 2 16bit intergers will occupy 4 bytes
+    uint32_t uInt32;     // a single 32bit unsigned interger occupies 4 bytes
+    int32_t Int32;       // a single 32bit interger occupies 4 bytes
+    float Float32;         // a single float occupies 4 bytes
 } leFrame;
 
+// Define the sizes (in bytes) of several data types
+#define BYTE_SIZE 1
+#define UINT16_SIZE 2
+#define INT16_SIZE 2
+#define UINT32_SIZE 4
+#define INT32_SIZE 4
+#define FLOAT32_SIZE 4
+#define TAI64_SIZE 4
+#define POINTER_SIZE 2
 
+// NOTE:  The TAI64 is a 64 bit (4 register) data type BUT:
+// The first 32 bits (two registers) will be 0x4000 0000 until the year 2106;
+// I'm ignoring it for the next 90 years to avoid using 64 bit math
+// The next 32 bits (two registers) have the actual seconds past Jan 1, 1970
+// In the case of TAI64N data there will be an additional 32 bits (two
+// registers) of data representing the nanosecond portion of the time.  This
+// data type does *not* deal with that.
+// Per the TAI64 standard, this value is always big-endian
+// https://www.tai64.com/
 
 class modbusMaster
 {
@@ -69,36 +96,46 @@ public:
     bool begin(byte modbusSlaveID, Stream &stream, int enablePin = -1);
 
     // These higher-level functions return a variety of data from a single or pair of data registers
-    uint16_t bitmaskFromRegister(byte regType, int regNum, endianness endian=bigEndian);
     uint16_t uint16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     int16_t int16FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
     float float32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     uint32_t uint32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     int32_t int32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     uint32_t tai64FromRegister(byte regType, int regNum);
+    byte byteFromRegister(byte regType, int regNum, int byteNum);
+    uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
+    int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
     String StringFromRegister(byte regType, int regNum, int charLength);
     void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
-    byte byteFromRegister(byte regType, int regNum, int byteNum);
+
+    // These set data in registers to a variety of data types
+    bool setRegisteruint16(uint16_t value, int regNum, endianness endian=bigEndian);
+    bool setRegisterint16(int16_t value, int regNum, endianness endian=bigEndian);
+    bool setRegisterfloat32(float value, int regNum, endianness endian=bigEndian);
+    bool setRegisteruint32(uint32_t value, int regNum, endianness endian=bigEndian);
+    bool setRegisterint32(int32_t value, int regNum, endianness endian=bigEndian);
+    bool setRegistertai64(uint32_t value, int regNum);
+    bool setRegisterbyte(byte value, int regNum, int byteNum);
+    bool setRegisterpointer(uint16_t value, int regNum, pointerType point, endianness endian=bigEndian);
+    bool setRegisterString(String value, int regNum);
+    bool setRegisterchar(char inChar[], int regNum, int charLength);
 
     // These mid-level functions return a variety of data from an input "frame"
     // By default the frame is the response buffer
     // Using these functions will be helpful if you wish to decrease the serial
     // traffic by sending one "getRegisters" request for many registers and then
     // parse that result into many different results.
-    uint16_t bitmaskFromFrame(endianness endian=bigEndian, int start_index=3);
     uint16_t uint16FromFrame(endianness endian=bigEndian, int start_index=3);
     int16_t int16FromFrame(endianness endian=bigEndian, int start_index=3);
-    uint16_t pointerFromFrame(endianness endian=bigEndian, int start_index=3);
-    int8_t pointerTypeFromFrame(endianness endian=bigEndian, int start_index=3);
     float float32FromFrame(endianness endian=bigEndian, int start_index=3);
     uint32_t uint32FromFrame(endianness endian=bigEndian, int start_index=3);
     int32_t int32FromFrame(endianness endian=bigEndian, int start_index=3);
     uint32_t tai64FromFrame(int start_index=3);
+    byte byteFromFrame(int start_index=3);
+    uint16_t pointerFromFrame(endianness endian=bigEndian, int start_index=3);
+    int8_t pointerTypeFromFrame(endianness endian=bigEndian, int start_index=3);
     String StringFromFrame(int charLength, int start_index=3);
     void charFromFrame(char outChar[], int charLength, int start_index=3);
-    byte byteFromFrame(int start_index=3);
 
     // This gets data from either a holding or input register
     // For a holding register readCommand = 0x03

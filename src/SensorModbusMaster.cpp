@@ -35,50 +35,51 @@ bool modbusMaster::begin(byte modbusSlaveID, Stream &stream, int enablePin)
 
 
 // These functions return a variety of data from a data register
-uint16_t modbusMaster::bitmaskFromRegister(byte regType, int regNum, endianness endian)
-{
-    getRegisters(regType, regNum, 1);
-    return bitmaskFromFrame(endian);
-}
 uint16_t modbusMaster::uint16FromRegister(byte regType, int regNum, endianness endian)
 {
-    getRegisters(regType, regNum, 1);
+    getRegisters(regType, regNum, UINT16_SIZE/2);
     return uint16FromFrame(endian);
 }
 int16_t modbusMaster::int16FromRegister(byte regType, int regNum, endianness endian)
 {
-    getRegisters(regType, regNum, 1);
+    getRegisters(regType, regNum, INT16_SIZE/2);
     return int16FromFrame(endian);
-}
-uint16_t modbusMaster::pointerFromRegister(byte regType, int regNum, endianness endian)
-{
-    getRegisters(regType, regNum, 1);
-    return pointerFromFrame(endian);
-}
-int8_t modbusMaster::pointerTypeFromRegister(byte regType, int regNum, endianness endian)
-{
-    getRegisters(regType, regNum, 1);
-    return pointerTypeFromFrame(endian);
 }
 float modbusMaster::float32FromRegister(byte regType, int regNum, endianness endian)
 {
-    getRegisters(regType, regNum, 2);
+    getRegisters(regType, regNum, FLOAT32_SIZE/2);
     return float32FromFrame(endian);
 }
 uint32_t modbusMaster::uint32FromRegister(byte regType, int regNum, endianness endian)
 {
-    getRegisters(regType, regNum, 2);
+    getRegisters(regType, regNum, UINT32_SIZE/2);
     return uint32FromFrame(endian);
 }
 int32_t modbusMaster::int32FromRegister(byte regType, int regNum, endianness endian)
 {
-    getRegisters(regType, regNum, 2);
+    getRegisters(regType, regNum, INT32_SIZE/2);
     return int32FromFrame(endian);
 }
 uint32_t modbusMaster::tai64FromRegister(byte regType, int regNum)
 {
-    getRegisters(regType, regNum, 4);
+    getRegisters(regType, regNum, TAI64_SIZE/2);
     return tai64FromFrame();
+}
+byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
+{
+    getRegisters(regType, regNum, 1);
+    if (byteNum == 1) return byteFromFrame();
+    else return byteFromFrame(4);
+}
+uint16_t modbusMaster::pointerFromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, POINTER_SIZE/2);
+    return pointerFromFrame(endian);
+}
+int8_t modbusMaster::pointerTypeFromRegister(byte regType, int regNum, endianness endian)
+{
+    getRegisters(regType, regNum, POINTER_SIZE/2);
+    return pointerTypeFromFrame(endian);
 }
 String modbusMaster::StringFromRegister(byte regType, int regNum, int charLength)
 {
@@ -90,13 +91,135 @@ void modbusMaster::charFromRegister(byte regType, int regNum, char outChar[], in
     getRegisters(regType, regNum, charLength/2);
     charFromFrame(outChar, charLength);
 }
-byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
-{
-    getRegisters(regType, regNum, 1);
-    if (byteNum == 1) return byteFromFrame();
-    else return byteFromFrame(4);
-}
 
+
+// These set data in registers to a variety of data types
+bool modbusMaster::setRegisteruint16(uint16_t value, int regNum, endianness endian)
+{
+    leFrame fram;
+    fram.uInt16[0] = value;
+    byte inputData[UINT16_SIZE] = {0x00,};
+    if (endian == bigEndian)
+    {
+        for (int i = 0; i < UINT16_SIZE; i++)
+            inputData[UINT16_SIZE-1-i] = fram.Byte[i];
+    }
+    else for (int i = 0; i < UINT16_SIZE; i++) inputData[i] = fram.Byte[i];
+    return setRegisters(regNum, UINT16_SIZE/2, inputData);
+}
+bool modbusMaster::setRegisterint16(int16_t value, int regNum, endianness endian)
+{
+    leFrame fram;
+    fram.Int16[0] = value;
+    byte inputData[INT16_SIZE] = {0x00,};
+    if (endian == bigEndian)
+    {
+        for (int i = 0; i < INT16_SIZE; i++)
+            inputData[INT16_SIZE-1-i] = fram.Byte[i];
+    }
+    else for (int i = 0; i < INT16_SIZE; i++) inputData[i] = fram.Byte[i];
+    return setRegisters(regNum, INT16_SIZE/2, inputData);
+}
+bool modbusMaster::setRegisterfloat32(float value, int regNum, endianness endian)
+{
+    leFrame fram;
+    fram.Float32 = value;
+    byte inputData[FLOAT32_SIZE] = {0x00,};
+    if (endian == bigEndian)
+    {
+        for (int i = 0; i < FLOAT32_SIZE; i++)
+            inputData[FLOAT32_SIZE-1-i] = fram.Byte[i];
+    }
+    else for (int i = 0; i < FLOAT32_SIZE; i++) inputData[i] = fram.Byte[i];
+    return setRegisters(regNum, FLOAT32_SIZE/2, inputData);
+}
+bool modbusMaster::setRegisteruint32(uint32_t value, int regNum, endianness endian)
+{
+    leFrame fram;
+    fram.Float32 = value;
+    byte inputData[UINT32_SIZE] = {0x00,};
+    if (endian == bigEndian)
+    {
+        for (int i = 0; i < UINT32_SIZE; i++)
+            inputData[UINT32_SIZE-1-i] = fram.Byte[i];
+    }
+    else for (int i = 0; i < UINT32_SIZE; i++) inputData[i] = fram.Byte[i];
+    return setRegisters(regNum, UINT32_SIZE/2, inputData);
+}
+bool modbusMaster::setRegisterint32(int32_t value, int regNum, endianness endian)
+{
+    leFrame fram;
+    fram.Float32 = value;
+    byte inputData[INT32_SIZE] = {0x00,};
+    if (endian == bigEndian)
+    {
+        for (int i = 0; i < INT32_SIZE; i++)
+            inputData[INT32_SIZE-1-i] = fram.Byte[i];
+    }
+    else for (int i = 0; i < INT32_SIZE; i++) inputData[i] = fram.Byte[i];
+    return setRegisters(regNum, INT32_SIZE/2, inputData);
+}
+bool modbusMaster::setRegistertai64(uint32_t value, int regNum)
+{
+    leFrame fram;
+    fram.Float32 = value;
+    byte inputData[TAI64_SIZE+4] = {0x00,};
+    inputData[0] = 0x40;  // This will be true until 2106
+    for (int i = 0; i < TAI64_SIZE; i++)
+        inputData[TAI64_SIZE-1-i] = fram.Byte[i+4];
+    return setRegisters(regNum, TAI64_SIZE, inputData);
+}
+bool modbusMaster::setRegisterbyte(byte value, int regNum, int byteNum)
+{
+    byte inputData[2] = {0x00,};
+    if (byteNum == 1) inputData[0] = value;
+    else  inputData[1] = value;
+    return setRegisters(regNum, 1, inputData);
+}
+bool modbusMaster::setRegisterpointer(uint16_t value, int regNum, pointerType point, endianness endian)
+{
+    leFrame fram;
+    fram.uInt16[0] = value;
+    byte inputData[UINT16_SIZE] = {0x00,};
+    if (endian == bigEndian)
+    {
+        inputData[1] = fram.Byte[0]<<2;  // Shift the lower address bit UP two
+        inputData[1] |= point;
+        inputData[0] = fram.Byte[1];
+    }
+    else
+    {
+        inputData[0] = fram.Byte[0]<<2;  // Shift the lower address bit UP two
+        inputData[0] |= point;
+        inputData[1] = fram.Byte[1];
+    }
+    return setRegisters(regNum, UINT16_SIZE/2, inputData);
+}
+bool modbusMaster::setRegisterString(String value, int regNum)
+{
+    int charLength = value.length();
+    char charString[charLength] = {0,};
+    byte inputData[charLength] = {0,};
+    value.toCharArray(charString, charLength);
+    int j = 0;
+    for (int i = 0; i < charLength; i++)
+    {
+        inputData[j] = charString[i];  // converts from "char" type to "byte" type
+        j++;
+    }
+    return setRegisters(regNum, charLength/2, inputData);
+}
+bool modbusMaster::setRegisterchar(char inChar[], int regNum, int charLength)
+{
+    byte inputData[charLength] = {0x00,};
+    int j = 0;
+    for (int i = 0; i < charLength; i++)
+    {
+        inputData[j] = inChar[i];  // converts from "char" type to "byte" type
+        j++;
+    }
+    return setRegisters(regNum, charLength/2, inputData);
+}
 
 //----------------------------------------------------------------------------
 //                           MID LEVEL FUNCTIONS
@@ -104,23 +227,26 @@ byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
 
 
 // These functions return a variety of data from an input frame
-uint16_t modbusMaster::bitmaskFromFrame(endianness endian, int start_index)
-{
-    int varBytes = 2;
-    return leFrameFromRegister(varBytes, endian, start_index).uInt16[0];
-}
-
 uint16_t modbusMaster::uint16FromFrame(endianness endian, int start_index)
-{
-   int varBytes = 2;
-   return leFrameFromRegister(varBytes, endian, start_index).uInt16[0];
-}
+{return leFrameFromRegister(UINT16_SIZE, endian, start_index).uInt16[0];}
 
 int16_t modbusMaster::int16FromFrame(endianness endian, int start_index)
-{
-    int varBytes = 2;
-    return leFrameFromRegister(varBytes, endian, start_index).Int16[0];
-}
+{return leFrameFromRegister(INT16_SIZE, endian, start_index).Int16[0];}
+
+float modbusMaster::float32FromFrame(endianness endian, int start_index)
+{return leFrameFromRegister(FLOAT32_SIZE, endian, start_index).Float32;}
+
+uint32_t modbusMaster::uint32FromFrame(endianness endian, int start_index)
+{return leFrameFromRegister(UINT32_SIZE, endian, start_index).uInt32;}
+
+int32_t modbusMaster::int32FromFrame(endianness endian, int start_index)
+{return leFrameFromRegister(INT32_SIZE, endian, start_index).Int32;}
+
+uint32_t modbusMaster::tai64FromFrame(int start_index)
+{return leFrameFromRegister(TAI64_SIZE, bigEndian, start_index+4).uInt32;}
+
+byte modbusMaster::byteFromFrame(int start_index)
+{return responseBuffer[start_index];}
 
 uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index)
 {
@@ -147,39 +273,6 @@ int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index)
     return pointerRegType;
 }
 
-float modbusMaster::float32FromFrame(endianness endian, int start_index)
-{
-    int varBytes = 4;
-    return leFrameFromRegister(varBytes, endian, start_index).Float;
-}
-
-uint32_t modbusMaster::uint32FromFrame(endianness endian, int start_index)
-{
-    int varBytes = 4;
-    return leFrameFromRegister(varBytes, endian, start_index).uInt32;
-}
-
-int32_t modbusMaster::int32FromFrame(endianness endian, int start_index)
-{
-    int varBytes = 4;
-    return leFrameFromRegister(varBytes, endian, start_index).Int32;
-}
-
-uint32_t modbusMaster::tai64FromFrame(int start_index)
-{
-    // This is a 64 bit (4 register) data type BUT:
-    // The first 32 bits (two registers) will be 0x4000 0000 until the year 2106;
-    // I'm ignoring it for the next 90 years to avoid using 64 bit math
-    // The next 32 bits (two registers) have the actual seconds past Jan 1, 1970
-    // In the case of TAI64N data there will be an additional 32 bits (two
-    // registers) of data representing the nanosecond portion of the time.  This
-    // data type does *not* deal with that.
-    // Per the TAI64 standard, this value is always big-endian
-    // https://www.tai64.com/
-    int varBytes = 4;
-    return leFrameFromRegister(varBytes, bigEndian, start_index+4).uInt32;
-}
-
 String modbusMaster::StringFromFrame(int charLength, int start_index)
 {
     char charString[charLength+1] = {0,};
@@ -202,11 +295,6 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
         outChar[j] = responseBuffer[i];  // converts from "byte" type to "char" type
         j++;
     }
-}
-
-byte modbusMaster::byteFromFrame(int start_index)
-{
-    return responseBuffer[start_index];
 }
 
 
