@@ -138,14 +138,14 @@ public:
     void charFromFrame(char outChar[], int charLength, int start_index=3);
 
     // Equivalent to above functions, but for creating a frame
-    void uint16ToFrame(uint16_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
-    void int16ToFrame(int16_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
-    void floatToFrame(float value, byte indata[], int start_index=0, endianness endian=bigEndian);
-    void uint32ToFrame(uint32_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
-    void int32ToFrame(int32_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void uint16ToFrame(uint16_t value, endianness endian, byte indata[], int start_index=0);
+    void int16ToFrame(int16_t value, endianness endian, byte indata[], int start_index=0);
+    void float32ToFrame(float value, endianness endian, byte indata[], int start_index=0);
+    void uint32ToFrame(uint32_t value, endianness endian, byte indata[], int start_index=0);
+    void int32ToFrame(int32_t value, endianness endian, byte indata[], int start_index=0);
     void TAI64ToFrame(uint32_t value, byte indata[], int start_index=0);
     void byteToFrame(byte value, int byteNum, byte indata[], int start_index=0);
-    void pointerToFrame(uint16_t value, pointerType point, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void pointerToFrame(uint16_t value, pointerType point, endianness endian, byte indata[], int start_index=0);
     void StringToFrame(String value, byte indata[], int start_index=0);
     void charToFrame(char inChar[], int charLength, byte indata[], int start_index=0);
 
