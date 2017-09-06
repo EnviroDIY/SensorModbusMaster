@@ -60,10 +60,10 @@ int32_t modbusMaster::int32FromRegister(byte regType, int regNum, endianness end
     getRegisters(regType, regNum, INT32_SIZE/2);
     return int32FromFrame(endian);
 }
-uint32_t modbusMaster::tai64FromRegister(byte regType, int regNum)
+uint32_t modbusMaster::TAI64FromRegister(byte regType, int regNum)
 {
     getRegisters(regType, regNum, TAI64_SIZE/2);
-    return tai64FromFrame();
+    return TAI64FromFrame();
 }
 byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
 {
@@ -94,7 +94,7 @@ void modbusMaster::charFromRegister(byte regType, int regNum, char outChar[], in
 
 
 // These set data in registers to a variety of data types
-bool modbusMaster::setRegisteruint16(uint16_t value, int regNum, endianness endian)
+bool modbusMaster::uint16ToRegister(int regNum, uint16_t value, endianness endian)
 {
     leFrame fram;
     fram.uInt16[0] = value;
@@ -107,7 +107,7 @@ bool modbusMaster::setRegisteruint16(uint16_t value, int regNum, endianness endi
     else for (int i = 0; i < UINT16_SIZE; i++) inputData[i] = fram.Byte[i];
     return setRegisters(regNum, UINT16_SIZE/2, inputData);
 }
-bool modbusMaster::setRegisterint16(int16_t value, int regNum, endianness endian)
+bool modbusMaster::int16ToRegister(int regNum, int16_t value, endianness endian)
 {
     leFrame fram;
     fram.Int16[0] = value;
@@ -120,7 +120,7 @@ bool modbusMaster::setRegisterint16(int16_t value, int regNum, endianness endian
     else for (int i = 0; i < INT16_SIZE; i++) inputData[i] = fram.Byte[i];
     return setRegisters(regNum, INT16_SIZE/2, inputData);
 }
-bool modbusMaster::setRegisterfloat32(float value, int regNum, endianness endian)
+bool modbusMaster::float32ToRegister(int regNum, float value, endianness endian)
 {
     leFrame fram;
     fram.Float32 = value;
@@ -133,7 +133,7 @@ bool modbusMaster::setRegisterfloat32(float value, int regNum, endianness endian
     else for (int i = 0; i < FLOAT32_SIZE; i++) inputData[i] = fram.Byte[i];
     return setRegisters(regNum, FLOAT32_SIZE/2, inputData);
 }
-bool modbusMaster::setRegisteruint32(uint32_t value, int regNum, endianness endian)
+bool modbusMaster::uint32ToRegister(int regNum, uint32_t value, endianness endian)
 {
     leFrame fram;
     fram.Float32 = value;
@@ -146,7 +146,7 @@ bool modbusMaster::setRegisteruint32(uint32_t value, int regNum, endianness endi
     else for (int i = 0; i < UINT32_SIZE; i++) inputData[i] = fram.Byte[i];
     return setRegisters(regNum, UINT32_SIZE/2, inputData);
 }
-bool modbusMaster::setRegisterint32(int32_t value, int regNum, endianness endian)
+bool modbusMaster::int32ToRegister(int regNum, int32_t value, endianness endian)
 {
     leFrame fram;
     fram.Float32 = value;
@@ -159,7 +159,7 @@ bool modbusMaster::setRegisterint32(int32_t value, int regNum, endianness endian
     else for (int i = 0; i < INT32_SIZE; i++) inputData[i] = fram.Byte[i];
     return setRegisters(regNum, INT32_SIZE/2, inputData);
 }
-bool modbusMaster::setRegistertai64(uint32_t value, int regNum)
+bool modbusMaster::TAI64ToRegister(int regNum, uint32_t value)
 {
     leFrame fram;
     fram.Float32 = value;
@@ -169,14 +169,14 @@ bool modbusMaster::setRegistertai64(uint32_t value, int regNum)
         inputData[TAI64_SIZE-1-i] = fram.Byte[i+4];
     return setRegisters(regNum, TAI64_SIZE, inputData);
 }
-bool modbusMaster::setRegisterbyte(byte value, int regNum, int byteNum)
+bool modbusMaster::byteToRegister(int regNum, int byteNum, byte value)
 {
     byte inputData[2] = {0x00,};
     if (byteNum == 1) inputData[0] = value;
     else  inputData[1] = value;
     return setRegisters(regNum, 1, inputData);
 }
-bool modbusMaster::setRegisterpointer(uint16_t value, int regNum, pointerType point, endianness endian)
+bool modbusMaster::pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian)
 {
     leFrame fram;
     fram.uInt16[0] = value;
@@ -195,7 +195,7 @@ bool modbusMaster::setRegisterpointer(uint16_t value, int regNum, pointerType po
     }
     return setRegisters(regNum, UINT16_SIZE/2, inputData);
 }
-bool modbusMaster::setRegisterString(String value, int regNum)
+bool modbusMaster::StringToRegister(int regNum, String value)
 {
     int charLength = value.length();
     char charString[charLength] = {0,};
@@ -209,7 +209,7 @@ bool modbusMaster::setRegisterString(String value, int regNum)
     }
     return setRegisters(regNum, charLength/2, inputData);
 }
-bool modbusMaster::setRegisterchar(char inChar[], int regNum, int charLength)
+bool modbusMaster::charToRegister(int regNum, char inChar[], int charLength)
 {
     byte inputData[charLength] = {0x00,};
     int j = 0;
@@ -242,7 +242,7 @@ uint32_t modbusMaster::uint32FromFrame(endianness endian, int start_index)
 int32_t modbusMaster::int32FromFrame(endianness endian, int start_index)
 {return leFrameFromRegister(INT32_SIZE, endian, start_index).Int32;}
 
-uint32_t modbusMaster::tai64FromFrame(int start_index)
+uint32_t modbusMaster::TAI64FromFrame(int start_index)
 {return leFrameFromRegister(TAI64_SIZE, bigEndian, start_index+4).uInt32;}
 
 byte modbusMaster::byteFromFrame(int start_index)

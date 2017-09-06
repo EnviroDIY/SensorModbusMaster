@@ -101,7 +101,7 @@ public:
     float float32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     uint32_t uint32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     int32_t int32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
-    uint32_t tai64FromRegister(byte regType, int regNum);
+    uint32_t TAI64FromRegister(byte regType, int regNum);
     byte byteFromRegister(byte regType, int regNum, int byteNum);
     uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
     int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
@@ -109,16 +109,16 @@ public:
     void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
 
     // These set data in registers to a variety of data types
-    bool setRegisteruint16(uint16_t value, int regNum, endianness endian=bigEndian);
-    bool setRegisterint16(int16_t value, int regNum, endianness endian=bigEndian);
-    bool setRegisterfloat32(float value, int regNum, endianness endian=bigEndian);
-    bool setRegisteruint32(uint32_t value, int regNum, endianness endian=bigEndian);
-    bool setRegisterint32(int32_t value, int regNum, endianness endian=bigEndian);
-    bool setRegistertai64(uint32_t value, int regNum);
-    bool setRegisterbyte(byte value, int regNum, int byteNum);
-    bool setRegisterpointer(uint16_t value, int regNum, pointerType point, endianness endian=bigEndian);
-    bool setRegisterString(String value, int regNum);
-    bool setRegisterchar(char inChar[], int regNum, int charLength);
+    bool uint16ToRegister(int regNum, uint16_t value, endianness endian=bigEndian);
+    bool int16ToRegister(int regNum, int16_t value, endianness endian=bigEndian);
+    bool float32ToRegister(int regNum, float value, endianness endian=bigEndian);
+    bool uint32ToRegister(int regNum, uint32_t value, endianness endian=bigEndian);
+    bool int32ToRegister(int regNum, int32_t value, endianness endian=bigEndian);
+    bool TAI64ToRegister(int regNum, uint32_t value);
+    bool byteToRegister(int regNum, int byteNum, byte value);
+    bool pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian=bigEndian);
+    bool StringToRegister(int regNum, String value);
+    bool charToRegister(int regNum, char inChar[], int charLength);
 
     // These mid-level functions return a variety of data from an input "frame"
     // By default the frame is the response buffer
@@ -130,12 +130,24 @@ public:
     float float32FromFrame(endianness endian=bigEndian, int start_index=3);
     uint32_t uint32FromFrame(endianness endian=bigEndian, int start_index=3);
     int32_t int32FromFrame(endianness endian=bigEndian, int start_index=3);
-    uint32_t tai64FromFrame(int start_index=3);
+    uint32_t TAI64FromFrame(int start_index=3);
     byte byteFromFrame(int start_index=3);
     uint16_t pointerFromFrame(endianness endian=bigEndian, int start_index=3);
     int8_t pointerTypeFromFrame(endianness endian=bigEndian, int start_index=3);
     String StringFromFrame(int charLength, int start_index=3);
     void charFromFrame(char outChar[], int charLength, int start_index=3);
+
+    // Equivalent to above functions, but for creating a frame
+    void uint16ToFrame(uint16_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void int16ToFrame(int16_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void floatToFrame(float value, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void uint32ToFrame(uint32_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void int32ToFrame(int32_t value, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void TAI64ToFrame(uint32_t value, byte indata[], int start_index=0);
+    void byteToFrame(byte value, int byteNum, byte indata[], int start_index=0);
+    void pointerToFrame(uint16_t value, pointerType point, byte indata[], int start_index=0, endianness endian=bigEndian);
+    void StringToFrame(String value, byte indata[], int start_index=0);
+    void charToFrame(char inChar[], int charLength, byte indata[], int start_index=0);
 
     // This gets data from either a holding or input register
     // For a holding register readCommand = 0x03
