@@ -37,7 +37,7 @@ const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 // AltSoftSerial modbusSerial;
 
 // Construct the Yosemitech modbus instance
-scan sensor;
+modbusMaster sensor;
 bool success;
 
 void printPaddedHex(byte val)
@@ -110,9 +110,6 @@ void setup()
     // Allow the sensor and converter to warm up
     Serial.println("Waiting for sensor and adapter to be ready.");
     delay(500);
-
-    // Print out all of the setup information
-    sensor.printSetup(Serial);
 
     // Print a header
     Serial.println("Register Type,  Reg #, Hex,          Binary,                             Char,   uInt16,        Float32");
@@ -192,80 +189,6 @@ void setup()
         i++;
     }
     Serial.println("=======================");
-/*
-    for (int i = 522; i < 963; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 1034; i < 1475; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 1546; i < 1987; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 2058; i < 2499; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 2570; i < 3011; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 3082; i < 3523; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 3594; i < 4035; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-
-    for (int i = 4106; i < 4547; i++)
-    {
-        Serial.print(i);
-        Serial.print(" - ");
-        Serial.println(sensor.float32FromRegister(0x04, i), 20);
-        i++;
-    }
-    Serial.println("=======================");
-    */
-
 }
 
 // ---------------------------------------------------------------------------
