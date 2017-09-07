@@ -465,7 +465,8 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters, byt
 int modbusMaster::sendCommand(byte command[], int commandLength)
 {
     // Empty the response buffer
-    modbusMaster::responseBuffer[RESPONSE_BUFFER_SIZE] = {0x00,};
+    for (int i = 0; i < RESPONSE_BUFFER_SIZE; i++)
+        modbusMaster::responseBuffer[i] = 0x00;
 
     // Add the CRC to the frame
     insertCRC(command, commandLength);
@@ -533,7 +534,11 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
         // If everything passes, return the number of bytes
         return bytesRead;
     }
-    else return 0;
+    else
+    {
+        _debugStream->println("No response received.");
+        return 0;
+    }
 }
 
 
@@ -596,7 +601,9 @@ void modbusMaster::printFrameHex(byte modbusFrame[], int frameLength)
 void modbusMaster::calculateCRC(byte modbusFrame[], int frameLength)
 {
     // Reset the CRC frame
-    crcFrame[2] = {0,};
+    modbusMaster::crcFrame[0] = {0x00};
+    modbusMaster::crcFrame[1] = {0x00};
+
     uint16_t crc = 0xFFFF;
     for (int pos = 0; pos < frameLength - 2; pos++)
     {
