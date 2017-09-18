@@ -214,8 +214,12 @@ String modbusMaster::StringFromFrame(int charLength, int start_index)
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++)
     {
-        charString[j] = responseBuffer[i];  // converts from "byte" type to "char" type
-        j++;
+        // check that it's a printable character
+        if (responseBuffer[i] >= 0x20 && responseBuffer[i] <= 0x7E)
+        {
+            charString[j] = responseBuffer[i];  // converts from "byte" type to "char" type
+            j++;
+        }
     }
     String string = String(charString);
     string.trim();
@@ -227,8 +231,12 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++)
     {
-        outChar[j] = responseBuffer[i];  // converts from "byte" type to "char" type
-        j++;
+        // check that it's a printable character
+        if (responseBuffer[i] >= 0x20 && responseBuffer[i] <= 0x7E)
+        {
+            outChar[j] = responseBuffer[i];  // converts from "byte" type to "char" type
+            j++;
+        }
     }
 }
 

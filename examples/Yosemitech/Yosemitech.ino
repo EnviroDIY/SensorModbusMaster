@@ -58,7 +58,7 @@ void setup()
         modbusSerial.begin(9600);  // port for communicating with sensor
         sensor.begin(modbusAddress, modbusSerial, DEREPin);
     // #else
-    //     Serial1.begin(38400, SERIAL_8N2);  // port for communicating with sensor
+    //     Serial1.begin(9600, SERIAL_8N1);  // port for communicating with sensor
     //     sensor.begin(modbusAddress, &Serial1, DEREPin);
     // #endif
 
