@@ -187,6 +187,7 @@ public:
     // sent between the Arduino and the modbus slave.
     // This sets a stream for debugging information to go to;
     void setDebugStream(Stream *stream){_debugStream = stream;}
+    void setDebugStream(Stream &stream){_debugStream = &stream;}
 
     // This sets a stream for debugging information to go to;
     void stopDebugging(void){_debugStream = &nullstream;}
