@@ -102,7 +102,7 @@ void setup()
     #else
         Serial1.begin(38400, SERIAL_8N2);  // port for communicating with sensor
         sensor.begin(modbusAddress, &Serial1, DEREPin);
-    #endif    
+    #endif
 
     // Turn on debugging
     // sensor.setDebugStream(&Serial);

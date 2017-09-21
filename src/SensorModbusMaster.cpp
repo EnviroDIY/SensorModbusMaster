@@ -62,7 +62,7 @@ int32_t modbusMaster::int32FromRegister(byte regType, int regNum, endianness end
 }
 uint32_t modbusMaster::TAI64FromRegister(byte regType, int regNum)
 {
-    getRegisters(regType, regNum, TAI64_SIZE/2);
+    getRegisters(regType, regNum, TAI64_SIZE);  // Don't divide size by 2, need all 4 registers
     return TAI64FromFrame();
 }
 byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
@@ -161,24 +161,25 @@ bool modbusMaster::charToRegister(int regNum, char inChar[], int charLength)
 //----------------------------------------------------------------------------
 
 
-// These functions return a variety of data from an input frame
+// These functions return a variety of data from an input modbus frame.
+// Currently, the only "frame" available is the response buffer.
 uint16_t modbusMaster::uint16FromFrame(endianness endian, int start_index)
-{return leFrameFromRegister(UINT16_SIZE, endian, start_index).uInt16[0];}
+{return leFrameFromFrame(UINT16_SIZE, endian, start_index).uInt16[0];}
 
 int16_t modbusMaster::int16FromFrame(endianness endian, int start_index)
-{return leFrameFromRegister(INT16_SIZE, endian, start_index).Int16[0];}
+{return leFrameFromFrame(INT16_SIZE, endian, start_index).Int16[0];}
 
 float modbusMaster::float32FromFrame(endianness endian, int start_index)
-{return leFrameFromRegister(FLOAT32_SIZE, endian, start_index).Float32;}
+{return leFrameFromFrame(FLOAT32_SIZE, endian, start_index).Float32;}
 
 uint32_t modbusMaster::uint32FromFrame(endianness endian, int start_index)
-{return leFrameFromRegister(UINT32_SIZE, endian, start_index).uInt32;}
+{return leFrameFromFrame(UINT32_SIZE, endian, start_index).uInt32;}
 
 int32_t modbusMaster::int32FromFrame(endianness endian, int start_index)
-{return leFrameFromRegister(INT32_SIZE, endian, start_index).Int32;}
+{return leFrameFromFrame(INT32_SIZE, endian, start_index).Int32;}
 
 uint32_t modbusMaster::TAI64FromFrame(int start_index)
-{return leFrameFromRegister(TAI64_SIZE, bigEndian, start_index+4).uInt32;}
+{return leFrameFromFrame(TAI64_SIZE, bigEndian, start_index+4).uInt32;}
 
 byte modbusMaster::byteFromFrame(int start_index)
 {return responseBuffer[start_index];}
@@ -242,95 +243,95 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
     if (j < charLength) for (int i = j; i < + charLength; i++) outChar[j] = 0;
 }
 
-// Equivalent to above functions, but for creating a frame
-void modbusMaster::uint16ToFrame(uint16_t value, endianness endian, byte indata[], int start_index)
+// These insert values into a longer modbus data frame.
+void modbusMaster::uint16ToFrame(uint16_t value, endianness endian, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.uInt16[0] = value;
     for (int i = 0; i < UINT16_SIZE; i++)
     {
         if (endian == bigEndian)
-            indata[UINT16_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
-        else indata[i + start_index] = fram.Byte[i + start_index];
+            modbusFrame[UINT16_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        else modbusFrame[i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::int16ToFrame(int16_t value, endianness endian, byte indata[], int start_index)
+void modbusMaster::int16ToFrame(int16_t value, endianness endian, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.Int16[0] = value;
     for (int i = 0; i < INT16_SIZE; i++)
     {
         if (endian == bigEndian)
-            indata[INT16_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
-        else indata[i + start_index] = fram.Byte[i + start_index];
+            modbusFrame[INT16_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        else modbusFrame[i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::float32ToFrame(float value, endianness endian, byte indata[], int start_index)
+void modbusMaster::float32ToFrame(float value, endianness endian, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.Float32 = value;
     for (int i = 0; i < FLOAT32_SIZE; i++)
     {
         if (endian == bigEndian)
-            indata[FLOAT32_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
-        else indata[i + start_index] = fram.Byte[i + start_index];
+            modbusFrame[FLOAT32_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        else modbusFrame[i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::uint32ToFrame(uint32_t value, endianness endian, byte indata[], int start_index)
+void modbusMaster::uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.uInt32 = value;
     for (int i = 0; i < UINT32_SIZE; i++)
     {
         if (endian == bigEndian)
-            indata[UINT32_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
-        else indata[i + start_index] = fram.Byte[i + start_index];
+            modbusFrame[UINT32_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        else modbusFrame[i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::int32ToFrame(int32_t value, endianness endian, byte indata[], int start_index)
+void modbusMaster::int32ToFrame(int32_t value, endianness endian, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.Int32 = value;
     for (int i = 0; i < INT32_SIZE; i++)
     {
         if (endian == bigEndian)
-            indata[INT32_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
-        else indata[i + start_index] = fram.Byte[i + start_index];
+            modbusFrame[INT32_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        else modbusFrame[i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::TAI64ToFrame(uint32_t value, byte indata[], int start_index)
+void modbusMaster::TAI64ToFrame(uint32_t value, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.Float32 = value;
-    indata[start_index] = 0x40;  // This will be true until 2106
+    modbusFrame[start_index] = 0x40;  // This will be true until 2106
     for (int i = 4; i < TAI64_SIZE + 4; i++)
     {
-        indata[TAI64_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        modbusFrame[TAI64_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::byteToFrame(byte value, int byteNum, byte indata[], int start_index)
+void modbusMaster::byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index)
 {
-    if (byteNum == 1) indata[start_index] = value;
-    else  indata[start_index+1] = value;
+    if (byteNum == 1) modbusFrame[start_index] = value;
+    else  modbusFrame[start_index+1] = value;
 }
-void modbusMaster::pointerToFrame(uint16_t value, pointerType point, endianness endian, byte indata[], int start_index)
+void modbusMaster::pointerToFrame(uint16_t value, pointerType point, endianness endian, byte modbusFrame[], int start_index)
 {
     leFrame fram;
     fram.uInt16[0] = value;
     if (endian == bigEndian)
     {
-        indata[start_index + 1] = fram.Byte[0]<<2;  // Shift the lower address bit UP two
-        indata[start_index + 1] |= point;
-        indata[start_index] = fram.Byte[1];
+        modbusFrame[start_index + 1] = fram.Byte[0]<<2;  // Shift the lower address bit UP two
+        modbusFrame[start_index + 1] |= point;
+        modbusFrame[start_index] = fram.Byte[1];
     }
     else
     {
-        indata[start_index] = fram.Byte[0]<<2;  // Shift the lower address bit UP two
-        indata[start_index] |= point;
-        indata[start_index + 1] = fram.Byte[1];
+        modbusFrame[start_index] = fram.Byte[0]<<2;  // Shift the lower address bit UP two
+        modbusFrame[start_index] |= point;
+        modbusFrame[start_index + 1] = fram.Byte[1];
     }
 }
-void modbusMaster::StringToFrame(String value, byte indata[], int start_index)
+void modbusMaster::StringToFrame(String value, byte modbusFrame[], int start_index)
 {
     int charLength = value.length();
     char charString[charLength];
@@ -338,16 +339,16 @@ void modbusMaster::StringToFrame(String value, byte indata[], int start_index)
     int j = 0;
     for (int i = 0; i < charLength; i++)
     {
-        indata[start_index + j] = charString[i];  // converts from "char" type to "byte" type
+        modbusFrame[start_index + j] = charString[i];  // converts from "char" type to "byte" type
         j++;
     }
 }
-void modbusMaster::charToFrame(char inChar[], int charLength, byte indata[], int start_index)
+void modbusMaster::charToFrame(char inChar[], int charLength, byte modbusFrame[], int start_index)
 {
     int j = 0;
     for (int i = 0; i < charLength; i++)
     {
-        indata[start_index + j] = inChar[i];  // converts from "char" type to "byte" type
+        modbusFrame[start_index + j] = inChar[i];  // converts from "char" type to "byte" type
         j++;
     }
 }
@@ -674,7 +675,7 @@ void modbusMaster::sliceArray(byte inputArray[], byte outputArray[],
 
 // This converts data in a register into a little-endian frame
 // little-endian frames are needed because all Arduino processors are little-endian
-leFrame modbusMaster::leFrameFromRegister(int varBytes,
+leFrame modbusMaster::leFrameFromFrame(int varBytes,
                                   endianness endian,
                                   int start_index)
 {

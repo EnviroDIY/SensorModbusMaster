@@ -120,8 +120,8 @@ public:
     bool StringToRegister(int regNum, String value);
     bool charToRegister(int regNum, char inChar[], int charLength);
 
-    // These mid-level functions return a variety of data from an input "frame"
-    // By default the frame is the response buffer
+    // These mid-level functions return a variety of data from an input modbus "frame"
+    // Currently, the only "frame" available is the response buffer.
     // Using these functions will be helpful if you wish to decrease the serial
     // traffic by sending one "getRegisters" request for many registers and then
     // parse that result into many different results.
@@ -137,17 +137,19 @@ public:
     String StringFromFrame(int charLength, int start_index=3);
     void charFromFrame(char outChar[], int charLength, int start_index=3);
 
-    // Equivalent to above functions, but for creating a frame
-    void uint16ToFrame(uint16_t value, endianness endian, byte indata[], int start_index=0);
-    void int16ToFrame(int16_t value, endianness endian, byte indata[], int start_index=0);
-    void float32ToFrame(float value, endianness endian, byte indata[], int start_index=0);
-    void uint32ToFrame(uint32_t value, endianness endian, byte indata[], int start_index=0);
-    void int32ToFrame(int32_t value, endianness endian, byte indata[], int start_index=0);
-    void TAI64ToFrame(uint32_t value, byte indata[], int start_index=0);
-    void byteToFrame(byte value, int byteNum, byte indata[], int start_index=0);
-    void pointerToFrame(uint16_t value, pointerType point, endianness endian, byte indata[], int start_index=0);
-    void StringToFrame(String value, byte indata[], int start_index=0);
-    void charToFrame(char inChar[], int charLength, byte indata[], int start_index=0);
+    // These insert values into a longer modbus data frame.
+    // These are useful in creating a single long frame which can be sent out
+    // in one "setRegisters" command.
+    void uint16ToFrame(uint16_t value, endianness endian, byte modbusFrame[], int start_index=0);
+    void int16ToFrame(int16_t value, endianness endian, byte modbusFrame[], int start_index=0);
+    void float32ToFrame(float value, endianness endian, byte modbusFrame[], int start_index=0);
+    void uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[], int start_index=0);
+    void int32ToFrame(int32_t value, endianness endian, byte modbusFrame[], int start_index=0);
+    void TAI64ToFrame(uint32_t value, byte modbusFrame[], int start_index=0);
+    void byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index=0);
+    void pointerToFrame(uint16_t value, pointerType point, endianness endian, byte modbusFrame[], int start_index=0);
+    void StringToFrame(String value, byte modbusFrame[], int start_index=0);
+    void charToFrame(char inChar[], int charLength, byte modbusFrame[], int start_index=0);
 
     // This gets data from either a holding or input register
     // For a holding register readCommand = 0x03
@@ -229,7 +231,7 @@ void printFrameHex(byte modbusFrame[], int frameLength);
 
     // This converts data in a register into a little-endian frame
     // little-endian frames are needed because all Arduino processors are little-endian
-    leFrame leFrameFromRegister(int varLength,
+    leFrame leFrameFromFrame(int varLength,
                                 endianness endian=bigEndian,
                                 int start_index=3);
 
