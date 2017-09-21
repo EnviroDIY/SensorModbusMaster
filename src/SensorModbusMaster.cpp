@@ -221,6 +221,7 @@ String modbusMaster::StringFromFrame(int charLength, int start_index)
             j++;
         }
     }
+    if (j < charLength) for (int i = j; i < + charLength+1; i++) charString[j] = 0;
     String string = String(charString);
     string.trim();
     return string;
@@ -238,6 +239,7 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
             j++;
         }
     }
+    if (j < charLength) for (int i = j; i < + charLength; i++) outChar[j] = 0;
 }
 
 // Equivalent to above functions, but for creating a frame
