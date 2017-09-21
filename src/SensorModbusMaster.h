@@ -51,10 +51,10 @@ typedef enum pointerType
 typedef union leFrame {
     byte Byte[4];        // 4 bytes will occupy 4 bytes
     char Char[4];        // 4 characters will occupy 4 bytes
-    uint16_t uInt16[2];  // 2 16bit unsigned intergers will occupy 4 bytes
-    int16_t Int16[2];    // 2 16bit intergers will occupy 4 bytes
-    uint32_t uInt32;     // a single 32bit unsigned interger occupies 4 bytes
-    int32_t Int32;       // a single 32bit interger occupies 4 bytes
+    uint16_t uInt16[2];  // 2 16bit unsigned integers will occupy 4 bytes
+    int16_t Int16[2];    // 2 16bit integers will occupy 4 bytes
+    uint32_t uInt32;     // a single 32bit unsigned integer occupies 4 bytes
+    int32_t Int32;       // a single 32bit integer occupies 4 bytes
     float Float32;         // a single float occupies 4 bytes
 } leFrame;
 
@@ -217,20 +217,20 @@ private:
     // This empties the serial buffer
     void emptyResponseBuffer(Stream *stream);
 
-// A function for prettily printing raw modbus frames
+// A function for prettily printing raw modbus RTU frames
 void printFrameHex(byte modbusFrame[], int frameLength);
 
     // Calculates a Modbus RTC cyclical redudancy code (CRC)
     void calculateCRC(byte modbusFrame[], int frameLength);
-    // Adds the CRC to a modbus frame
+    // Adds the CRC to a modbus RTU frame
     void insertCRC(byte modbusFrame[], int frameLength);
 
     // This slices one array out of another
     void sliceArray(byte inputArray[], byte outputArray[],
                     int start_index, int numBytes, bool reverseOrder=false);
 
-    // This converts data in a register into a little-endian frame
-    // little-endian frames are needed because all Arduino processors are little-endian
+    // This converts data in a modbus RTU frame into a little-endian data frame
+    // little-endian frames data are needed because all Arduino processors are little-endian
     leFrame leFrameFromFrame(int varLength,
                                 endianness endian=bigEndian,
                                 int start_index=3);

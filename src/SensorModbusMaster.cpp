@@ -161,7 +161,7 @@ bool modbusMaster::charToRegister(int regNum, char inChar[], int charLength)
 //----------------------------------------------------------------------------
 
 
-// These functions return a variety of data from an input modbus frame.
+// These functions return a variety of data from an input modbus RTU frame.
 // Currently, the only "frame" available is the response buffer.
 uint16_t modbusMaster::uint16FromFrame(endianness endian, int start_index)
 {return leFrameFromFrame(UINT16_SIZE, endian, start_index).uInt16[0];}
@@ -382,7 +382,7 @@ bool modbusMaster::getRegisters(byte readCommand, int16_t startRegister, int16_t
     command[5] = fram.Byte[2];
 
     // The size of the returned frame should be:
-    // # Registers X 2 bytes/register + 5 bytes of modbus frame
+    // # Registers X 2 bytes/register + 5 bytes of modbus RTU frame
 
     // Try up to 10 times to get the right results
     int tries = 0;
@@ -649,7 +649,7 @@ void modbusMaster::insertCRC(byte modbusFrame[], int frameLength)
 }
 
 // This slices one array out of another
-// Used for slicing one or more registers out of a returned modbus frame
+// Used for slicing one or more registers out of a returned modbus RTU frame
 void modbusMaster::sliceArray(byte inputArray[], byte outputArray[],
                 int start_index, int numBytes, bool reverseOrder)
 {
@@ -673,8 +673,8 @@ void modbusMaster::sliceArray(byte inputArray[], byte outputArray[],
 }
 
 
-// This converts data in a register into a little-endian frame
-// little-endian frames are needed because all Arduino processors are little-endian
+// This converts data in a modbus RTU frame into a little-endian data frame
+// little-endian data frames are needed because all Arduino processors are little-endian
 leFrame modbusMaster::leFrameFromFrame(int varBytes,
                                   endianness endian,
                                   int start_index)
