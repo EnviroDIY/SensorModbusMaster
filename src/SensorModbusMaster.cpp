@@ -211,7 +211,7 @@ int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index)
 
 String modbusMaster::StringFromFrame(int charLength, int start_index)
 {
-    char charString[charLength+1];
+    char charString[charLength];
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++)
     {
@@ -222,7 +222,7 @@ String modbusMaster::StringFromFrame(int charLength, int start_index)
             j++;
         }
     }
-    if (j < charLength) for (int i = j; i < + charLength+1; i++) charString[j] = 0;
+    if (j < charLength) for (int i = j; i < + charLength; i++) charString[j] = 0;
     String string = String(charString);
     string.trim();
     return string;
