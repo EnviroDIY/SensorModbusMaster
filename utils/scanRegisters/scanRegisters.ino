@@ -38,9 +38,8 @@ const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 // #include <AltSoftSerial.h>  // include the AltSoftSerial library
 // AltSoftSerial modbusSerial;
 
-// Construct the Yosemitech modbus instance
-modbusMaster sensor;
-bool success;
+// Construct the modbus instance
+modbusMaster modbus;
 
 void printPaddedHex(byte val)
 {
@@ -98,14 +97,14 @@ void setup()
 
     #if defined(ARDUINO_AVR_UNO)
         modbusSerial.begin(38400);  // port for communicating with sensor
-        sensor.begin(modbusAddress, modbusSerial, DEREPin);
+        modbus.begin(modbusAddress, modbusSerial, DEREPin);
     #else
         Serial1.begin(38400, SERIAL_8N2);  // port for communicating with sensor
-        sensor.begin(modbusAddress, &Serial1, DEREPin);
+        modbus.begin(modbusAddress, &Serial1, DEREPin);
     #endif
 
     // Turn on debugging
-    // sensor.setDebugStream(&Serial);
+    // modbus.setDebugStream(&Serial);
 
     // Start up note
     Serial.println("Full scan of all input and holding registers");
@@ -123,31 +122,31 @@ void setup()
         Serial.print("Input (0x04),    ");
         printPaddedInt16(i);
         Serial.print(", ");
-        if (sensor.getRegisters(0x04, i, 2))
+        if (modbus.getRegisters(0x04, i, 2))
         {
-            printPaddedHex(sensor.responseBuffer[3]);
+            printPaddedHex(modbus.responseBuffer[3]);
             Serial.print(" ");
-            printPaddedHex(sensor.responseBuffer[4]);
+            printPaddedHex(modbus.responseBuffer[4]);
             Serial.print(" ");
-            printPaddedHex(sensor.responseBuffer[5]);
+            printPaddedHex(modbus.responseBuffer[5]);
             Serial.print(" ");
-            printPaddedHex(sensor.responseBuffer[6]);
+            printPaddedHex(modbus.responseBuffer[6]);
             Serial.print(",  ");
-            printPaddedBin(sensor.responseBuffer[3]);
+            printPaddedBin(modbus.responseBuffer[3]);
             Serial.print(" ");
-            printPaddedBin(sensor.responseBuffer[4]);
+            printPaddedBin(modbus.responseBuffer[4]);
             Serial.print(" ");
-            printPaddedBin(sensor.responseBuffer[5]);
+            printPaddedBin(modbus.responseBuffer[5]);
             Serial.print(" ");
-            printPaddedBin(sensor.responseBuffer[6]);
+            printPaddedBin(modbus.responseBuffer[6]);
             Serial.print(",  ");
-            printPaddedString(sensor.StringFromFrame(4));
+            printPaddedString(modbus.StringFromFrame(4));
             Serial.print(",  ");
-            printPaddedInt16(sensor.uint16FromFrame(bigEndian, 3));
+            printPaddedInt16(modbus.uint16FromFrame(bigEndian, 3));
             Serial.print(" ");
-            printPaddedInt16(sensor.uint16FromFrame(bigEndian, 5));
+            printPaddedInt16(modbus.uint16FromFrame(bigEndian, 5));
             Serial.print(",  ");
-            Serial.print(sensor.float32FromFrame(bigEndian, 3), 4);
+            Serial.print(modbus.float32FromFrame(bigEndian, 3), 4);
             Serial.println();
         }
         else Serial.println("Read Register Failed!");
@@ -161,31 +160,31 @@ void setup()
         Serial.print("Holding (0x03),  ");
         printPaddedInt16(i);
         Serial.print(", ");
-        if (sensor.getRegisters(0x03, i, 2))
+        if (modbus.getRegisters(0x03, i, 2))
         {
-            printPaddedHex(sensor.responseBuffer[3]);
+            printPaddedHex(modbus.responseBuffer[3]);
             Serial.print(" ");
-            printPaddedHex(sensor.responseBuffer[4]);
+            printPaddedHex(modbus.responseBuffer[4]);
             Serial.print(" ");
-            printPaddedHex(sensor.responseBuffer[5]);
+            printPaddedHex(modbus.responseBuffer[5]);
             Serial.print(" ");
-            printPaddedHex(sensor.responseBuffer[6]);
+            printPaddedHex(modbus.responseBuffer[6]);
             Serial.print(",  ");
-            printPaddedBin(sensor.responseBuffer[3]);
+            printPaddedBin(modbus.responseBuffer[3]);
             Serial.print(" ");
-            printPaddedBin(sensor.responseBuffer[4]);
+            printPaddedBin(modbus.responseBuffer[4]);
             Serial.print(" ");
-            printPaddedBin(sensor.responseBuffer[5]);
+            printPaddedBin(modbus.responseBuffer[5]);
             Serial.print(" ");
-            printPaddedBin(sensor.responseBuffer[6]);
+            printPaddedBin(modbus.responseBuffer[6]);
             Serial.print(",  ");
-            printPaddedString(sensor.StringFromFrame(4));
+            printPaddedString(modbus.StringFromFrame(4));
             Serial.print(",  ");
-            printPaddedInt16(sensor.uint16FromFrame(bigEndian, 3));
+            printPaddedInt16(modbus.uint16FromFrame(bigEndian, 3));
             Serial.print(" ");
-            printPaddedInt16(sensor.uint16FromFrame(bigEndian, 5));
+            printPaddedInt16(modbus.uint16FromFrame(bigEndian, 5));
             Serial.print(",  ");
-            Serial.print(sensor.float32FromFrame(bigEndian, 3), 4);
+            Serial.print(modbus.float32FromFrame(bigEndian, 3), 4);
             Serial.println();
         }
         else Serial.println("Read Register Failed!");
