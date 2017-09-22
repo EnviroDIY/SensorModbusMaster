@@ -89,7 +89,7 @@ public:
     // Per modbus specifications, the stream must have:
     //    - 1 start bit
     //    - 8 data bits, least significant bit sent first
-    //    - 1 stop bit if parity is used-2 bits if no parity
+    //    - 1 stop bit if parity is used - 2 bits if no parity
     // Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
     // will support either even or odd parity!
     bool begin(byte modbusSlaveID, Stream *stream, int enablePin = -1);
