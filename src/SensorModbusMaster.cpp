@@ -564,6 +564,7 @@ void modbusMaster::driverEnable(void)
     if (_enablePin > 0)
     {
         digitalWrite(_enablePin, HIGH);
+        _debugStream->println("Driver/Master Enabled");
         delay(8);
     }
 }
@@ -574,6 +575,7 @@ void modbusMaster::recieverEnable(void)
     if (_enablePin > 0)
     {
         digitalWrite(_enablePin, LOW);
+        _debugStream->println("Receiver/Slave Enabled");
         delay(8);
     }
 }

@@ -114,7 +114,7 @@ void setup()
     delay(500);
 
     // Print a header
-    Serial.println("Register Type,  Reg #, Hex,          Binary,                             Char,   uInt16,        Float32");
+    Serial.println("Register Type,  Reg #,     Hex     ,                Binary               ,  Char ,     uInt16  ,  Float32");
 
     // Get values two at a time
     for (long i = 0; i < 65535; i++)
@@ -153,6 +153,9 @@ void setup()
         i++;
     }
     Serial.println("=======================");
+    Serial.println("\n\n\n\n\n\n\n\n");
+    Serial.println("=======================");
+    Serial.println("Register Type,  Reg #,     Hex     ,                Binary               ,  Char ,     uInt16  ,  Float32");
 
     // Get values two at a time
     for (long i = 0; i < 65535; i++)
