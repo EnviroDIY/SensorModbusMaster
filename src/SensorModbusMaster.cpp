@@ -25,6 +25,7 @@ bool modbusMaster::begin(byte modbusSlaveID, Stream *stream, int enablePin)
 
     // Set pin mode for the enable pin
     if (_enablePin > 0) pinMode(_enablePin, OUTPUT);
+    recieverEnable();
 
     _stream->setTimeout(modbusFrameTimeout);
 
