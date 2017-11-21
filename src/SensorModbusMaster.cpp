@@ -63,8 +63,18 @@ int32_t modbusMaster::int32FromRegister(byte regType, int regNum, endianness end
 }
 uint32_t modbusMaster::TAI64FromRegister(byte regType, int regNum)
 {
-    getRegisters(regType, regNum, TAI64_SIZE);  // Don't divide size by 2, need all 4 registers
+    getRegisters(regType, regNum, TAI64_SIZE/2);
     return TAI64FromFrame();
+}
+uint32_t modbusMaster::TAI64NFromRegister(byte regType, int regNum, uint32_t &nanoseconds)
+{
+    getRegisters(regType, regNum, TAI64N_SIZE/2);
+    return TAI64NFromFrame(nanoseconds);
+}
+uint32_t modbusMaster::TAI64NAFromRegister(byte regType, int regNum, uint32_t &nanoseconds, uint32_t &attoseconds)
+{
+    getRegisters(regType, regNum, TAI64NA_SIZE/2);
+    return TAI64NAFromFrame(nanoseconds, attoseconds);
 }
 byte modbusMaster::byteFromRegister(byte regType, int regNum, int byteNum)
 {
@@ -125,11 +135,23 @@ bool modbusMaster::int32ToRegister(int regNum, int32_t value, endianness endian)
     int32ToFrame(value, endian, inputData);
     return setRegisters(regNum, INT32_SIZE/2, inputData);
 }
-bool modbusMaster::TAI64ToRegister(int regNum, uint32_t value)
+bool modbusMaster::TAI64ToRegister(int regNum, uint32_t seconds)
 {
-    byte inputData[TAI64_SIZE+4] = {0x00,};
-    TAI64ToFrame(value, inputData);
+    byte inputData[TAI64_SIZE] = {0x00,};
+    TAI64ToFrame(seconds, inputData);
     return setRegisters(regNum, TAI64_SIZE, inputData);
+}
+bool modbusMaster::TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds)
+{
+    byte inputData[TAI64N_SIZE] = {0x00,};
+    TAI64NToFrame(seconds, nanoseconds, inputData);
+    return setRegisters(regNum, TAI64N_SIZE, inputData);
+}
+bool modbusMaster::TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds)
+{
+    byte inputData[TAI64NA_SIZE] = {0x00,};
+    TAI64NAToFrame(seconds, nanoseconds, attoseconds, inputData);
+    return setRegisters(regNum, TAI64NA_SIZE, inputData);
 }
 bool modbusMaster::byteToRegister(int regNum, int byteNum, byte value)
 {
@@ -180,7 +202,18 @@ int32_t modbusMaster::int32FromFrame(endianness endian, int start_index)
 {return leFrameFromFrame(INT32_SIZE, endian, start_index).Int32;}
 
 uint32_t modbusMaster::TAI64FromFrame(int start_index)
-{return leFrameFromFrame(TAI64_SIZE, bigEndian, start_index+4).uInt32;}
+{return leFrameFromFrame(4, bigEndian, start_index + 4).uInt32;}
+uint32_t modbusMaster::TAI64NFromFrame(uint32_t &nanoseconds, int start_index)
+{
+    nanoseconds = leFrameFromFrame(4, bigEndian, start_index + 8).uInt32;
+    return leFrameFromFrame(4, bigEndian, start_index + 4).uInt32;
+}
+uint32_t modbusMaster::TAI64NAFromFrame(uint32_t &nanoseconds, uint32_t &attoseconds, int start_index)
+{
+    attoseconds = leFrameFromFrame(4, bigEndian, start_index + 12).uInt32;
+    nanoseconds = leFrameFromFrame(4, bigEndian, start_index + 8).uInt32;
+    return leFrameFromFrame(4, bigEndian, start_index + 4).uInt32;
+}
 
 byte modbusMaster::byteFromFrame(int start_index)
 {return responseBuffer[start_index];}
@@ -300,14 +333,49 @@ void modbusMaster::int32ToFrame(int32_t value, endianness endian, byte modbusFra
         else modbusFrame[i + start_index] = fram.Byte[i + start_index];
     }
 }
-void modbusMaster::TAI64ToFrame(uint32_t value, byte modbusFrame[], int start_index)
+void modbusMaster::TAI64ToFrame(uint32_t seconds, byte modbusFrame[], int start_index)
 {
-    leFrame fram;
-    fram.Float32 = value;
     modbusFrame[start_index] = 0x40;  // This will be true until 2106
-    for (int i = 4; i < TAI64_SIZE + 4; i++)
+    leFrame fram;
+    fram.Int32 = seconds;
+    for (int i = 4; i < 8; i++)
     {
-        modbusFrame[TAI64_SIZE - 1 - i + start_index] = fram.Byte[i + start_index];
+        modbusFrame[7 - i + start_index] = fram.Byte[i + start_index];
+    }
+}
+void modbusMaster::TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds, byte modbusFrame[], int start_index)
+{
+    modbusFrame[start_index] = 0x40;  // This will be true until 2106
+    leFrame fram;
+    fram.Int32 = seconds;
+    for (int i = 4; i < 8; i++)
+    {
+        modbusFrame[7 - i + start_index] = fram.Byte[i + start_index];
+    }
+    fram.Int32 = nanoseconds;
+    for (int i = 8; i < 12; i++)
+    {
+        modbusFrame[11 - i + start_index] = fram.Byte[i + start_index];
+    }
+}
+void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds, byte modbusFrame[], int start_index)
+{
+    modbusFrame[start_index] = 0x40;  // This will be true until 2106
+    leFrame fram;
+    fram.Int32 = seconds;
+    for (int i = 4; i < 8; i++)
+    {
+        modbusFrame[7 - i + start_index] = fram.Byte[i + start_index];
+    }
+    fram.Int32 = nanoseconds;
+    for (int i = 8; i < 12; i++)
+    {
+        modbusFrame[11 - i + start_index] = fram.Byte[i + start_index];
+    }
+    fram.Int32 = attoseconds;
+    for (int i = 12; i < 16; i++)
+    {
+        modbusFrame[15 - i + start_index] = fram.Byte[i + start_index];
     }
 }
 void modbusMaster::byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index)

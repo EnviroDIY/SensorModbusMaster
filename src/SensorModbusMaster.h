@@ -55,17 +55,20 @@ typedef union leFrame {
     int16_t Int16[2];    // 2 16bit integers will occupy 4 bytes
     uint32_t uInt32;     // a single 32bit unsigned integer occupies 4 bytes
     int32_t Int32;       // a single 32bit integer occupies 4 bytes
-    float Float32;         // a single float occupies 4 bytes
+    float Float32;       // a single float occupies 4 bytes
 } leFrame;
 
 // Define the sizes (in bytes) of several data types
+// There are generally 2 bytes in each register, so this is double the number of registers
 #define BYTE_SIZE 1
 #define UINT16_SIZE 2
 #define INT16_SIZE 2
 #define UINT32_SIZE 4
 #define INT32_SIZE 4
 #define FLOAT32_SIZE 4
-#define TAI64_SIZE 4
+#define TAI64_SIZE 8
+#define TAI64N_SIZE 12
+#define TAI64NA_SIZE 16
 #define POINTER_SIZE 2
 
 // NOTE:  The TAI64 is a 64 bit (4 register) data type BUT:
@@ -73,8 +76,10 @@ typedef union leFrame {
 // I'm ignoring it for the next 90 years to avoid using 64 bit math
 // The next 32 bits (two registers) have the actual seconds past Jan 1, 1970
 // In the case of TAI64N data there will be an additional 32 bits (two
-// registers) of data representing the nanosecond portion of the time.  This
-// data type does *not* deal with that.
+// registers) of data representing the nanosecond portion of the time.
+// In the case of TAI64NA data there will be an additional 32 bits (two
+// registers) of data representing the nanosecond portion of the time and yet
+// another 32 bits (two registers) representing the attosecond count.
 // Per the TAI64 standard, this value is always big-endian
 // https://www.tai64.com/
 
@@ -102,6 +107,8 @@ public:
     uint32_t uint32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     int32_t int32FromRegister(byte regType, int regNum, endianness endian=bigEndian);
     uint32_t TAI64FromRegister(byte regType, int regNum);
+    uint32_t TAI64NFromRegister(byte regType, int regNum, uint32_t &nanoseconds);
+    uint32_t TAI64NAFromRegister(byte regType, int regNum, uint32_t &nanoseconds, uint32_t &attoseconds);
     byte byteFromRegister(byte regType, int regNum, int byteNum);
     uint16_t pointerFromRegister(byte regType, int regNum, endianness endian=bigEndian);
     int8_t pointerTypeFromRegister(byte regType, int regNum, endianness endian=bigEndian);
@@ -114,7 +121,9 @@ public:
     bool float32ToRegister(int regNum, float value, endianness endian=bigEndian);
     bool uint32ToRegister(int regNum, uint32_t value, endianness endian=bigEndian);
     bool int32ToRegister(int regNum, int32_t value, endianness endian=bigEndian);
-    bool TAI64ToRegister(int regNum, uint32_t value);
+    bool TAI64ToRegister(int regNum, uint32_t seconds);
+    bool TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds);
+    bool TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds);
     bool byteToRegister(int regNum, int byteNum, byte value);
     bool pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian=bigEndian);
     bool StringToRegister(int regNum, String value);
@@ -131,6 +140,8 @@ public:
     uint32_t uint32FromFrame(endianness endian=bigEndian, int start_index=3);
     int32_t int32FromFrame(endianness endian=bigEndian, int start_index=3);
     uint32_t TAI64FromFrame(int start_index=3);
+    uint32_t TAI64NFromFrame(uint32_t &nanoseconds, int start_index=3);
+    uint32_t TAI64NAFromFrame(uint32_t &nanoseconds, uint32_t &attoseconds, int start_index=3);
     byte byteFromFrame(int start_index=3);
     uint16_t pointerFromFrame(endianness endian=bigEndian, int start_index=3);
     int8_t pointerTypeFromFrame(endianness endian=bigEndian, int start_index=3);
@@ -145,7 +156,9 @@ public:
     void float32ToFrame(float value, endianness endian, byte modbusFrame[], int start_index=0);
     void uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[], int start_index=0);
     void int32ToFrame(int32_t value, endianness endian, byte modbusFrame[], int start_index=0);
-    void TAI64ToFrame(uint32_t value, byte modbusFrame[], int start_index=0);
+    void TAI64ToFrame(uint32_t seconds, byte modbusFrame[], int start_index=0);
+    void TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds, byte modbusFrame[], int start_index=0);
+    void TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds, byte modbusFrame[], int start_index=0);
     void byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index=0);
     void pointerToFrame(uint16_t value, pointerType point, endianness endian, byte modbusFrame[], int start_index=0);
     void StringToFrame(String value, byte modbusFrame[], int start_index=0);

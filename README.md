@@ -49,6 +49,10 @@ The following data types are supported:
 - int32 (32-bit signed integer)
 - TAI64 (64-bit timestamp, https://www.tai64.com/)
     - This is supported as if it were a 32-bit unix timestamp because the first 16-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
+- TAI64N (64-bit timestamp followed by a 16-bit nanosecond count, https://www.tai64.com/)
+    - Note that the seconds and nanoseconds are broken into two different fields.
+- TAI64NA (64-bit timestamp followed by a 16-bit nanosecond count and then a 16-bit attosecond count, https://www.tai64.com/)
+    - Note that the seconds, nanoseconds, and attoseconds are broken into three different fields.
 - byte (8-bit unsigned integer or raw bytes of data)
 - char (c++/ASCII style characters)
 - String (Arduino Strings)
