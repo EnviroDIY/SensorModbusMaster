@@ -1,6 +1,6 @@
 {
     "name": "SensorModbusMaster",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "keywords": "sensor, modbus",
     "description": "Arduino library for communicating via modbus with the Arduino acting as master",
     "repository":

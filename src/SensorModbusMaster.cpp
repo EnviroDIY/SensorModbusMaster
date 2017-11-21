@@ -139,19 +139,19 @@ bool modbusMaster::TAI64ToRegister(int regNum, uint32_t seconds)
 {
     byte inputData[TAI64_SIZE] = {0x00,};
     TAI64ToFrame(seconds, inputData);
-    return setRegisters(regNum, TAI64_SIZE, inputData);
+    return setRegisters(regNum, TAI64_SIZE/2, inputData);
 }
 bool modbusMaster::TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds)
 {
     byte inputData[TAI64N_SIZE] = {0x00,};
     TAI64NToFrame(seconds, nanoseconds, inputData);
-    return setRegisters(regNum, TAI64N_SIZE, inputData);
+    return setRegisters(regNum, TAI64N_SIZE/2, inputData);
 }
 bool modbusMaster::TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds)
 {
     byte inputData[TAI64NA_SIZE] = {0x00,};
     TAI64NAToFrame(seconds, nanoseconds, attoseconds, inputData);
-    return setRegisters(regNum, TAI64NA_SIZE, inputData);
+    return setRegisters(regNum, TAI64NA_SIZE/2, inputData);
 }
 bool modbusMaster::byteToRegister(int regNum, int byteNum, byte value)
 {
