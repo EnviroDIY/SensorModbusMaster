@@ -17,8 +17,7 @@ holding registers.
 // ---------------------------------------------------------------------------
 
 // Define the sensor's modbus address
-byte modbusAddress = 0x04;  // The sensor's modbus address, or SlaveID
-// Yosemitech ships sensors with a default ID of 0x01.
+byte modbusAddress = 0x01;  // The sensor's modbus address, or SlaveID
 
 // Define pin number variables
 const int DEREPin = -1;   // The pin controlling Recieve Enable and Driver Enable
@@ -33,10 +32,6 @@ const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
     #include <SoftwareSerial.h>
     SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
 #endif
-
-// AltSoftSerial object for Modbus
-// #include <AltSoftSerial.h>  // include the AltSoftSerial library
-// AltSoftSerial modbusSerial;
 
 // Construct the modbus instance
 modbusMaster modbus;
@@ -99,7 +94,7 @@ void setup()
         modbusSerial.begin(38400);  // port for communicating with sensor
         modbus.begin(modbusAddress, modbusSerial, DEREPin);
     #else
-        Serial1.begin(38400, SERIAL_8N2);  // port for communicating with sensor
+        Serial1.begin(38400, SERIAL_8O1);  // port for communicating with sensor
         modbus.begin(modbusAddress, &Serial1, DEREPin);
     #endif
 

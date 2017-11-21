@@ -49,15 +49,15 @@ The following data types are supported:
 - int32 (32-bit signed integer)
 - TAI64 (64-bit timestamp, https://www.tai64.com/)
     - This is supported as if it were a 32-bit unix timestamp because the first 16-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
-- byte (raw bytes of data)
-- char (c++ style characters)
+- byte (8-bit unsigned integer or raw bytes of data)
+- char (c++/ASCII style characters)
 - String (Arduino Strings)
 - pointer (pointers to other registers)
 _____
 
 
 ## Notes on modbus maps
-While modbus RTU specifications define the format of a data frame and a very simple data structure for a master and slave, there are no specification for what types of data a slave stores, where it is stored, or in what format it is stored.  You **MUST** get this information from the manufacture/programmer of your modbus device.  Typically this information is shared in what is called a modbus map.
+While modbus RTU specifications define the format of a data frame and a very simple data structure for a master and slave, there are no specification for what types of data a slave stores, where it is stored, or in what format it is stored.  You **MUST** get this information from the manufacturer/programmer of your modbus device.  Typically this information is shared in what is called a modbus map.
 
 You need the following data from your modbus map:
 - the baud rate the device communicaes at (modbus allows any baud rate)
@@ -75,4 +75,4 @@ _____
 
 
 ## TTL and RS485/RS322
-Again, while modbus RTU specifications define the format of a data frame transfered over a serial line, the type of serial signal is not defined.  Many modbus sensors communicate over [RS-485](https://en.wikipedia.org/wiki/RS-485).  To interface with them, you will need an RS485-to-TLL adapter. There are a number of RS485-to-TLL adapters available.  When shopping for one, be mindful of the logic level of the TLL output by the adapter.  The MAX485, one of the most popular adapters, has a 5V logic level in the TLL signal.  This will _fry_ any board that can only use on 3.3V logic.  You would need a voltage shifter in between the Mayfly and the MAX485 to make it work.  You will also need an interface board to communicate between an Arduino and any modbus sensor that communicates over [RS422](https://en.wikipedia.org/wiki/RS-422) or [RS232](https://en.wikipedia.org/wiki/RS-232).  Again, mind your voltages.
+While modbus RTU specifications define the format of a data frame transfered over a serial line, the type of serial signal is not defined.  Many modbus sensors communicate over [RS-485](https://en.wikipedia.org/wiki/RS-485).  To interface between RS485 and the TTL used by standard Arduino-type boards, you will need an RS485-to-TLL adapter. There are a number of RS485-to-TLL adapters available.  When shopping for one, be mindful of the logic level of the TLL output by the adapter.  The MAX485, one of the most popular adapters, has a 5V logic level in the TLL signal.  This will _fry_ any board that can only use on 3.3V logic.  You would need a voltage shifter in between the Mayfly and the MAX485 to make it work.  Also note that most RS485-to-TLL adapters are implemented _without_ automatic flow control.  That is, you must manually set voltages on driver enable and receiver enable pins to control the data flow direction.  While this library includes functions for setting the enables, I've found communcation to be much more stable on adapters with built-in flow control.  You will also need an interface board to communicate between an Arduino and any modbus sensor that communicates over [RS422](https://en.wikipedia.org/wiki/RS-422) or [RS232](https://en.wikipedia.org/wiki/RS-232).  Again, mind your voltages and the method of direction control.
