@@ -1,7 +1,7 @@
 {
     "name": "SensorModbusMaster",
-    "version": "0.5.2",
-    "keywords": "sensor, modbus",
+    "version": "0.5.3",
+    "keywords": "sensor, modbus, master, EnviroDIY",
     "description": "Arduino library for communicating via modbus with the Arduino acting as master",
     "repository":
     {
