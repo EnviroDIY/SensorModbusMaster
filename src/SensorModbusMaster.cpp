@@ -513,7 +513,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
 {
     // figure out how long the command will be
     int commandLength;
-    if (numRegisters > 1 or forceMultiple) commandLength = numRegisters*2 + 7;
+    if (numRegisters > 1 or forceMultiple) commandLength = numRegisters*2 + 9;
     else commandLength = numRegisters*2 + 6;
 
     // Create an array for the command
