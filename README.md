@@ -39,24 +39,57 @@ modbus.float32FromRegister(0x04, 15, bigEndian);
 modbus.uint16ToRegister(20, 56, littleEndian);
 ```
 
-There are also mid-level functions available to help to reduce serial traffic by calling many registers at once and low level functions to make raw modbus calls.  See SensorModbusMaster.h for all the avaialable functions.
-
 The following data types are supported:
 - uint16 (16-bit unsigned integer)
+    - Value must be within a single 16-bit register
+    - bigEndian or littleEndian can be specified, bigEndian will be used by default
+    - By default, the modbus command for pre-setting a single register will be used (0x06).  Set the forceMultiple boolean flag to 'true' to force the use of the modbus command for setting multiple resisters (0x10).
 - int16 (16-bit signed integer)
+    - Value must be within a single 16-bit register
+    - bigEndian or littleEndian can be specified, bigEndian will be used by default
+    - By default, the modbus command for pre-setting a single register will be used (0x06).  Set the forceMultiple boolean flag to 'true' to force the use of the modbus command for setting multiple resisters (0x10).
 - float32 (32-bit float)
+    - Value must be in two adjacent 16-bit registers
+    - bigEndian or littleEndian can be specified, bigEndian will be used by default
+    - Only "fully" big or little endianness is supported - that is both high byte and high word first or both low byte and low word first.
 - uint32 (32-bit unsigned integer)
+    - Value must be in two adjacent 16-bit registers
+    - bigEndian or littleEndian can be specified, bigEndian will be used by default
+    - Only "fully" big or little endianness is supported - that is both high byte and high word first or both low byte and low word first.
 - int32 (32-bit signed integer)
-- TAI64 (64-bit timestamp, https://www.tai64.com/)
-    - This is supported as if it were a 32-bit unix timestamp because the first 16-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
-- TAI64N (64-bit timestamp followed by a 16-bit nanosecond count, https://www.tai64.com/)
+    - Value must be in two adjacent 16-bit registers
+    - bigEndian or littleEndian can be specified, bigEndian will be used by default
+    - Only "fully" big or little endianness is supported - that is both high byte and high word first or both low byte and low word first.
+- TAI64 (64-bit timestamp)
+    - Value must be in four contiguous 16-bit registers
+    - Value is always fully big endian
+    - Supported as if it were a 32-bit unix timestamp because the first 16-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
+    - See https://www.tai64.com/ for more details on this format type
+- TAI64N (64-bit timestamp followed by a 16-bit nanosecond count)
+    - Value must be in six contiguous 16-bit registers
+    - Value is always fully big endian
     - Note that the seconds and nanoseconds are broken into two different fields.
-- TAI64NA (64-bit timestamp followed by a 16-bit nanosecond count and then a 16-bit attosecond count, https://www.tai64.com/)
+    - See https://www.tai64.com/ for more details on this format type
+- TAI64NA (64-bit timestamp followed by a 16-bit nanosecond count and then a 16-bit attosecond count)
+    - Value must be in eight contiguous 16-bit registers
+    - Value is always fully big endian
     - Note that the seconds, nanoseconds, and attoseconds are broken into three different fields.
-- byte (8-bit unsigned integer or raw bytes of data)
+    - See https://www.tai64.com/ for more details on this format type
+- byte (8-bit unsigned integer or raw byte of data)
+    - Must specify either the first or second 8-bit component of a single 16-bit register)
+    - By default, the modbus command for pre-setting a single register will be used (0x06).  Set the forceMultiple boolean flag to 'true' to force the use of the modbus command for setting multiple resisters (0x10).
 - char (c++/ASCII style characters)
+    - Characters can be in one or more contiguous 16-bit registers
+    - Length of the character array must be specified
+    - By default, the modbus command for pre-setting a single register will be used (0x06) if the character array has two or fewer characters.  Set the forceMultiple boolean flag to 'true' to force the use of the modbus command for setting multiple resisters (0x10).
 - String (Arduino Strings)
+    - Characters can be in one or more contiguous 16-bit registers
+    - By default, the modbus command for pre-setting a single register will be used (0x06) if the String has two or fewer characters.  Set the forceMultiple boolean flag to 'true' to force the use of the modbus command for setting multiple resisters (0x10).
 - pointer (pointers to other registers)
+    - Value must be within a single 16-bit register
+    - By default, the modbus command for pre-setting a single register will be used (0x06).  Set the forceMultiple boolean flag to 'true' to force the use of the modbus command for setting multiple resisters (0x10).
+
+There are also mid-level functions available to help to reduce serial traffic by calling many registers at once and low level functions to make raw modbus calls.  See SensorModbusMaster.h for all the available functions and their required and optional inputs
 _____
 
 

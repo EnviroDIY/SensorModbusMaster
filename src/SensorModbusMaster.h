@@ -116,18 +116,18 @@ public:
     void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
 
     // These set data in registers to a variety of data types
-    bool uint16ToRegister(int regNum, uint16_t value, endianness endian=bigEndian);
-    bool int16ToRegister(int regNum, int16_t value, endianness endian=bigEndian);
+    bool uint16ToRegister(int regNum, uint16_t value, endianness endian=bigEndian, bool forceMultiple=false);
+    bool int16ToRegister(int regNum, int16_t value, endianness endian=bigEndian, bool forceMultiple=false);
     bool float32ToRegister(int regNum, float value, endianness endian=bigEndian);
     bool uint32ToRegister(int regNum, uint32_t value, endianness endian=bigEndian);
     bool int32ToRegister(int regNum, int32_t value, endianness endian=bigEndian);
     bool TAI64ToRegister(int regNum, uint32_t seconds);
     bool TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds);
     bool TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds);
-    bool byteToRegister(int regNum, int byteNum, byte value);
-    bool pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian=bigEndian);
-    bool StringToRegister(int regNum, String value);
-    bool charToRegister(int regNum, char inChar[], int charLength);
+    bool byteToRegister(int regNum, int byteNum, byte value, bool forceMultiple=false);
+    bool pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian=bigEndian, bool forceMultiple=false);
+    bool StringToRegister(int regNum, String value, bool forceMultiple=false);
+    bool charToRegister(int regNum, char inChar[], int charLength, bool forceMultiple=false);
 
     // These mid-level functions return a variety of data from an input modbus "frame"
     // Currently, the only "frame" available is the response buffer.
@@ -179,7 +179,8 @@ public:
     // This sets the value of one or more holding registers
     // Modbus commands 0x06 and 0x10
     // Input registers cannot be written by a Modbus controller/master
-    bool setRegisters(int16_t startRegister, int16_t numRegisters, byte value[]);
+    bool setRegisters(int16_t startRegister, int16_t numRegisters, byte value[],
+                      bool forceMultiple=false);
 
     // This sets the value of one or more output coils
     // Modbus commands 0x05 and 0x0F

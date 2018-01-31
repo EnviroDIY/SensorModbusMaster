@@ -105,17 +105,20 @@ void modbusMaster::charFromRegister(byte regType, int regNum, char outChar[], in
 
 
 // These set data in registers to a variety of data types
-bool modbusMaster::uint16ToRegister(int regNum, uint16_t value, endianness endian)
+// For data types that can be only one register long, the modbus command to pre-set
+// a single register (0x06) will be used by default.  To force the use of the pre-set
+// multiple registers command, set the boolean input for forceMultiple to true.
+bool modbusMaster::uint16ToRegister(int regNum, uint16_t value, endianness endian, bool forceMultiple)
 {
     byte inputData[UINT16_SIZE] = {0x00,};
     uint16ToFrame(value, endian, inputData);
-    return setRegisters(regNum, UINT16_SIZE/2, inputData);
+    return setRegisters(regNum, UINT16_SIZE/2, inputData, forceMultiple);
 }
-bool modbusMaster::int16ToRegister(int regNum, int16_t value, endianness endian)
+bool modbusMaster::int16ToRegister(int regNum, int16_t value, endianness endian, bool forceMultiple)
 {
     byte inputData[INT16_SIZE] = {0x00,};
     int16ToFrame(value, endian, inputData);
-    return setRegisters(regNum, INT16_SIZE/2, inputData);
+    return setRegisters(regNum, INT16_SIZE/2, inputData, forceMultiple);
 }
 bool modbusMaster::float32ToRegister(int regNum, float value, endianness endian)
 {
@@ -153,30 +156,30 @@ bool modbusMaster::TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nano
     TAI64NAToFrame(seconds, nanoseconds, attoseconds, inputData);
     return setRegisters(regNum, TAI64NA_SIZE/2, inputData);
 }
-bool modbusMaster::byteToRegister(int regNum, int byteNum, byte value)
+bool modbusMaster::byteToRegister(int regNum, int byteNum, byte value, bool forceMultiple)
 {
     byte inputData[2] = {0x00,};
     byteToFrame(value, byteNum, inputData);
-    return setRegisters(regNum, 1, inputData);
+    return setRegisters(regNum, 1, inputData, forceMultiple);
 }
-bool modbusMaster::pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian)
+bool modbusMaster::pointerToRegister(int regNum, uint16_t value, pointerType point, endianness endian, bool forceMultiple)
 {
     byte inputData[UINT16_SIZE] = {0x00,};
     pointerToFrame(value, point, endian, inputData);
-    return setRegisters(regNum, UINT16_SIZE/2, inputData);
+    return setRegisters(regNum, UINT16_SIZE/2, inputData, forceMultiple);
 }
-bool modbusMaster::StringToRegister(int regNum, String value)
+bool modbusMaster::StringToRegister(int regNum, String value, bool forceMultiple)
 {
     int charLength = value.length();
     byte inputData[charLength];
     StringToFrame(value, inputData);
-    return setRegisters(regNum, charLength/2, inputData);
+    return setRegisters(regNum, charLength/2, inputData, forceMultiple);
 }
-bool modbusMaster::charToRegister(int regNum, char inChar[], int charLength)
+bool modbusMaster::charToRegister(int regNum, char inChar[], int charLength, bool forceMultiple)
 {
     byte inputData[charLength];
     charToFrame(inChar, charLength, inputData);
-    return setRegisters(regNum, charLength/2, inputData);
+    return setRegisters(regNum, charLength/2, inputData, forceMultiple);
 }
 
 //----------------------------------------------------------------------------
@@ -503,7 +506,10 @@ bool modbusMaster::getRegisters(byte readCommand, int16_t startRegister, int16_t
 
 // This sets the value of one or more holding registers
 // Modbus commands 0x06 and 0x10 (16)
-bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters, byte value[])
+// The boolean switch to "forceMultiple" will force the command 0x10 (16,
+// preset multiple registers) instead of using 0x06 for a single register
+bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
+                                byte value[], bool forceMultiple)
 {
     // figure out how long the command will be
     int commandLength;
@@ -515,7 +521,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters, byt
 
     // Put in the slave id and the command
     command[0] = _slaveID;
-    if (numRegisters > 1) command[1] = 0x10;
+    if (numRegisters > 1 or forceMultiple) command[1] = 0x10;
     else command[1] = 0x06;
 
     // Put in the starting register
@@ -526,7 +532,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters, byt
 
     // Put in the register values
     // For multiple registers, need to add in how many registers and how many bytes
-    if (numRegisters > 1)
+    if (numRegisters > 1 or forceMultiple)
     {
         // Put in the number of registers
         fram.Int16[1] = numRegisters;
