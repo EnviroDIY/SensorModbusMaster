@@ -513,7 +513,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
 {
     // figure out how long the command will be
     int commandLength;
-    if (numRegisters > 1) commandLength = numRegisters*2 + 7;
+    if (numRegisters > 1 or forceMultiple) commandLength = numRegisters*2 + 7;
     else commandLength = numRegisters*2 + 6;
 
     // Create an array for the command
@@ -560,7 +560,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
         respSize = sendCommand(command, commandLength);
         // The structure of the response for 0x10 should be:
         // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
-        if (numRegisters > 1 && respSize == 8 && int16FromFrame(bigEndian, 4) == numRegisters)
+        if ((numRegisters > 1 or forceMultiple) && respSize == 8 && int16FromFrame(bigEndian, 4) == numRegisters)
             success = true;
         // The structure of the response for 0x06 should be:
         // {slaveID, fxnCode, Address of 1st register, Value written, CRC}
