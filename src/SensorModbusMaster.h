@@ -229,7 +229,7 @@ private:
     void recieverEnable(void);
 
     // This empties the serial buffer
-    void emptyResponseBuffer(Stream *stream);
+    void emptySerialBuffer(Stream *stream);
 
 // A function for prettily printing raw modbus RTU frames
 void printFrameHex(byte modbusFrame[], int frameLength);

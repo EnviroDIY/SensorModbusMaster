@@ -592,6 +592,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
 
     // Send out the command
     driverEnable();
+    emptySerialBuffer(_stream);  // Clear any junk before sending command
     _stream->write(command, commandLength);
     _stream->flush();
     // Print the raw send (for debugging)
@@ -609,7 +610,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
     {
         // Read the incoming bytes
         int bytesRead = _stream->readBytes(responseBuffer, 135);
-        emptyResponseBuffer(_stream);
+        emptySerialBuffer(_stream);
 
         // Print the raw response (for debugging)
         _debugStream->print("Raw Response (");
@@ -689,7 +690,7 @@ void modbusMaster::recieverEnable(void)
 }
 
 // This empties the serial buffer
-void modbusMaster::emptyResponseBuffer(Stream *stream)
+void modbusMaster::emptySerialBuffer(Stream *stream)
 {
     while (stream->available() > 0)
     {
