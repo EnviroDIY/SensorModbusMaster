@@ -12318,11 +12318,15 @@ OSHW_LOGO</description>
 when not using regulator, to power
 insturment directly off of 5v from
 Mayfly</text>
+<text x="5.08" y="5.08" size="1.778" layer="91">Single 470uF cap on C1 
+seems sufficient from testing</text>
 </plain>
 <instances>
 <instance part="C1" gate="G$1" x="17.78" y="20.32"/>
 <instance part="C2" gate="G$1" x="25.4" y="20.32"/>
-<instance part="U$1" gate="G$1" x="50.8" y="20.32"/>
+<instance part="U$1" gate="G$1" x="50.8" y="20.32" smashed="yes">
+<attribute name="VALUE" x="50.8" y="30.48" size="1.6764" layer="95" align="center"/>
+</instance>
 <instance part="U$2" gate="G$1" x="124.46" y="20.32"/>
 <instance part="J1" gate="G$1" x="27.94" y="50.8"/>
 <instance part="J2" gate="G$1" x="45.72" y="50.8"/>
