@@ -2,13 +2,18 @@
 
 This is an early draft document describing how to acquire parts, construct and use the EnviroDIY Modbus-Mafly-WingShield board.
 
+NOTE:
+- Communication is hardwired to digital pins 5 & 6, which enable use of the [AltSoftSerial](https://github.com/PaulStoffregen/AltSoftSerial) library.
+- Power to the RS485 to TTL Adapter comes from the Mayfly's switched 3.3V power.
+- Power to the sensor(s) comes from the Mayfly's switched 3.3V power supply, which can then be optionally boosted to 9V or 12V depending on the requirements of the sensor.
+
 <img src="https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/Photos/IMG_6733.JPG"  width="600">
 
 ## Parts List
 
 - [Modbus-Mayfly-Wing PCB](https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/Board_Mrk1.png)
-  - Users can have the printed circuit boards (PCBs) made by one of the manufactures below using these [Gerber files](https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/RS485_Mayfly_Gerbers.zip)
-  - These PCB manufacturers that specialize in small jobs:
+  - Users can have the printed circuit board (PCB) made from these [Gerber files](https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/RS485_Mayfly_Gerbers.zip).
+  - These PCB manufacturers that specialize in small, inexpensive jobs for DIYers:
     - [Bay Area Circuits](https://store.bayareacircuits.com)
     - [Advanced Circuits](http://www.4pcb.com)
     - [OSH Park](https://oshpark.com)
