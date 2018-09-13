@@ -1,11 +1,12 @@
 # Modbus-Mafly-WingShield
 
-This is an early draft document describing how to acquire parts, construct and use the EnviroDIY Modbus-Mafly-WingShield board.
+This is an early draft document describing how to acquire parts, construct and use the EnviroDIY **Modbus-Mafly-WingShield** board.
 
 NOTE:
-- Communication is hardwired to digital pins 5 & 6, which enable use of the [AltSoftSerial](https://github.com/PaulStoffregen/AltSoftSerial) library.
+- Communication is hardwired to Mayfly digital pins 5 & 6, which enable use of the [AltSoftSerial](https://github.com/PaulStoffregen/AltSoftSerial) library.
+  - Read more at our [Notes on Arduino Streams and Software Serial](https://github.com/EnviroDIY/ModularSensors#notes-on-arduino-streams-and-software-serial).
 - Power to the RS485 to TTL Adapter comes from the Mayfly's switched 3.3V power.
-- Power to the sensor(s) comes from the Mayfly's switched 3.3V power supply, which can then be optionally boosted to 9V or 12V depending on the requirements of the sensor.
+- Power to the sensor(s) comes from the Mayfly's switched 5V power supply, which can then be optionally boosted to 9V or 12V depending on the requirements of the sensor.
 
 <img src="https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/Photos/IMG_6733.JPG"  width="600">
 
