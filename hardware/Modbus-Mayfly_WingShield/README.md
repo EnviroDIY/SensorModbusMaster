@@ -12,6 +12,8 @@ NOTE:
 
 ## Parts List
 
+<img src="https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/Photos/IMG_6747-crop.JPG"  width="600">
+
 - [Modbus-Mayfly-Wing PCB](https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/Board_Mrk1.png)
   - Users can have the printed circuit board (PCB) made from these [Gerber files](https://github.com/EnviroDIY/SensorModbusMaster/blob/master/hardware/Modbus-Mayfly_WingShield/RS485_Mayfly_Gerbers.zip).
   - These PCB manufacturers that specialize in small, inexpensive jobs for DIYers:
@@ -19,9 +21,14 @@ NOTE:
     - [Advanced Circuits](http://www.4pcb.com)
     - [OSH Park](https://oshpark.com)
 
-- [WINGONEER TTL To RS485 Adapter 485 Serial Port UART Level Converter Module 3.3V 5V](https://www.amazon.com/gp/product/B06XHH6B6R) from Amazon.
+- [WINGONEER TTL To RS485 Adapter 485 Serial Port UART Level Converter Module 3.3V 5V](https://www.amazon.com/gp/product/B06XHH6B6R) from Amazon. 
+  - There are many other companies that sell this exact same RS485 adapter board (such as [SMAKN](https://www.amazon.com/SMAKN®-Adapter-Serial-Converter-Module/dp/B010723BCE/#product)), so pick any of them that look like this one:
+![u3022-wiring-1](https://user-images.githubusercontent.com/5166036/46170137-9825d580-c262-11e8-88a8-5ac84e84da19.jpg)
+  - NOTE: It is hard to find documenation on this board, but we know from experience that it can handle signal logic level shifting from anything between 5-12V down to the 3.3V digital signal required by the Mayfly. This is the RS485 adapter board that YosemiTech shipped inside a converter box enclosure along with a 12V power adaptor for their sensors, which is why we started using it with sensors that require higher voltages to power them.
 
 - [Pololu 12V Step-Up Voltage Regulator U3V12F12](https://www.pololu.com/product/2117) or the [Pololu 9V Step-Up Voltage Regulator U3V12F9](https://www.pololu.com/product/2116), depending on your needs.
+  - NOTE: If your sensor only needs 5V of power, you can skip buying a regulator and just solder a jumper closed on the Wing PCB to power the sensor from the 5V Mayfly power line.
+
 * Capacitors:
   - You will probably need a capacitor to handle the initial power surge of starting up the sensor. Here are the three that we used:
       * [CAP ALUM 220UF 20% 10V RADIAL](https://www.digikey.com/product-detail/en/wurth-electronics-inc/860020273009/732-8911-1-ND/5728854), for the lowest power demand sensors.
