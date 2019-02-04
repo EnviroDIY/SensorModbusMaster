@@ -1,4 +1,4 @@
-# Hardware for using ModbusRTU with RS-485
+# Hardware for using ModbusRTU with RS-485 on Arduino
 
 The [Modbus RTU](https://en.wikipedia.org/wiki/Modbus) *logical* communication protocol is typically transmitted using the *physical* [RS-485](https://en.wikipedia.org/wiki/RS-485) serial communication signaling standard.
 
