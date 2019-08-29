@@ -405,6 +405,7 @@ void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds, uint32
     }
 
     // The 32-bit attoseconds start 12 bytes after the 64-bit value starts
+    fram.Int32 = attoseconds;
     int byte_offset_attosec = 12;
     int end_index_attosec = start_index + byte_offset_attosec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++)
@@ -474,7 +475,7 @@ bool modbusMaster::getRegisters(byte readCommand, int16_t startRegister, int16_t
     command[1] = readCommand;
 
     // Put in the starting register
-    leFrame fram = {0,};
+    leFrame fram = {{0,}};
     fram.Int16[0] = startRegister;
     command[2] = fram.Byte[1];
     command[3] = fram.Byte[0];
@@ -525,7 +526,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
     else command[1] = 0x06;
 
     // Put in the starting register
-    leFrame fram = {0,};
+    leFrame fram = {{0,}};
     fram.Int16[0] = startRegister;
     command[2] = fram.Byte[1];
     command[3] = fram.Byte[0];
@@ -797,7 +798,7 @@ leFrame modbusMaster::leFrameFromFrame(int varBytes,
         sliceArray(responseBuffer, outFrame, start_index, varBytes, true);
     else sliceArray(responseBuffer, outFrame, start_index, varBytes, false);
     // Put it into a little-endian frame (the format of all arduino processors)
-    leFrame fram = {0,};
+    leFrame fram = {{0,}};
     memcpy(fram.Byte, outFrame, varBytes);
     // Return the little-endian frame
     return fram;

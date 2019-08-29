@@ -173,8 +173,7 @@ public:
     // For a output coil readCommand = 0x01
     // For an input contact readCommand = 0x02
     // TODO - implement this
-    bool getCoils(byte readCommand, int16_t startRegister, int16_t numRegisters)
-    {return false;}
+    // bool getCoils(byte readCommand, int16_t startRegister, int16_t numRegisters)
 
     // This sets the value of one or more holding registers
     // Modbus commands 0x06 and 0x10
@@ -186,8 +185,7 @@ public:
     // Modbus commands 0x05 and 0x0F
     // Input contacts cannot be written by a Modbus controller/master
     // TODO - implement this
-    bool setCoils(int16_t startRegister, int16_t numRegisters, byte value[])
-    {return false;}
+    // bool setCoils(int16_t startRegister, int16_t numRegisters, byte value[])
 
     // This is the lowest level command.
     // This takes a command, adds the proper CRC, sends it to the sensor bus,
@@ -206,7 +204,7 @@ public:
     void setDebugStream(Stream &stream){_debugStream = &stream;}
 
     // This sets a stream for debugging information to go to;
-    void stopDebugging(void){_debugStream = &nullstream;}
+    void stopDebugging(void){_debugStream = NULL;}
 
 
     // This needs to be bigger than the largest response
@@ -231,8 +229,8 @@ private:
     // This empties the serial buffer
     void emptySerialBuffer(Stream *stream);
 
-// A function for prettily printing raw modbus RTU frames
-void printFrameHex(byte modbusFrame[], int frameLength);
+    // A function for prettily printing raw modbus RTU frames
+    void printFrameHex(byte modbusFrame[], int frameLength);
 
     // Calculates a Modbus RTC cyclical redudancy code (CRC)
     void calculateCRC(byte modbusFrame[], int frameLength);
@@ -253,20 +251,7 @@ void printFrameHex(byte modbusFrame[], int frameLength);
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
     int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
 
-    // This creates a null stream to use for "debugging" if you don't want to
-    // actually print to a real stream.
-    struct NullStream : public Stream
-    {
-        NullStream( void ) { return; }
-        int available( void ) { return 0; }
-        void flush( void ) { return; }
-        int peek( void ) { return -1; }
-        int read( void ){ return -1; }
-        size_t write( uint8_t u_Data ){ return 0; }
-        size_t write(const uint8_t *buffer, size_t size) { return 0; }
-    };
-    NullStream nullstream;
-    Stream *_debugStream = &nullstream;  // The stream instance (serial port) for debugging
+    Stream *_debugStream;  // The stream instance (serial port) for debugging
 
     static byte crcFrame[2];
 
