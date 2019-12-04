@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------
 
 // This needs to be bigger than the largest response
-// Pet the Specification and Implementation Guide for MODBUS over serial line,
+// Per the Specification and Implementation Guide for MODBUS over serial line,
 // this value is 256 bytes.  (This translates into a maximum of 125 registers
 // to be read via Modbus/RTU and 123 by Modbus/TCP.)
 // If you know you will never make any modbus calls longer than this, decrease
