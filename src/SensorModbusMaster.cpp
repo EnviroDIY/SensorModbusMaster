@@ -596,12 +596,12 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
     emptySerialBuffer(_stream);  // Clear any junk before sending command
     _stream->write(command, commandLength);
     _stream->flush();
+    recieverEnable();
     // Print the raw send (for debugging)
     _debugStream->print("Raw Request >>> ");
     printFrameHex(command, commandLength);
 
-    // Listen for a response
-    recieverEnable();
+    // Wait for a response
     uint32_t start = millis();
     while (_stream->available() == 0 && millis() - start < modbusTimeout)
     { delay(1);}
@@ -686,7 +686,7 @@ void modbusMaster::recieverEnable(void)
     {
         digitalWrite(_enablePin, LOW);
         _debugStream->println("RS485 Receiver/Slave Tx Enabled");
-        delay(8);
+        // delay(8);
     }
 }
 
