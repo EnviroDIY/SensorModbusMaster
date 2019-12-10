@@ -24,7 +24,7 @@ bool modbusMaster::begin(byte modbusSlaveID, Stream *stream, int enablePin)
     _enablePin = enablePin;
 
     // Set pin mode for the enable pin
-    if (_enablePin > 0) pinMode(_enablePin, OUTPUT);
+    if (_enablePin >= 0) pinMode(_enablePin, OUTPUT);
     recieverEnable();
 
     _stream->setTimeout(modbusFrameTimeout);
@@ -671,10 +671,10 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
 // This flips the device/receive enable to DRIVER so the arduino can send text
 void modbusMaster::driverEnable(void)
 {
-    if (_enablePin > 0)
+    if (_enablePin >= 0)
     {
         digitalWrite(_enablePin, HIGH);
-        _debugStream->println("Driver/Master Enabled");
+        _debugStream->println("RS485 Driver/Master Tx Enabled");
         delay(8);
     }
 }
@@ -682,10 +682,10 @@ void modbusMaster::driverEnable(void)
 // This flips the device/receive enable to RECIEVER so the sensor can send text
 void modbusMaster::recieverEnable(void)
 {
-    if (_enablePin > 0)
+    if (_enablePin >= 0)
     {
         digitalWrite(_enablePin, LOW);
-        _debugStream->println("Receiver/Slave Enabled");
+        _debugStream->println("RS485 Receiver/Slave Tx Enabled");
         delay(8);
     }
 }
