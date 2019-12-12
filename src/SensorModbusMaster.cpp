@@ -3,7 +3,7 @@
 */
 
 #include "SensorModbusMaster.h"
-
+#define _debugStream if (NULL!= _debugStream1) _debugStream1
 // initialize the response buffer
 byte modbusMaster::responseBuffer[RESPONSE_BUFFER_SIZE] = {0x00,};
 byte modbusMaster::crcFrame[2] = {0x00,};
