@@ -3,7 +3,11 @@
 */
 
 #include "SensorModbusMaster.h"
-#define _debugStream if (NULL!= _debugStream1) _debugStream1
+
+// A define on the debugging to make sure we never attempt to access a null pointer
+// Thank you Neil Hancock for this catch!
+#define _debugStream if (NULL != _debugStream1) _debugStream1
+
 // initialize the response buffer
 byte modbusMaster::responseBuffer[RESPONSE_BUFFER_SIZE] = {0x00,};
 byte modbusMaster::crcFrame[2] = {0x00,};
