@@ -4,7 +4,8 @@ This library is designed to use an Arduino as a Modbus master to communicate wit
 
 ### Contents:
 - [Using the library](#usingLibrary)
-- [Notes on Modbus maps](#notesModbusMaps)
+- [Notes on modbus maps](#ModbusMaps)
+- [Supported data types](#DataTypes)
 - [Notes on TTL and RS485/RS322 electrical communications standards](#notesRS485)
 - [Hardware interface suggestions for EnviroDIY Mayfly and other Arduino boards](#hardwareMayfly)
 
@@ -33,18 +34,53 @@ Within the setup function begin both the serial instance and the modbusMaster in
 modbusSerial.begin(baudRate);
 
 // start the modbus
-modbus.begin(modbusSlaveID, modbusSerial, enablePin);
+modbus.begin(modbusSlaveID, modbusSerial);
+// ^^ use this if you have an RS485 adapter with automatic flow control
+// modbus.begin(modbusSlaveID, modbusSerial, enablePin);
+// ^^ use this if you need to manually control flow direction on your RS485 adapter
 ```
 
 Once you've created and begun these, getting data from or adding data to a register is very simple:
 
 ```cpp
-// Retrieve a 32-bit big endian float from input register 15 (input registers are called with 0x04)
+// Retrieve data from a read-only input register
+// Input registers are called with 0x04 - Input registers are always read-only
+// This gets a 32-bit big endian float from input register 15
 modbus.float32FromRegister(0x04, 15, bigEndian);
+
+// Retrieve data from a read/write holding register
+// Holding registers are called with 0x03
+// Retrieve a signed 16-big endian float from holding register 12
+modbus.int16FromRegister(0x03, 12, littleEndian);
 
 // Write the value "56" to holding register 20 as a little-endian unsigned 16-bit integer
 modbus.uint16ToRegister(20, 56, littleEndian);
 ```
+_____
+
+
+## <a name="ModbusMaps"></a>Modbus Maps
+
+While Modbus RTU specifications define the format of a data frame and a very simple data structure for a master and slave, there are no specification for what types of data a slave stores, where it is stored, or in what format it is stored.  You **MUST** get this information from the manufacturer/programmer of your Modbus device.  Typically this information is shared in what is called a Modbus map.
+
+You need the following data from your Modbus map:
+- the baud rate the device communicates at (Modbus allows any baud rate)
+- the parity the device uses on the serial line (Modbus technically allows 8O1, 8E1, and 8N2, though some devices may use 8N1)
+    - Software serial libraries generally do not support 8O1, 8E1, or 8N2; you will need a hardware serial port available if your device uses one of these stop/parity configurations
+- the type of register or coils the data you are interested is stored in (ie, holding register, input register, coil, or discrete input)
+    - Note - This library does not currently support getting or setting values in coils.
+    - All input registers are read-only.  If your map says a register is read/write (R/W), it is a holding register.
+- the register or coil number the data is stored in
+- the format of data within the registers/coils (ie, float, integer, bitmask, ascii text)
+- whether multi-register numeric data is stored as ["big-endian" or "little-endian"](https://en.wikipedia.org/wiki/Endianness) values (That is, is it high _word_ first or low _word_ first.  There are no specifications for this.)
+- whether single-register data is stored "big-endian" or "little-endian" (That is, is it high _byte_ first or low _byte_ first.  Modbus specifies that it should be high byte first (big-endian), but devices vary.)
+    - Note - This library only supports data that is "fully" big or little endian.  That is, data must be both high byte and high word first or both low byte and low word first.  Mixed endianness is not supported.
+
+Without this information, you have little hope of being able to communicate properly with the device.  You can use programs like [CAS Modbus scanner](http://www.chipkin.com/cas-modbus-scanner/) to find a device if its address, baud rate, and parity are unknown, but it may take some time to make a connection.  You can also use the "scanRegisters" utility in this library to get a view of all the registers, but if you don't have a pretty good idea of what you are looking for that will not be as helpful as you might hope.
+_____
+
+
+## <a name="DataTypes"></a>Supported Data Types
 
 The following data types are supported:
 - uint16 (16-bit unsigned integer)
@@ -97,24 +133,6 @@ The following data types are supported:
     - By default, the Modbus command for pre-setting a single register will be used (0x06).  Set the forceMultiple boolean flag to 'true' to force the use of the Modbus command for setting multiple resisters (0x10).
 
 There are also mid-level functions available to help to reduce serial traffic by calling many registers at once and low level functions to make raw Modbus calls.  See SensorModbusMaster.h for all the available functions and their required and optional inputs
-_____
-
-
-## <a name="notesModbusMaps"></a>Notes on Modbus maps
-While Modbus RTU specifications define the format of a data frame and a very simple data structure for a master and slave, there are no specification for what types of data a slave stores, where it is stored, or in what format it is stored.  You **MUST** get this information from the manufacturer/programmer of your Modbus device.  Typically this information is shared in what is called a Modbus map.
-
-You need the following data from your Modbus map:
-- the baud rate the device communicates at (Modbus allows any baud rate)
-- the parity the device uses on the serial line (Modbus technically allows 8O1, 8E1, and 8N2, though some devices may use 8N1)
-- the type of register or coils the data you are interested is stored in (ie, holding register, input register, coil, or discrete input)
-    - Note - This library does not currently support getting or setting values in coils.
-- the register or coil number the data is stored in
-- the format of data within the registers/coils (ie, float, integer, bitmask, ascii text)
-- whether multi-register numeric data is stored as ["big-endian" or "little-endian"](https://en.wikipedia.org/wiki/Endianness) values (That is, is it high _word_ first or low _word_ first.  There are no specifications for this.)
-- whether single-register data is stored "big-endian" or "little-endian" (That is, is it high _byte_ first or low _byte_ first.  Modbus specifies that it should be high byte first (big-endian), but devices vary.)
-    - Note - This library only supports data that is "fully" big or little endian.  That is, data must be both high byte and high word first or both low byte and low word first.
-
-Without this information, you have little hope of being able to communicate properly with the device.  You can use programs like [CAS Modbus scanner](http://www.chipkin.com/cas-modbus-scanner/) to find a device if its address, baud rate, and parity are unknown, but it may take some time to make a connection.  You can also use the "scanRegisters" utility in this library to get a view of all the registers, but if you don't have a pretty good idea of what you are looking for that will not be as helpful as you might hope.
 _____
 
 

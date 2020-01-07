@@ -1,6 +1,6 @@
 {
     "name": "SensorModbusMaster",
-    "version": "0.6.7",
+    "version": "0.6.8",
     "keywords": "sensor, modbus, master, EnviroDIY",
     "description": "Arduino library for communicating via modbus with the Arduino acting as master",
     "repository":
@@ -21,6 +21,7 @@
     "platforms": "atmelavr, atmelsam",
     "examples":
     [
+        "examples/*/*.ino",
         "utils/*/*.ino"
     ]
 }

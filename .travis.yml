@@ -8,6 +8,7 @@ cache:
         - "~/.platformio"
 
 env:
+    - PLATFORMIO_CI_SRC=examples/readWriteRegister/readWriteRegister.ino
     - PLATFORMIO_CI_SRC=utils/scanRegisters/scanRegisters.ino
 
 install:
