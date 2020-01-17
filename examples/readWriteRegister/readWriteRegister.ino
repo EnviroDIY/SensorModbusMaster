@@ -41,7 +41,7 @@ SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
 #else
 // This is just a assigning another name to the same port, for convienence
 // Unless it is unavailable, always prefer hardware serial.
-HardwareSerial modbusSerial = Serial1;
+HardwareSerial* modbusSerial = &Serial1;
 #endif
 
 // Construct the modbus instance
