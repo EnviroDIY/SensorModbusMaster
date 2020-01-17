@@ -25,7 +25,7 @@ long modbusBaudRate = 38400; // The baud rate the sensor uses
 // Define pin number variables
 const int sensorPwrPin = 10;  // The pin sending power to the sensor
 const int adapterPwrPin = 22; // The pin sending power to the RS485 adapter
-const int DEREPin = -1;       // The pin controlling Recieve Enable and Driver Enable
+const int DEREPin = 7;       // The pin controlling Recieve Enable and Driver Enable
                               // on the RS485 adapter, if applicable (else, -1)
                               // Setting HIGH enables the driver (arduino) to send text
                               // Setting LOW enables the receiver (sensor) to send text
@@ -84,7 +84,7 @@ void setup()
     // ^^ use this for 8 data bits - no parity - 2 stop bits
     // Serial1.begin(modbusBaudRate);
     // ^^ use this for 8 data bits - no parity - 1 stop bits
-    // Despite being technically "non complient" with the modbus specifications
+    // Despite being technically "non-compliant" with the modbus specifications
     // 8N1 parity is very common.
 #endif
 
