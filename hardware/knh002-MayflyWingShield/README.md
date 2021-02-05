@@ -2,6 +2,8 @@
 
 *** Provisional ~ for discussion ****
 
+https://github.com/neilh10/SensorModbusMaster/issues/1
+
 https://oshpark.com/shared_projects/ffQNVmrp
 
 This Mayfly wingboard interface supports   
