@@ -2,18 +2,19 @@
 
 This Mayfly wingboard interface supports   
 - RS485 on up to three physical connectors.   
+- improved power supply to 1.9W continuous
 - new feature - local 120ohm termination 2mm jack. The installer can activate the RS485 120ohm termination resistor if needed.   
+- new feature - battery monitoring, V and mAHrs 
  This RS485 physical line interface designed for long lines if required, one remote 120ohms, and a local 120ohms termination resistor.  
-- new feature - 12V output has 100mA resetable fuse. Trips at 250mA, but will hold 100mA. If output wire is s/c will protect battery/processor reliability.
+- new feature - 12V output has 155mA resetable fuse. Trips at 350mA. If output wire is s/c will protect battery/processor reliability.
      (The hybrid design used Mayfly 0.5b 3.3V that was limited to ~500mA or 1.6W, but not short circuit limited ) 
 - new feature Powering routing that allows connection directly to the LiIon battery.  
    This is a more efficient +12V generation and greater power resilency taken from the battery. 
-   Max +12V current supply of 100mA/250mA (1.2W continuous/3Wsurge) not tested.   
+   Max +12V current supply of 155mA/250mA (1.9W continuous/3Wsurge)   
 - Low ESR capacitor on the +12V generation input pins to avoid power surge propagation
 - new feature - TTL lines have power safe data lines.  (not tested)
 - new feature - ground wire. Connect the RS485 GND through a thick 18AWG wire to external ground to conduct external power surges. 
-- a dual led shows RED flashes for transmit to RS485 instrument, Green flashes from RS485 instrumnent (response)
-- new advanced feature - fuel gauge with accurate battery voltage measurement ( in beta still being tested )    
+- a dual led shows RED flashes for transmit to RS485 instrument, Green flashes from RS485 instrumnent (response)   
 
 Changes from the old Mayfly RS485 wingboard
 a) doesn't use the unmanaged hybrid.  These hybrids where of unspecified quality, and often didn't work for me. 
@@ -23,6 +24,12 @@ https://github.com/neilh10/SensorModbusMaster/wiki  Building Guide - tbd  see ht
 https://github.com/neilh10/SensorModbusMaster/issues/1
 
 History
+2021-Mar-10 Circuit diagram for KNH002revision6
+   Changes the 12V fuse to 155mA hold, 330mA Trip
+   Changes the LED R for the Green and adjust the footprint. For succesful sensor poll should see the Green flash, For unsucesfull will se Red Flash
+   This changes the position of the two pin battery connectors. 
+   This uses the STC3100 battery monitoring IC with R in ground leg. This monitors the LiIon battery Voltage, Current and power used mAhr/coloumbs.
+
 2021-Feb-10 KNH002revision4 https://github.com/neilh10/SensorModbusMaster/tree/release1/hardware/knh002-MayflyWingShield 
     Order place but not tested.  https://oshpark.com/shared_projects/zZYpR4hd
     All boards and libs are in  KNH002rev4_2102101316published.zip
