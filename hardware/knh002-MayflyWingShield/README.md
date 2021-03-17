@@ -4,9 +4,9 @@ This Mayfly wingboard interface supports
 - RS485 on up to three physical connectors.   
 - improved power supply to 1.9W continuous
 - new feature - local 120ohm termination 2mm jack. The installer can activate the RS485 120ohm termination resistor if needed.   
-- new feature - battery monitoring, V and mAHrs 
  This RS485 physical line interface designed for long lines if required, one remote 120ohms, and a local 120ohms termination resistor.  
-- new feature - 12V output has 155mA resetable fuse. Trips at 350mA. If output wire is s/c will protect battery/processor reliability.
+- new feature - battery monitoring, V and mAHrs 
+- new feature - 12V output has 155mA resetable fuse. Guarenteed trip at 350mA. If output wire is short circuit it will protect battery/processor reliability.
      (The hybrid design used Mayfly 0.5b 3.3V that was limited to ~500mA or 1.6W, but not short circuit limited ) 
 - new feature Powering routing that allows connection directly to the LiIon battery.  
    This is a more efficient +12V generation and greater power resilency taken from the battery. 
