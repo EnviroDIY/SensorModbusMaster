@@ -24,15 +24,17 @@ https://github.com/neilh10/SensorModbusMaster/wiki  Building Guide - tbd  see ht
 https://github.com/neilh10/SensorModbusMaster/issues/1
 
 History
-2021-Mar-10 Circuit diagram for KNH002revision6
-   Changes the 12V fuse to 155mA hold, 330mA Trip
-   Changes the LED R for the Green and adjust the footprint. For succesful sensor poll should see the Green flash, For unsucesfull will se Red Flash
-   This changes the position of the two pin battery connectors. 
-   This uses the STC3100 battery monitoring IC with R in ground leg. This monitors the LiIon battery Voltage, Current and power used mAhr/coloumbs.
+2021-Mar-10 Circuit diagram for KNH002revision6    
+   The 12V fuse is 155mA hold, 330mA Trip changed from previous 180mA. A line short causes the heating in the electronic fuse, which causes it to go to high resistance, limiting the current flow.       
+   The LED resistor for the Green is set to 60ohms make the emitted mcd similar to the Red Led which is 120ohms. For succesful sensor poll, a user should see the Red/Green flashes, For unsucesfull polling with no response will see a Red Flash.  A technical detail, the PCB footprint Rev6 is correct, on the Rev4 it had an error, swapping the colours.
+   The connector labeled "May" is physically closest to the Mayfly bat Jp1 and polarised to be the same as Mayfly JP1. Rev4 had it the other way around.      
+   The battery monitoring IC STC3100  monitors the LiIon battery Voltage, Current and power used mAhr/coloumbs. This was introduced in Rev5, Rev4 had a different IC that became unavailable.     
+   Rev6 PCB https://oshpark.com/shared_projects/tlFl6OPg    
+   https://github.com/neilh10/SensorModbusMaster/tree/release1/hardware/knh002-MayflyWingShield/rev6    
+   
 
 2021-Feb-10 KNH002revision4 https://github.com/neilh10/SensorModbusMaster/tree/release1/hardware/knh002-MayflyWingShield 
-    Order place but not tested.  https://oshpark.com/shared_projects/zZYpR4hd
-    All boards and libs are in  KNH002rev4_2102101316published.zip
+    All boards and libs are in  KNH002rev4_2102101316published.zip  (as of Mar10 not recommended as has a number of issues corrected in rev6)
 
 Background (from original Mayfly Wingboard)    
 
