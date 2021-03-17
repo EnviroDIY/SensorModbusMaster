@@ -1,17 +1,15 @@
 # KNH002 Hardware RS-485 Hardware for Envirodiy Mayfly
 
 This Mayfly wingboard interface supports   
-- RS485 on up to three physical connectors. Uses the MAX22025 for RS485 physical interface, and has the feautre of managing the RS485 half duplex states.   
-- improved power supply to 1.9W continuous, voltage dependent on booster.
-- new feature - local 120ohm termination 2mm jack. The installer can activate the RS485 120ohm termination resistor if needed.   
- This RS485 physical line interface designed for long lines if required, one remote 120ohms, and a local 120ohms termination resistor.  
-- new feature - battery monitoring, V and mAHrs 
-- new feature - 12V output has 155mA resetable fuse. Guarenteed trip at 350mA. If output wire is short circuit it will protect battery/processor reliability.
-     (The hybrid design used Mayfly 0.5b 3.3V that was limited to ~500mA or 1.6W, but not short circuit limited ) 
-- new feature Powering routing that allows connection directly to the LiIon battery.  
-   This is a more efficient boost generation and greater power resilency by routing power directly from the battery. 
-   Frr the +12V current supply, the current supplied an be 155mA/250mA (1.9W continuous/3Wsurge)   
+- RS485 on up to three physical connectors, all clearly labeled with G V B A   
+- improved power supply to a min 1.9W continuous, voltage dependent on booster. The boost circuit may be able to supply larger surge currents as it's supply climbs/boosts as the LiIon bat is low impedance. These could be as high as 0.7A continuous at lower voltages, valuable for starting up instruments on turnon.
+- - new feature Powering routing that allows connection directly to the LiIon battery, for more efficent generation and power resilency.  
+   For he +12V current supply, the current supplied can be 155mA to 250mA surge (1.9W continuous/3Wsurge)   
 - Low ESR capacitor on the +12V generation input pins to avoid power surge propagation
+- new feature - 12V output has 155mA resetable fuse.
+- new feature - local RS485 120ohm termination 2mm jack. The installer can activate the RS485 120ohm termination resistor if needed.   
+- new feature - battery monitoring, accurate battery (V), energy consumed (mAHrs) and instaneous current mmeasurement.
+
 - new feature - TTL lines have power safe data lines.  (not tested)
 - new feature - ground wire. Connect the RS485 GND through a thick 18AWG wire to external ground to conduct external power surges. 
 - a dual led shows RED flashes for transmit to RS485 instrument, Green flashes from RS485 instrumnent (response)   
@@ -22,6 +20,25 @@ a) doesn't use the unmanaged hybrid.  These hybrids where of unspecified quality
 https://github.com/neilh10/SensorModbusMaster/wiki  Building Guide - tbd  see https://github.com/EnviroDIY/YosemitechModbus#suggested-setup-with-an-envirodiy-mayfly
 
 https://github.com/neilh10/SensorModbusMaster/issues/1
+# KNH002 Circuit Discription
+(as per rev6) 
+- Typically the 3 physical connections are deciced by the end-user, and soldered onto the board. The silk screen has clearly printed G V B A for each connector on both sides of the board. G=Grnd  V=Voltage and then RS485 designators A and B.     
+- Typically the boost hybrid is decided by the end user. BOM has 12V option.   
+- U1/ MAX22025 is the RS485 physical interface, and manages the RS486 half-duplex state machine.   
+- R2/R3 649R are the pull-up down resistors for a long twisted pair transmission line. The values are selected based on a remote 120Ohm and local 120ohm terminations. Its optomized for a single instrument termination over a long line, but typically will work with a number instruments terminating locally. Its up to the user to figure out if a complex set of instruments and wire lengths works for them, or do RS485 line calculations for what value of resistors they need.     
+- The Max22025 Rxb (Rx buffered) interfaces to the Mafyly via the Ioff Safe SN74LVC234. These allow the MAX22025/SN74LVC234 to be turned off, and not take current from the Mayflfy.   
+- The Green LED is attached to the Rxb driven by the Max22025 output. When an instrument responds to a poll request, the green LED flashes on low portions of the signal. Statastically its likely there will be some low portions in the received signal.
+- The SN74LVC234 Txb Tx(buffered) drives the RED LED, turning ON when LOW, and board powered. This reflects attempts to poll a target instrumnet. ModularSensors code attempts multiple (3) times to contact an instrument. For the sensor set to read/average 3 times, then there will be 9 fast red flashes. 
+- Typically the power will be supplied by a battery attached to the J8 labelled "Bat", and ajumper wire will supply power from J9 labelled "May" . On the underside of the board these are clearly labeled "Mayfly" and "Battery" with the + connection identified.   
+- Typically the power will be boosted by U2, and C1 is designed to be able to supply fast switching currents on U2. For detailed analysis refer to the capacitor specification and how switching circuits work.    
+- The power is switched via U3 SIP32431 Load Switch or similar. They can support continuous 1.4A. If there is a short circuit in the power loop, these devices will emit smoke and become non-operational.
+- The output of U2 has an electronic fuse R8 155mA, protecting from a short on the output "12V".
+-  Fuses are rated at minimium holding current, and guarenteed trip at 350mA. If output wire is short circuit it will protect battery/processor reliability.  
+      (The old RS485 hybrid wingboard used the builtin Mayfly regulator that would limit current flows at 3.3V to 0.5A, also limiting power availability to max 1.65W)   
+- On building a board, it can be built with power coming from the 5Vsw, by adding R1=0 and not stuffing U3,J8 J9 (and of course U5 or R5)    
+- Battery coloumb "Fuel Gauge" monitor - STC3100. This supplies acurrate Liion Battery voltage, coloumb in mAh with a typical 0.2mAh resolution, 8-byte unique ID, 32Ram bytes backed up by LiIon battery. There is a device driver https://github.com/neilh10/STC3100arduino
+ 
+
 
 History
 2021-Mar-10 Circuit diagram for KNH002revision6    
