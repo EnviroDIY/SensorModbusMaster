@@ -2,19 +2,19 @@
 
 This Mayfly wingboard interface supports   
 - RS485 on up to three physical connectors, all clearly labeled with G V B A   
+- improved brightness - a dual line status LED Red/Green a) Red flashes for transmit to RS485 instrument, B) Green flashes from RS485 instrumnent (response)  
 - improved power supply to a min 1.9W continuous, voltage dependent on booster. The boost circuit may be able to supply larger surge currents as it's supply climbs/boosts as the LiIon bat is low impedance. These could be as high as 0.7A continuous at lower voltages, valuable for starting up instruments on turnon.
 - new feature - Powering routing that allows connection directly to the LiIon battery, for more efficent generation and power resilency.  
-   For he +12V current supply, the current supplied can be 155mA to 250mA surge (1.9W continuous/3Wsurge)   
-- Low ESR capacitor on the +12V generation input pins to avoid power surge propagation
-- new feature - instrument power "12V" has 155mA resetable fuse (PTC).
+   For the power output "12V" current supply, the current supplied can be 155mA to 250mA surge (1.9W continuous/3Wsurge) depending on boost hybrid.  
+   Low ESR capacitor on the +12V generation input pins to avoid power surge propagation
+- new feature - instrument power "12V" has 155mA resetable fuse (PTC), limiting power drawn on a line short.
 - new feature - local RS485 120ohm termination 2mm jack. The installer can activate the RS485 120ohm termination resistor as needed.   
 - new feature - battery monitoring, accurate battery (V), energy consumed (mAHrs) and instaneous current mmeasurement.
-
 - new feature - TTL lines have power safe data lines.  (not tested)
 - new feature - ground wire. Connect the RS485 GND through a thick 18AWG wire to external ground to conduct external power surges. 
-- a dual led shows RED flashes for transmit to RS485 instrument, Green flashes from RS485 instrumnent (response)   
+ 
 
-Changes from the old Mayfly RS485 wingboard
+Changes from the old Mayfly RS485 wingboard    
 a) doesn't use the unmanaged hybrid.  These hybrids where of unspecified quality, and often didn't work for me. 
 
 Building Guide - to-be-updated - see    
