@@ -12,7 +12,7 @@ This Mayfly wingboard interface supports
 - new feature - battery monitoring, accurate battery (V), energy consumed (mAHrs) and instaneous current mmeasurement.
 - new feature - TTL lines have power safe data lines.  (not tested)
 - new feature - ground wire. Connect the RS485 GND through a thick 18AWG wire to external ground to conduct external power surges. 
- 
+- new feature - pcb designed KiCad open source https://kicad.org/ easier to modify. Thanks to the previouse generation of board, that was imported into KiCad. 
 
 Changes from the old Mayfly RS485 wingboard    
 a) doesn't use the unmanaged hybrid.  These hybrids where of unspecified quality, and often didn't work for me. 
