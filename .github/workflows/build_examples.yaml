@@ -170,7 +170,7 @@ jobs:
       LIBRARY_INSTALL_GIT: ${{ needs.determine_library_source.outputs.library_install_git }}
     strategy:
       matrix:
-        example: [examples/AllFunctions]
+        example: [examples/readWriteRegister]
 
     steps:
       - uses: actions/checkout@v4
