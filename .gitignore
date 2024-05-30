@@ -94,3 +94,6 @@ tests/*
 
 # VSCode
 .vscode
+.history
+compile_commands.json
+pioScripts

@@ -4,10 +4,6 @@
 
 #include "SensorModbusMaster.h"
 
-// A define on the debugging to make sure we never attempt to access a null pointer
-// Thank you Neil Hancock for this catch!
-#define _debugStream if (NULL != _debugStream1) _debugStream1
-
 // initialize the response buffer
 byte modbusMaster::responseBuffer[RESPONSE_BUFFER_SIZE] = {0x00,};
 byte modbusMaster::crcFrame[2] = {0x00,};
@@ -602,7 +598,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
     _stream->flush();
     recieverEnable();
     // Print the raw send (for debugging)
-    _debugStream->print("Raw Request >>> ");
+    debugPrint("Raw Request >>> ");
     printFrameHex(command, commandLength);
 
     // Wait for a response
@@ -618,15 +614,13 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
         emptySerialBuffer(_stream);
 
         // Print the raw response (for debugging)
-        _debugStream->print("Raw Response (");
-        _debugStream->print(bytesRead);
-        _debugStream->print(" bytes) <<< ");
+        debugPrint("Raw Response (", bytesRead, " bytes) <<< ");
         printFrameHex(responseBuffer, bytesRead);
 
         // Verify that the values match with the commands
         if (responseBuffer[0] != _slaveID)
         {
-            _debugStream->println("Response is not from the correct modbus slave!");
+            debugPrint("Response is not from the correct modbus slave!\n");
             return 0;
         }
 
@@ -634,7 +628,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
         calculateCRC(responseBuffer, bytesRead);
         if (crcFrame[0] != responseBuffer[bytesRead-2] || crcFrame[1] != responseBuffer[bytesRead-1])
         {
-            _debugStream->println("CRC of response is not correct!");
+            debugPrint("CRC of response is not correct!\n");
             return 0;
         }
 
@@ -642,17 +636,17 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
         // An execption response sets the highest bit of the function code in the response.
         if ((responseBuffer[1] & 0b10000000) ==  0b10000000)
         {
-            _debugStream->print("Exception:  ");
-            if (responseBuffer[2] == 0x01)_debugStream->println("Illegal Function!");
-            if (responseBuffer[2] == 0x02)_debugStream->println("Illegal Data Address!");
-            if (responseBuffer[2] == 0x03)_debugStream->println("Illegal Data Value!");
-            if (responseBuffer[2] == 0x04)_debugStream->println("Slave Device Failure!");
-            if (responseBuffer[2] == 0x05)_debugStream->println("Acknowledge...");
-            if (responseBuffer[2] == 0x06)_debugStream->println("Slave Device Busy!");
-            if (responseBuffer[2] == 0x07)_debugStream->println("Negative Acknowledge!");
-            if (responseBuffer[2] == 0x08)_debugStream->println("Memory Parity Error!");
-            if (responseBuffer[2] == 0x0A)_debugStream->println("Gateway Path Unavailable!");
-            if (responseBuffer[2] == 0x0B)_debugStream->println("Gateway Target Device Failed to Respond!");
+            debugPrint("Exception:  ");
+            if (responseBuffer[2] == 0x01)debugPrint("Illegal Function!\n");
+            if (responseBuffer[2] == 0x02)debugPrint("Illegal Data Address!\n");
+            if (responseBuffer[2] == 0x03)debugPrint("Illegal Data Value!\n");
+            if (responseBuffer[2] == 0x04)debugPrint("Slave Device Failure!\n");
+            if (responseBuffer[2] == 0x05)debugPrint("Acknowledge...\n");
+            if (responseBuffer[2] == 0x06)debugPrint("Slave Device Busy!\n");
+            if (responseBuffer[2] == 0x07)debugPrint("Negative Acknowledge!\n");
+            if (responseBuffer[2] == 0x08)debugPrint("Memory Parity Error!\n");
+            if (responseBuffer[2] == 0x0A)debugPrint("Gateway Path Unavailable!\n");
+            if (responseBuffer[2] == 0x0B)debugPrint("Gateway Target Device Failed to Respond!\n");
             return 0;
         }
 
@@ -661,7 +655,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength)
     }
     else
     {
-        _debugStream->println("No response received.");
+        debugPrint("No response received.\n");
         return 0;
     }
 }
@@ -678,7 +672,7 @@ void modbusMaster::driverEnable(void)
     if (_enablePin >= 0)
     {
         digitalWrite(_enablePin, HIGH);
-        _debugStream->println("RS485 Driver/Master Tx Enabled");
+        debugPrint("RS485 Driver/Master Tx Enabled\n");
         delay(8);
     }
 }
@@ -689,7 +683,7 @@ void modbusMaster::recieverEnable(void)
     if (_enablePin >= 0)
     {
         digitalWrite(_enablePin, LOW);
-        _debugStream->println("RS485 Receiver/Slave Tx Enabled");
+        debugPrint("RS485 Receiver/Slave Tx Enabled\n");
         // delay(8);
     }
 }
@@ -708,15 +702,15 @@ void modbusMaster::emptySerialBuffer(Stream *stream)
 // This is purely for debugging
 void modbusMaster::printFrameHex(byte modbusFrame[], int frameLength)
 {
-    _debugStream->print("{");
+    debugPrint("{");
     for (int i = 0; i < frameLength; i++)
     {
-        _debugStream->print("0x");
-        if (modbusFrame[i] < 16) _debugStream->print("0");
-        _debugStream->print(modbusFrame[i], HEX);
-        if (i < frameLength - 1) _debugStream->print(", ");
+        debugPrint("0x");
+        if (modbusFrame[i] < 16) debugPrint("0");
+        debugPrint(modbusFrame[i], HEX);
+        if (i < frameLength - 1) debugPrint(", ");
     }
-    _debugStream->println("}");
+    debugPrint("}\n");
 }
 
 

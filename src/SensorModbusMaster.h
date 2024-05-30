@@ -247,6 +247,20 @@ private:
                                 endianness endian=bigEndian,
                                 int start_index=3);
 
+    // Utility templates for writing to the debugging stream
+    template <typename T>
+    inline void debugPrint(T last) {
+        if (_debugStream != nullptr) { _debugStream->print(last); }
+    }
+
+    template <typename T, typename... Args>
+    inline void debugPrint(T head, Args... tail) {
+        if (_debugStream != nullptr) {
+            _debugStream->print(head);
+            _debugStream->debugPrint(tail...);
+        }
+    }
+
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
     int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
