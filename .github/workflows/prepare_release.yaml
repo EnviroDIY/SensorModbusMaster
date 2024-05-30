@@ -1,0 +1,73 @@
+on:
+  push:
+    branches:
+      - master
+    # Sequence of patterns matched against refs/tags
+    paths:
+      - 'VERSION' # Push events when the VERSION file changes
+  workflow_dispatch:
+
+name: Prepare a new release and add release assets
+
+env:
+  PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+
+jobs:
+  release:
+    name: Prepare a new release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set environment variable for current library version
+        run: |
+          echo "::debug::Get the current version number"
+          VER=$(cat VERSION)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: Get change log entry for release notes
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          path: ChangeLog.md
+          version: ${{ env.VERSION }}
+          # validation_depth: 10
+
+      # I use the first line of the change log entry as the name, so read it here
+      # - name: Get release name
+      #   id: get_release_name
+      #   run: |
+      #     release_name=$(echo ${{steps.changelog_reader.outputs.changes}} | cut -d '\n' -f 1)
+      #      echo "release_name=release_name" >> $GITHUB_OUTPUT
+
+      # Create a new release
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v2.0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ format('v{0}',env.VERSION) }}
+          # name: ${{ format('v{0} - {1}', env.VERSION, steps.get_release_name.outputs.release_name) }}
+          name: ${{ format('v{0}',env.VERSION) }}
+          draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
+          prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          generate_release_notes: false
+
+      # Publish the new release to the PlatformIO package manager
+      - name: Publish release to the PlatformIO package manager
+        id: publish-pio
+        run: pio package publish --owner envirodiy --non-interactive
