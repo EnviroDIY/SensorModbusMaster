@@ -200,11 +200,11 @@ public:
     // These are purely debugging functions to print out the raw hex data
     // sent between the Arduino and the modbus slave.
     // This sets a stream for debugging information to go to;
-    void setDebugStream(Stream *stream){_debugStream1 = stream;}
-    void setDebugStream(Stream &stream){_debugStream1 = &stream;}
+    void setDebugStream(Stream *stream){_debugStream = stream;}
+    void setDebugStream(Stream &stream){_debugStream = &stream;}
 
     // This sets a stream for debugging information to go to;
-    void stopDebugging(void){_debugStream1 = NULL;}
+    void stopDebugging(void){_debugStream = nullptr;}
 
 
     // This needs to be bigger than the largest response
@@ -263,9 +263,9 @@ private:
 
     byte _slaveID;  // The sensor slave id
     Stream *_stream;  // The stream instance (serial port) for communication with the RS485
-    int _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
+    int8_t _enablePin;  // The pin controlling the driver/receiver enable on the RS485-to-TLL chip
 
-    Stream *_debugStream1;  // The stream instance (serial port) for debugging
+    Stream *_debugStream;  // The stream instance (serial port) for debugging
 
     static byte crcFrame[2];
 

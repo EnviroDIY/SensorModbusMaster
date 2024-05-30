@@ -491,7 +491,7 @@ bool modbusMaster::getRegisters(byte readCommand, int16_t startRegister, int16_t
     // Try up to 10 times to get the right results
     int tries = 0;
     int16_t respSize = 0;
-    while ((respSize != (numRegisters*2 + 5) && tries < 10))
+    while (respSize != (numRegisters*2 + 5) && tries < 10)
     {
         // Send out the command (this adds the CRC)
         respSize = sendCommand(command, 8);
@@ -514,7 +514,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
 {
     // figure out how long the command will be
     int commandLength;
-    if (numRegisters > 1 or forceMultiple) commandLength = numRegisters*2 + 9;
+    if (numRegisters > 1 || forceMultiple) commandLength = numRegisters*2 + 9;
     else commandLength = numRegisters*2 + 6;
 
     // Create an array for the command
@@ -522,7 +522,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
 
     // Put in the slave id and the command
     command[0] = _slaveID;
-    if (numRegisters > 1 or forceMultiple) command[1] = 0x10;
+    if (numRegisters > 1 || forceMultiple) command[1] = 0x10;
     else command[1] = 0x06;
 
     // Put in the starting register
@@ -533,7 +533,7 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
 
     // Put in the register values
     // For multiple registers, need to add in how many registers and how many bytes
-    if (numRegisters > 1 or forceMultiple)
+    if (numRegisters > 1 || forceMultiple)
     {
         // Put in the number of registers
         fram.Int16[1] = numRegisters;
@@ -555,13 +555,13 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
     int tries = 0;
     int16_t respSize = 0;
     bool success = false;
-    while ((!success && tries < 10))
+    while (!success && tries < 10)
     {
         // Send out the command (this adds the CRC)
         respSize = sendCommand(command, commandLength);
         // The structure of the response for 0x10 should be:
         // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
-        if ((numRegisters > 1 or forceMultiple) && respSize == 8 && int16FromFrame(bigEndian, 4) == numRegisters)
+        if ((numRegisters > 1 || forceMultiple) && respSize == 8 && int16FromFrame(bigEndian, 4) == numRegisters)
             success = true;
         // The structure of the response for 0x06 should be:
         // {slaveID, fxnCode, Address of 1st register, Value written, CRC}
