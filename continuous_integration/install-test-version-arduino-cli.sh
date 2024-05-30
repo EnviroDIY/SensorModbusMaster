@@ -21,7 +21,7 @@ unzip -o home/arduino/downloads/SensorModbusMaster.zip -d home/arduino/downloads
 echo "\n\e[32mEnsuring no old directories exist\e[0m"
 rm -r -f home/arduino/user/libraries/SensorModbusMaster
 
-echo "\n\e[32mCreating a new directory for the testing version of Modular sensors\e[0m"
+echo "\n\e[32mCreating a new directory for the testing version of SensorModbusMaster\e[0m"
 mkdir -p home/arduino/user/libraries/SensorModbusMaster
 
 echo "\n\e[32mMoving the unzipped library to the new directory\e[0m"

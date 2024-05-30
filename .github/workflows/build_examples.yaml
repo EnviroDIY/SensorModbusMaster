@@ -99,7 +99,7 @@ jobs:
           sh continuous_integration/install-deps-arduino-cli.sh
 
       # Install SensorModbusMaster for the Arduino CLI
-      - name: Install the testing version of Modular Sensors for the Arduino CLI
+      - name: Install the testing version of SensorModbusMaster for the Arduino CLI
         run: |
           chmod +x continuous_integration/install-test-version-arduino-cli.sh
           sh continuous_integration/install-test-version-arduino-cli.sh
@@ -158,7 +158,7 @@ jobs:
 
           exit $status
 
-      - name: Uninstall testing version of Modular Sensors before caching
+      - name: Uninstall testing version of SensorModbusMaster before caching
         run: |
           arduino-cli --config-file continuous_integration/arduino_cli.yaml lib uninstall SensorModbusMaster
 
@@ -222,6 +222,6 @@ jobs:
         run: |
           platformio ci --verbose --project-option='framework=arduino' --board=mayfly --board=uno --board=leonardo --board=yun --board=megaatmega2560 --board=nano_every --board=uno_wifi_rev2 --board=genuino101 --board=uno_r4_wifi --board=dueUSB --board=mkr1000USB --board=mkrvidor4000 --board=zero --board=adafruit_feather_m0 --board=adafruit_feather_m4 --board=teensy31 --board=bluepill_f103c8 --board=uno_pic32 --board=esp01 --board=nodemcuv2 --board=esp32dev --board=featheresp32 --board=adafruit_feather_esp32s2 --board=esp32-c3-devkitm-1 --board=pico
 
-      - name: Uninstall testing version of Modular Sensors before caching
+      - name: Uninstall testing version of SensorModbusMaster before caching
         run: |
           pio pkg uninstall -g --library SensorModbusMaster
