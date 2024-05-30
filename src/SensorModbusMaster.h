@@ -83,20 +83,8 @@ class modbusMaster {
 
  public:
 
-    // This function sets up the communication
-    // It should be run during the arduino "setup" function.
-    // The "stream" device must be initialized prior to running this.
-    // Per modbus specifications, the stream must have:
-    //    - 1 start bit
-    //    - 8 data bits, least significant bit sent first
-    //    - 1 stop bit if parity is used - 2 bits if no parity
-    // Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
-    // will support either even or odd parity!
-    bool begin(byte modbusSlaveID, Stream* stream, int enablePin = -1);
-    bool begin(byte modbusSlaveID, Stream& stream, int enablePin = -1);
-
-    // These higher-level functions return a variety of data from a single or pair of
-    // data registers
+    bool begin(byte modbusSlaveID, Stream* stream, int8_t enablePin = -1);
+    bool begin(byte modbusSlaveID, Stream& stream, int8_t enablePin = -1);
     uint16_t uint16FromRegister(byte regType, int regNum,
                                 endianness endian = bigEndian);
     int16_t  int16FromRegister(byte regType, int regNum, endianness endian = bigEndian);
@@ -245,8 +233,7 @@ class modbusMaster {
     // This flips the device/receive enable to DRIVER so the arduino can send text
     void driverEnable(void);
 
-    // This flips the device/receive enable to RECIEVER so the sensor can send text
-    void recieverEnable(void);
+    void receiverEnable(void);
 
     // This empties the serial buffer
     void emptySerialBuffer(Stream* stream);

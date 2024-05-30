@@ -49,6 +49,9 @@ Temporary Items
 # PyCharm
 .idea/
 
+# Python
+__pycache__/
+
 # Atom / PlatformIO
 .pio
 .pioenvs
@@ -105,3 +108,4 @@ output_mcss.log
 docs/output_copyFunctions.log
 docs/output_documentExamples.log
 docs/output_fixSectionsInXml.log
+continuous_integration/output_check_component_inclusion.log

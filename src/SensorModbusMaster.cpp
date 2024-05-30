@@ -20,7 +20,7 @@ byte modbusMaster::crcFrame[2] = {
 // This function sets up the communication
 // It should be run during the arduino "setup" function.
 // The "stream" device must be initialized and begun prior to running this.
-bool modbusMaster::begin(byte modbusSlaveID, Stream* stream, int enablePin) {
+bool modbusMaster::begin(byte modbusSlaveID, Stream* stream, int8_t enablePin) {
     // Give values to variables;
     _slaveID   = modbusSlaveID;
     _stream    = stream;
@@ -28,13 +28,13 @@ bool modbusMaster::begin(byte modbusSlaveID, Stream* stream, int enablePin) {
 
     // Set pin mode for the enable pin
     if (_enablePin >= 0) { pinMode(_enablePin, OUTPUT); }
-    recieverEnable();
+    receiverEnable();
 
     _stream->setTimeout(modbusFrameTimeout);
 
     return true;
 }
-bool modbusMaster::begin(byte modbusSlaveID, Stream& stream, int enablePin) {
+bool modbusMaster::begin(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
     return begin(modbusSlaveID, &stream, enablePin);
 }
 
@@ -245,12 +245,12 @@ byte modbusMaster::byteFromFrame(int start_index) {
 uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index) {
     leFrame fram;
     if (endian == bigEndian) {
-        fram.Byte[0] = responseBuffer[start_index + 1] >>
-            2;  // Shift the lower address bit DOWN two
+        // Shift the lower address bit DOWN two
+        fram.Byte[0] = responseBuffer[start_index + 1] >> 2;
         fram.Byte[1] = responseBuffer[start_index];
     } else {
-        fram.Byte[0] = responseBuffer[start_index] >>
-            2;  // Shift the lower address bit DOWN two
+        // Shift the lower address bit DOWN two
+        fram.Byte[0] = responseBuffer[start_index] >> 2;
         fram.Byte[1] = responseBuffer[start_index + 1];
     }
     return fram.Int16[0];
@@ -258,7 +258,7 @@ uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index) {
 
 int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index) {
     uint8_t pointerRegType;
-    // Mask to get the last two bits, which are the type
+    // Mask with 3 (0b00000011) to get the last two bits, which are the type
     if (endian == bigEndian) {
         pointerRegType = responseBuffer[start_index + 1] & 3;
     } else {
@@ -626,7 +626,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength) {
     emptySerialBuffer(_stream);  // Clear any junk before sending command
     _stream->write(command, commandLength);
     _stream->flush();
-    recieverEnable();
+    receiverEnable();
     // Print the raw send (for debugging)
     debugPrint("Raw Request >>> ");
     printFrameHex(command, commandLength);
@@ -704,8 +704,8 @@ void modbusMaster::driverEnable(void) {
     }
 }
 
-// This flips the device/receive enable to RECIEVER so the sensor can send text
-void modbusMaster::recieverEnable(void) {
+// This flips the device/receive enable to RECEIVER so the sensor can send text
+void modbusMaster::receiverEnable(void) {
     if (_enablePin >= 0) {
         digitalWrite(_enablePin, LOW);
         debugPrint("RS485 Receiver/Slave Tx Enabled\n");

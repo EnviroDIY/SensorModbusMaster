@@ -25,7 +25,7 @@ long modbusBaudRate = 38400;  // The baud rate the sensor uses
 // Define pin number variables
 const int sensorPwrPin  = 10;  // The pin sending power to the sensor
 const int adapterPwrPin = 22;  // The pin sending power to the RS485 adapter
-const int DEREPin       = 7;   // The pin controlling Recieve Enable and Driver Enable
+const int DEREPin       = 7;   // The pin controlling Receive Enable and Driver Enable
                                // on the RS485 adapter, if applicable (else, -1)
                                // Setting HIGH enables the driver (arduino) to send text
                                // Setting LOW enables the receiver (sensor) to send text
@@ -36,7 +36,7 @@ const int DEREPin       = 7;   // The pin controlling Recieve Enable and Driver 
 // computer If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
 #include <SoftwareSerial.h>
-const int      SSRxPin = 10;  // Recieve pin for software serial (Rx on RS485 adapter)
+const int      SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
 const int      SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
 #else

@@ -106,14 +106,14 @@ The following data types are supported:
 - TAI64 (64-bit timestamp)
     - Value must be in four contiguous 16-bit registers
     - Value is always fully big endian
-    - Supported as if it were a 32-bit unix timestamp because the first 16-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
+    - Supported as if it were a 32-bit unix timestamp because the first 32-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
     - See https://www.tai64.com/ for more details on this format type
-- TAI64N (64-bit timestamp followed by a 16-bit nanosecond count)
+- TAI64N (64-bit timestamp followed by a 32-bit nanosecond count)
     - Value must be in six contiguous 16-bit registers
     - Value is always fully big endian
     - Note that the seconds and nanoseconds are broken into two different fields.
     - See https://www.tai64.com/ for more details on this format type
-- TAI64NA (64-bit timestamp followed by a 16-bit nanosecond count and then a 16-bit attosecond count)
+- TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a 32-bit attosecond count)
     - Value must be in eight contiguous 16-bit registers
     - Value is always fully big endian
     - Note that the seconds, nanoseconds, and attoseconds are broken into three different fields.
