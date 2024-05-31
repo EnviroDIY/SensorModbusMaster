@@ -17,6 +17,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Microsoft Office temp files
+~$*
+
 # =========================
 # Operating System Files
 # =========================
@@ -99,8 +102,11 @@ tests/*
 .vscode
 .history
 compile_commands.json
+
+# Other Stuff
 pioScripts
 runDoxygen.bat
+generateKeywords.bat
 output_doxygen.log
 output_doxygen_run.log
 output_mcss_run.log
@@ -109,5 +115,4 @@ docs/output_copyFunctions.log
 docs/output_documentExamples.log
 docs/output_fixSectionsInXml.log
 continuous_integration/output_check_component_inclusion.log
-generateKeywords.bat
 sync.ffs_db
