@@ -11,8 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Applied clang format.
 
 ### Added
+- Added Doxygen documentation
 
 ### Removed
 

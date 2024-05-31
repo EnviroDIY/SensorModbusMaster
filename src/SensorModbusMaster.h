@@ -45,7 +45,10 @@
 /**
  * @brief The "endianness" of returned values
  */
-typedef enum endianness { littleEndian = 0, bigEndian } endianness;
+typedef enum endianness {
+    littleEndian = 0,  ///< little endian
+    bigEndian          ///< big endian
+} endianness;
 
 /**
  * @brief The types of "pointers" to other modbus addresses.
@@ -55,10 +58,10 @@ typedef enum endianness { littleEndian = 0, bigEndian } endianness;
  * you in what section of the memory map to look for the value being pointed to.
  */
 typedef enum pointerType {
-    holdingRegister = 0,
-    inputRegister,
-    inputContacts,
-    outputCoil
+    holdingRegister = 0,  ///< pointer to a holding register
+    inputRegister,        ///< pointer to an input register
+    inputContacts,        ///< pointer to a input contact
+    outputCoil            ///< pointer to a output coil
 } pointerType;
 
 
