@@ -1,5 +1,10 @@
-/*
- *SensorModbusMaster.cpp
+/**
+ * @file SensorModbusMaster.cpp
+ * @copyright Stroud Water Research Center
+ * Part of the EnviroDIY SensorModbusMaster library for Arduino.
+ * This library is published under the BSD-3 license.
+ *
+ * @brief Contains the modbusMaster class definitions.
  */
 
 #include "SensorModbusMaster.h"

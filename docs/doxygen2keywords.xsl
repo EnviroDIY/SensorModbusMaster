@@ -12,9 +12,7 @@ https://github.com/bengtmartensson/KeywordsTxtGenerator
 
 <!-- Author: Bengt Martensson -->
 
-<xsl:stylesheet
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="text" />
 
     <xsl:template match="/doxygenindex">
@@ -27,24 +25,24 @@ https://github.com/bengtmartensson/KeywordsTxtGenerator
 # Classes and structs (KEYWORD1)
 #######################################
 
-</xsl:text>
-    <xsl:apply-templates select="compound[@kind='class' or @kind='struct' ]"/>
+        </xsl:text>
+        <xsl:apply-templates select="compound[@kind='class' or @kind='struct' ]"/>
 
-    <xsl:text>
+        <xsl:text>
 #######################################
-# Methods (KEYWORD2)
-#######################################
-
-</xsl:text>
-    <xsl:apply-templates select="compound/member[@kind='function']"/>
-
-    <xsl:text>
-#######################################
-# Constants (LITERAL1)
+### Methods and Functions (KEYWORD2)
 #######################################
 
-</xsl:text>
-    <xsl:apply-templates select="compound/member[@kind='define' or @kind='enumvalue']"/>
+        </xsl:text>
+        <xsl:apply-templates select="compound/member[@kind='function']"/>
+
+        <xsl:text>
+#######################################
+### Constants (LITERAL1)
+#######################################
+
+        </xsl:text>
+        <xsl:apply-templates select="compound/member[@kind='define' or @kind='enumvalue']"/>
     </xsl:template>
 
     <xsl:template match="compound[@kind='class' or @kind='struct' ]">

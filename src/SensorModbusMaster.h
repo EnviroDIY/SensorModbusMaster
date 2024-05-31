@@ -1,5 +1,10 @@
-/*
- *SensorModbusMaster.h
+/**
+ * @file SensorModbusMaster.h
+ * @copyright Stroud Water Research Center
+ * Part of the EnviroDIY SensorModbusMaster library for Arduino.
+ * This library is published under the BSD-3 license.
+ *
+ * @brief Contains the modbusMaster class declarations.
  */
 
 #ifndef SensorModbusMaster_h
@@ -118,6 +123,7 @@ class modbusMaster {
     /**
      * @anchor ctor_and_begin
      * @name Constructors and Begins
+     *
      * Functions to create the modbusMaster object and set up the communication with the
      * Arduino stream connected to the modbus device.
      */
@@ -172,6 +178,7 @@ class modbusMaster {
     /**
      * @anchor high_level_getters
      * @name High level register fetching functions
+     *
      * These higher-level functions return a variety of data from a single or group of
      * input or holding registers
      */
@@ -358,6 +365,7 @@ class modbusMaster {
     /**
      * @anchor high_level_setters
      * @name High level register setting functions
+     *
      * These higher-level functions set data in input registers to a variety of data
      * types
      */
@@ -523,6 +531,7 @@ class modbusMaster {
     /**
      * @anchor mid_level_getters
      * @name Mid-level data frame result fetching functions
+     *
      * These mid-level functions return a variety of data from an input modbus "frame."
      * Currently, the only "frame" available is the response buffer.
      * Using these functions will be helpful if you wish to decrease the serial traffic
@@ -681,6 +690,7 @@ class modbusMaster {
     /**
      * @anchor mid_level_setters
      * @name Data frame setting functions
+     *
      * These insert values into a longer modbus data frame.
      * These are useful in creating a single long frame which can be sent out in one
      * "setRegisters" command.

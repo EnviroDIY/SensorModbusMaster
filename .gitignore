@@ -109,3 +109,4 @@ docs/output_copyFunctions.log
 docs/output_documentExamples.log
 docs/output_fixSectionsInXml.log
 continuous_integration/output_check_component_inclusion.log
+generateKeywords.bat
