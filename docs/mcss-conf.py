@@ -10,11 +10,7 @@ LINKS_NAVBAR1 = [
             ('<a href="change_log.html">ChangeLog</a>',),
         ],
     ),
-    (
-        "The Main Class",
-        "classmodbus_master",
-        [],
-    ),
+    ('<a href="classmodbus_master.html">The modbusMaster Class</a>',[]),
     (
         "Examples",
         "page_the_examples",
