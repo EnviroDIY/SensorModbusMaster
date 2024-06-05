@@ -61,7 +61,7 @@ PROJECT_BRIEF          = "An Arduino library for communicating via modbus with t
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-# PROJECT_LOGO           = SensorModbusMaster_ubuntu_264x55.png
+# PROJECT_LOGO           =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -2388,7 +2388,6 @@ PREDEFINED             = DOXYGEN=1 \
                          ARDUINO=10808 \
                          __AVR_ATmega1284P__ \
                          SERIAL_PORT_USBVIRTUAL=0 \
-                         protected=private
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
