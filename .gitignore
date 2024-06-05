@@ -117,3 +117,4 @@ docs/output_fixSectionsInXml.log
 continuous_integration/output_check_component_inclusion.log
 sync.ffs_db
 runDoxygen_args.bat
+docs/markdown_prefilter.py
