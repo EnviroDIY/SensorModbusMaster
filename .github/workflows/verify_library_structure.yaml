@@ -11,4 +11,4 @@ jobs:
   verify_library_structure:
     name: Validate library structure
     if: "!contains(github.event.head_commit.message, 'ci skip')"
-    uses: EnviroDIY/workflows/.github/workflows/verify_library_structure.yml
+    uses: EnviroDIY/workflows/.github/workflows/verify_library_structure.yml@main
