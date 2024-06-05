@@ -1046,7 +1046,7 @@ class modbusMaster {
     inline void debugPrint(T head, Args... tail) {
         if (_debugStream != nullptr) {
             _debugStream->print(head);
-            _debugStream->debugPrint(tail...);
+            this->debugPrint(tail...);
         }
     }
 
