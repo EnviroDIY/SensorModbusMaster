@@ -16,5 +16,5 @@ jobs:
   release:
     name: Prepare a new release
     if: "!contains(github.event.head_commit.message, 'ci skip')"
-    uses: EnviroDIY/workflows/.github/workflows/prepare_release.yml@main
+    uses: EnviroDIY/workflows/.github/workflows/prepare_release.yaml@main
     secrets: inherit

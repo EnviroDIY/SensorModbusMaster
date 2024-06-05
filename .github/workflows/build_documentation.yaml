@@ -25,7 +25,7 @@ jobs:
   doc_build:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     name: Build documentation
-    uses: EnviroDIY/workflows/.github/workflows/build_documentation.yml@main
+    uses: EnviroDIY/workflows/.github/workflows/build_documentation.yaml@main
     with:
       publish: ${{ (github.event_name == 'release' && github.event.action == 'published') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true') }}
     secrets: inherit
