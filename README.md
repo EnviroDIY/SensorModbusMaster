@@ -19,7 +19,7 @@ It's specifically written with lots of "higher-level" functions to help out user
 [//]: # ( End GitHub Only )
 _____
 
-## Using the library<!-- {#mainpage_using_library} -->
+## Using the library
 
 To communicate with a Modbus sensor or other Modbus slave, first create a stream instance (ie, Serial1, SoftwareSerial, AltSoftSerial) and then an instance of the modbusMaster.
 
@@ -68,7 +68,7 @@ modbus.uint16ToRegister(20, 56, littleEndian);
 
 _____
 
-## Modbus Maps<!-- {#mainpage_modbus_maps} -->
+## Modbus Maps
 
 While Modbus RTU specifications define the format of a data frame and a very simple data structure for a master and slave, there are no specification for what types of data a slave stores, where it is stored, or in what format it is stored.
 You **MUST** get this information from the manufacturer/programmer of your Modbus device.
@@ -98,7 +98,7 @@ You can use programs like [CAS Modbus scanner](http://www.chipkin.com/cas-modbus
 You can also use the "scanRegisters" utility in this library to get a view of all the registers, but if you don't have a pretty good idea of what you are looking for that will not be as helpful as you might hope.
 _____
 
-## Supported Data Types<!-- {#mainpage_data_types} -->
+## Supported Data Types
 
 The following data types are supported:
 
@@ -161,7 +161,7 @@ There are also mid-level functions available to help to reduce serial traffic by
 See SensorModbusMaster.h for all the available functions and their required and optional inputs
 _____
 
-## Notes on TTL and RS485/RS322 electrical communications standards<!-- {#mainpage_rs485} -->
+## Notes on TTL and RS485/RS322 electrical communications standards
 
 While Modbus RTU specifications define the format of a data frame transferred over a serial line, the type of serial signal is not defined.
 Many Modbus sensors communicate over [RS-485](https://en.wikipedia.org/wiki/RS-485).
@@ -176,7 +176,7 @@ While this library includes functions for setting the enables, I've found commut
 You will also need a [hardware interface board](#hardware-interface-suggestions-for-envirodiy-mayfly) to communicate between an Arduino and any Modbus sensor that communicates over [RS422](https://en.wikipedia.org/wiki/RS-422) or [RS232](https://en.wikipedia.org/wiki/RS-232).
 Again, mind your voltages and the method of direction control.
 
-## Hardware interface suggestions for EnviroDIY Mayfly<!-- {#mainpage_mayfly_hardware} -->
+## Hardware interface suggestions for EnviroDIY Mayfly
 
 For use with the [EnviroDIY Mayfly datalogger](https://github.com/EnviroDIY/EnviroDIY_Mayfly_Logger) and other Arduino framework boards, you will likely need some additional [Hardware for using ModbusRTU with RS-485 on Arduino](https://github.com/EnviroDIY/SensorModbusMaster/tree/master/hardware).
 
