@@ -54,7 +54,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ### Fixed
 
-- Fix by @neilh11 for a null pointer in the debugging causing crashes and other "undefined behavior."
+- Fix by [neilh10](https://github.com/neilh10) for a null pointer in the debugging causing crashes and other "undefined behavior."
 
 ***
 

@@ -1,6 +1,7 @@
 # Hardware for using ModbusRTU with RS-485 on Arduino<!-- {#page_hardware} -->
 
-### NOTICE: Hardware designs have been moved to the [Mayfly-Modbus-Wing](https://github.com/EnviroDIY/Mayfly-Modbus-Wing) repo!
+> [!NOTE]
+> Hardware designs have been moved to the [Mayfly-Modbus-Wing](https://github.com/EnviroDIY/Mayfly-Modbus-Wing) repo!
 
 ## Why Modbus Hardware is Required for Arduino
 
