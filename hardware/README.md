@@ -1,5 +1,9 @@
 # Hardware for using ModbusRTU with RS-485 on Arduino<!-- {#page_hardware} -->
 
+### NOTICE: Hardware designs have been moved to the [Mayfly-Modbus-Wing](https://github.com/EnviroDIY/Mayfly-Modbus-Wing) repo!
+
+## Why Modbus Hardware is Required for Arduino
+
 The [Modbus RTU](https://en.wikipedia.org/wiki/Modbus) *logical* communication protocol is typically transmitted using the *physical* [RS-485](https://en.wikipedia.org/wiki/RS-485) serial communication signaling standard.
 
 Arduino-framework micro-controllers, on the other hand, transmit serial signals using transistor-to-transistor logic, or [TTL serial](https://learn.sparkfun.com/tutorials/serial-communication/wiring-and-hardware).
@@ -8,9 +12,4 @@ Therefore, most sensors using this library will need to an RS485-to-TTL adapter 
 
 For all these reasons, additional hardware is usually required to interface a Modbus sensor with an Arduino micro-controller.
 
-Here we provide some guidance, designs and documentation different  interface hardware solutions that have worked for us.
-
-- [Modbus-Mayfly-WingShield](https://github.com/EnviroDIY/SensorModbusMaster/tree/master/hardware/Modbus-Mayfly_WingShield)
-  - This is what we are currently using widely.
-- Early DIY prototype:
-  - https://github.com/EnviroDIY/YosemitechModbus#suggested-setup-with-an-envirodiy-mayfly
+We have developed some guidance, designs and documentation different interface hardware solutions that have worked for us. This information is now available in the [EnviroDIY/Mayfly-Modbus-Wing](https://github.com/EnviroDIY/Mayfly-Modbus-Wing) repo.

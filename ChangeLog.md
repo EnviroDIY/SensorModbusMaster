@@ -12,15 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Applied clang format to source and examples.
-- Moved the scanRegisters example from the utils to the examples folder.
-- Updated Arduino library keywords file.
-- Changed the debugging functionality to not require a define.
-
 ### Added
-
-- Added Doxygen documentation comments
-- Added CI checks with Github actions using reusable workflows
 
 ### Removed
 
@@ -42,6 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Doxygen documentation comments.
 - Created a documentation page using Doxygen.
 - Added CI checks with Github actions using reusable workflows.
+
+### Removed
+
+- Removed build files and documentation for custom RS-485 boards.
+This information can now be found in its [own repository](https://github.com/EnviroDIY/Mayfly-Modbus-Wing).
 
 ***
 
