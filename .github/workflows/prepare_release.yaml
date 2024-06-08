@@ -18,3 +18,6 @@ jobs:
     if: ${{ ! contains(github.event.head_commit.message, 'ci skip') }}
     uses: EnviroDIY/workflows/.github/workflows/prepare_release.yaml@main
     secrets: inherit
+    with:
+      library-manager: 'update'
+      library-compliance: 'specification'
