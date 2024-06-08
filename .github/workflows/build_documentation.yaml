@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   doc_build:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: ${{ ! contains(github.event.head_commit.message, 'ci skip') }}
     name: Build documentation
     uses: EnviroDIY/workflows/.github/workflows/build_documentation.yaml@main
     with:
