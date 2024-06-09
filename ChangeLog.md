@@ -42,7 +42,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.6.8]
+## [0.6.8]
 
 ### Added
 
@@ -50,7 +50,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.6.7]
+## [0.6.7]
 
 ### Fixed
 
@@ -58,7 +58,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.6.5]
+## [0.6.5]
 
 ### Fixed
 
@@ -67,7 +67,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.6.2]
+## [0.6.2]
 
 ### Added
 
@@ -75,7 +75,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.5.3]
+## [0.5.3]
 
 ### Changed
 
@@ -83,7 +83,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.5.2]
+## [0.5.2]
 
 ### Added
 
@@ -95,7 +95,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.4.8]
+## [0.4.8]
 
 ### Changed
 
@@ -104,7 +104,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.4.3]
+## [0.4.3]
 
 ### Fixed
 
@@ -112,13 +112,13 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.4.0]
+## [0.4.0]
 
 - Added functions to write to registers and frames
 
 ***
 
-## [v0.1.2]
+## [0.1.2]
 
 ### Changed
 
@@ -126,7 +126,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-## [v0.1.0]
+## [0.1.0]
 
 ### Added
 
