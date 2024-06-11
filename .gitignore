@@ -160,16 +160,8 @@ compile_commands.json
 pioScripts
 runDoxygen.bat
 generateKeywords.bat
-output_doxygen.log
-output_doxygen_run.log
-output_mcss_run.log
-output_mcss.log
-docs/output_copyFunctions.log
-docs/output_documentExamples.log
-docs/output_fixSectionsInXml.log
-continuous_integration/output_check_component_inclusion.log
+output_*.log
 sync.ffs_db
 runDoxygen_args.bat
 docs/markdown_prefilter.py
-output_copyFunctions.log
 docs/Doxyfile.bak

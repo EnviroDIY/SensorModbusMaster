@@ -53,7 +53,7 @@ typedef enum endianness {
 /**
  * @brief The types of "pointers" to other modbus addresses.
  *
- * Sometimes values in registers are set as the addres of a pointer to look at for the
+ * Sometimes values in registers are set as the address of a pointer to look at for the
  * real value rather than being set as the values themselves. This pointer type tells
  * you in what section of the memory map to look for the value being pointed to.
  */
@@ -98,9 +98,9 @@ typedef union leFrame {
 #define FLOAT32_SIZE 4  ///< The size of a float32 in bytes
 #define TAI64_SIZE 8    ///< The size of a 64-bit timestamp in bytes
 #define TAI64N_SIZE \
-    12  ///< The size of a 64-bit timestamp plus 32-bit nanosecond in bytes
+    12  ///< The size of a 64-bit timestamp plus a 32-bit nanosecond in bytes
 #define TAI64NA_SIZE \
-    16  ///< The size of a 64-bit timestamp plus 32-bit nanosecond plus 16-bit
+    16  ///< The size of a 64-bit timestamp plus a 32-bit nanosecond plus a 32-bit
         ///< attosecond in bytes
 #define POINTER_SIZE 2  ///< The size of a pointer in bytes (when using Ardino system)
 

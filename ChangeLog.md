@@ -134,21 +134,19 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/ModularSensors/compare/v0.7.0
-[0.7.0]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.6.8
-[0.6.8]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.6.8
-[0.6.7]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.6.7
-[0.6.5]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.6.5
-[0.6.2]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.6.2
-[0.5.3]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.5.3
-[0.5.2]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.5.2
-[0.4.8]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.4.8
-[0.4.7]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.4.7
-[0.4.3]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.4.3
-[0.4.0]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.4.0
-[0.1.2]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.1.2
-[0.1.0]: https://github.com/EnviroDIY/ModularSensors/releases/tag/v0.1.0
-
-[//]: # ( @tableofcontents{XML:1} )
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.0
+[0.6.8]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.8
+[0.6.7]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.7
+[0.6.5]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.5
+[0.6.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.2
+[0.5.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.5.3
+[0.5.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.5.2
+[0.4.8]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.8
+[0.4.7]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.7
+[0.4.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.3
+[0.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.0
+[0.1.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.1.2
+[0.1.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.1.0
 
 [//]: # ( @m_footernavigation )
