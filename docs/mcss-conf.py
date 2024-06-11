@@ -1,6 +1,6 @@
 DOXYFILE = "mcss-Doxyfile"
 THEME_COLOR = "#cb4b16"
-FAVICON = "https://3qzcxr28gq9vutx8scdn91zq-wpengine.netdna-ssl.com/wp-content/uploads/2016/05/cropped-EnviroDIY_LogoMaster_TrueSquare_V5_TwoTree_Trans_notext-192x192.png"
+FAVICON = "enviroDIY_Favicon.png"
 LINKS_NAVBAR1 = [
     (
         "About",
@@ -10,7 +10,7 @@ LINKS_NAVBAR1 = [
             ('<a href="change_log.html">ChangeLog</a>',),
         ],
     ),
-    ('<a href="classmodbus_master.html">The modbusMaster Class</a>',[]),
+    ('<a href="classmodbus_master.html">The modbusMaster Class</a>', []),
     (
         "Examples",
         "page_the_examples",
@@ -32,3 +32,7 @@ CLASS_INDEX_EXPAND_LEVELS = 2
 STYLESHEETS = [
     "css/m-EnviroDIY+documentation.compiled.css",
 ]
+EXTRA_FILES = ["gp-desktop-logo.png", "gp-mobile-logo.png", "gp-scrolling-logo.png"]
+DESKTOP_LOGO = "gp-desktop-logo.png"
+MOBILE_LOGO = "gp-mobile-logo.png"
+SCROLLING_LOGO = "gp-scrolling-logo.png"
