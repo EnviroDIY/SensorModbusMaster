@@ -1,0 +1,20 @@
+/**
+ * @dir src
+ *
+ * @brief Contains the source code for the SensorModbusMaster library
+ */
+/**
+ * @dir docs
+ *
+ * @brief Contains extra documentation and files to help build the documentation
+ */
+/**
+ * @dir examples
+ *
+ * @brief Contains all of the example sketches
+ */
+/**
+ * @dir hardware
+ *
+ * @brief Contains documentation on RS-485 hardware
+ */
