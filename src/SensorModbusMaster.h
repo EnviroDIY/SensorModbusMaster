@@ -2,7 +2,7 @@
  * @file SensorModbusMaster.h
  * @copyright Stroud Water Research Center
  * Part of the EnviroDIY SensorModbusMaster library for Arduino.
- * This library is published under the BSD-3 license.
+ * @license This library is published under the BSD-3 license.
  * @author Sara Geleskie Damiano <sdamiano@stroudcenter.org>
  *
  * @brief Contains the modbusMaster class declarations.

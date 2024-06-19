@@ -1,14 +1,10 @@
 /**
+ * @dir examples
+ *
+ * @brief Contains all of the example sketches
+ */
+/**
  * @page page_the_examples
  * @m_innerpage{example_read_write_register}
  * @m_innerpage{example_scan_registers}
- */
-/**
- * @example{lineno} readWriteRegister.ino @m_examplenavigation{example_read_write_register,} @m_footernavigation
- * @brief This example writes a setting value to a holding register, reads it to confirm
- * the value has changed, and then reads several data values from holding registers.
- */
-/**
- * @example{lineno} scanRegisters.ino @m_examplenavigation{example_scan_registers,} @m_footernavigation
- * @brief This is a testing program to scan through all possible holding registers.
  */

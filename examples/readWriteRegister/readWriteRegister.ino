@@ -1,13 +1,16 @@
 /** =========================================================================
- * @file readWriteRegister.ino
+ * @example{lineno} readWriteRegister.ino
  * @author Sara Geleskie Damiano <sdamiano@stroudcenter.org>
  * @copyright Stroud Water Research Center
- * This example is published under the BSD-3 license.
+ * @license This example is published under the BSD-3 license.
  *
  * @brief This example writes a setting value to a holding register, reads it to confirm
  * the value has changed, and then reads several data values from holding registers.
  *
  * The register numbers in this example happen to be for an S::CAN oxy::lyser.
+ *
+ * @m_examplenavigation{example_read_write_register,}
+ * @m_footernavigation
  * ======================================================================= */
 
 // ---------------------------------------------------------------------------

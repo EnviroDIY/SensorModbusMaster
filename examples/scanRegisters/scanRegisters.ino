@@ -1,10 +1,13 @@
 /** =========================================================================
- * @file scanRegisters.ino
+ * @example{lineno} scanRegisters.ino
  * @author Sara Geleskie Damiano <sdamiano@stroudcenter.org>
  * @copyright Stroud Water Research Center
- * This example is published under the BSD-3 license.
+ * @license This example is published under the BSD-3 license.
  *
  * @brief This is a testing program to scan through all possible holding registers.
+ *
+ * @m_examplenavigation{example_scan_registers,}
+ * @m_footernavigation
  * ======================================================================= */
 
 // ---------------------------------------------------------------------------
