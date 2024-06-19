@@ -1240,9 +1240,7 @@ table.m-table th.m-info,
 table.m-table td.m-dim,
 table.m-table th.m-dim,
 table.m-table td.m-param,
-table.m-table th.m-param,
-table.m-table td.m-type,
-table.m-table th.m-type {
+table.m-table th.m-param {
   padding-left: 0.4375rem;
   padding-right: 0.4375rem;
 }
@@ -1261,9 +1259,7 @@ table.m-table.m-big th.m-info,
 table.m-table.m-big td.m-dim,
 table.m-table.m-big th.m-dim,
 table.m-table.m-big td.m-param,
-table.m-table.m-big th.m-param,
-table.m-table.m-big td.m-type,
-table.m-table.m-big th.m-type {
+table.m-table.m-big th.m-param {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
 }
@@ -1298,11 +1294,7 @@ table.m-table th.m-dim,
 table.m-table tr.m-param td,
 table.m-table td.m-param,
 table.m-table tr.m-param th,
-table.m-table th.m-param,
-table.m-table tr.m-type td,
-table.m-table td.m-type,
-table.m-table tr.m-type th,
-table.m-table th.m-type {
+table.m-table th.m-param {
   border-color: #e8e8e8;
 }
 .m-note pre,
@@ -1354,13 +1346,7 @@ table.m-table tr.m-param code,
 table.m-table td.m-param pre,
 table.m-table td.m-param code,
 table.m-table th.m-param pre,
-table.m-table th.m-param code,
-table.m-table tr.m-type pre,
-table.m-table tr.m-type code,
-table.m-table td.m-type pre,
-table.m-table td.m-type code,
-table.m-table th.m-type pre,
-table.m-table th.m-type code {
+table.m-table th.m-param code {
   background-color: rgba(251, 240, 236, 0.5);
 }
 img.m-image,
@@ -2255,20 +2241,6 @@ span.m-dim a:active {
 .m-block.m-param h6 a:active {
   color: #9ad36a;
 }
-.m-block.m-type h3 a:hover,
-.m-block.m-type h3 a:focus,
-.m-block.m-type h3 a:active,
-.m-block.m-type h4 a:hover,
-.m-block.m-type h4 a:focus,
-.m-block.m-type h4 a:active,
-.m-block.m-type h5 a:hover,
-.m-block.m-type h5 a:focus,
-.m-block.m-type h5 a:active,
-.m-block.m-type h6 a:hover,
-.m-block.m-type h6 a:focus,
-.m-block.m-type h6 a:active {
-  color: var(--type-link-active-color);
-}
 div.m-button a,
 .m-label {
   color: #ffffff;
@@ -2321,11 +2293,6 @@ div.m-button.m-param a,
   background-color: #9ad36a;
   color: #3c763d;
 }
-div.m-button.m-type a,
-.m-label:not(.m-flat).m-type {
-  background-color: var(--type-color);
-  color: var(--type-filled-color);
-}
 div.m-button.m-default a:hover,
 div.m-button.m-default a:focus,
 div.m-button.m-default a:active {
@@ -2365,11 +2332,6 @@ div.m-button.m-param a:hover,
 div.m-button.m-param a:focus,
 div.m-button.m-param a:active {
   background-color: #9ad36a;
-}
-div.m-button.m-type a:hover,
-div.m-button.m-type a:focus,
-div.m-button.m-type a:active {
-  background-color: var(--type-link-active-color);
 }
 .m-note.m-default {
   background-color: transparent;
@@ -2706,38 +2668,6 @@ table.m-table tr.m-param th a:active,
 table.m-table th.m-param a:active {
   color: #9ad36a;
 }
-.m-note.m-type,
-table.m-table tr.m-type td,
-table.m-table td.m-type,
-table.m-table tr.m-type th,
-table.m-table th.m-type {
-  background-color: var(--type-filled-background-color);
-  color: var(--type-filled-color);
-}
-.m-note.m-type a,
-table.m-table tr.m-type td a,
-table.m-table td.m-type a,
-table.m-table tr.m-type th a,
-table.m-table th.m-type a {
-  color: var(--type-filled-link-color);
-}
-.m-note.m-type a:hover,
-table.m-table tr.m-type td a:hover,
-table.m-table td.m-type a:hover,
-table.m-table tr.m-type th a:hover,
-table.m-table th.m-type a:hover,
-.m-note.m-type a:focus,
-table.m-table tr.m-type td a:focus,
-table.m-table td.m-type a:focus,
-table.m-table tr.m-type th a:focus,
-table.m-table th.m-type a:focus,
-.m-note.m-type a:active,
-table.m-table tr.m-type td a:active,
-table.m-table td.m-type a:active,
-table.m-table tr.m-type th a:active,
-table.m-table th.m-type a:active {
-  color: var(--type-filled-link-active-color);
-}
 figure.m-figure.m-default::before {
   border-color: transparent;
 }
@@ -2794,12 +2724,6 @@ figure.m-figure.m-param::before {
 }
 figure.m-figure.m-param figcaption {
   color: #9ad36a;
-}
-figure.m-figure.m-type::before {
-  border-color: var(--type-filled-background-color);
-}
-figure.m-figure.m-type figcaption {
-  color: var(--type-color);
 }
 figure.m-figure.m-dim::before {
   border-color: transparent;
@@ -2988,24 +2912,6 @@ div.m-plot svg .m-bar.m-param,
 .m-graph.m-param g.m-node polyline {
   stroke: #9ad36a;
 }
-.m-math.m-type,
-.m-math g.m-type,
-.m-math rect.m-type,
-div.m-plot svg .m-bar.m-type,
-.m-graph.m-type g.m-edge polygon,
-.m-graph.m-type g.m-node:not(.m-flat) ellipse,
-.m-graph.m-type g.m-node:not(.m-flat) polygon,
-.m-graph.m-type g.m-edge text,
-.m-graph.m-type g.m-node.m-flat text {
-  fill: var(--type-color);
-}
-.m-graph.m-type g.m-edge polygon,
-.m-graph.m-type g.m-edge path,
-.m-graph.m-type g.m-node ellipse,
-.m-graph.m-type g.m-node polygon,
-.m-graph.m-type g.m-node polyline {
-  stroke: var(--type-color);
-}
 .m-graph g.m-edge.m-default polygon,
 .m-graph g.m-node.m-default:not(.m-flat) ellipse,
 .m-graph g.m-node.m-default:not(.m-flat) polygon,
@@ -3132,21 +3038,6 @@ div.m-plot svg .m-bar.m-type,
 .m-graph g.m-node.m-param polyline,
 .m-graph g.m-cluster.m-param polygon {
   stroke: #9ad36a;
-}
-.m-graph g.m-edge.m-type polygon,
-.m-graph g.m-node.m-type:not(.m-flat) ellipse,
-.m-graph g.m-node.m-type:not(.m-flat) polygon,
-.m-graph g.m-edge.m-type text,
-.m-graph g.m-node.m-type.m-flat text {
-  fill: var(--type-color);
-}
-.m-graph g.m-edge.m-type polygon,
-.m-graph g.m-edge.m-type path,
-.m-graph g.m-node.m-type ellipse,
-.m-graph g.m-node.m-type polygon,
-.m-graph g.m-node.m-type polyline,
-.m-graph g.m-cluster.m-type polygon {
-  stroke: var(--type-color);
 }
 p,
 ul,
@@ -3540,22 +3431,22 @@ body > main {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
-article h1 {
+article .breadcrumbs {
   font-size: 1.75rem;
 }
-article h1 .m-breadcrumb {
+article .m-breadcrumb {
   color: #666;
   font-weight: normal;
   font-size: 16px;
   padding-top: 8px;
   padding-bottom: 8px;
 }
-article h1 .m-breadcrumb a {
+article .m-breadcrumb a {
   color: #26a9e0;
 }
-article h1 .m-breadcrumb a:hover,
-article h1 a:focus,
-article h1 a:active {
+article .m-breadcrumb a:hover,
+article a:focus,
+article a:active {
   color: #26a9e0;
 }
 article hr {
@@ -4579,11 +4470,11 @@ ul.m-doc li.m-doc-collapsible > a:first-child,
 }
 a.m-doc,
 a.m-doc-self {
-  font-weight: bold;
+  font-weight: bold !important;
 }
 .m-thin a.m-doc,
 .m-thin a.m-doc-self {
-  font-weight: normal;
+  font-weight: normal !important;
 }
 ul.m-doc li.m-doc-expansible > a:first-child,
 ul.m-doc li.m-doc-collapsible > a:first-child,
@@ -4616,14 +4507,13 @@ h3 a.m-doc-external {
 }
 span.m-doc-wrap-bumper {
   margin-right: -1rem;
-  display: inline-block;
   vertical-align: text-top;
 }
 span.m-doc-wrap {
   padding-left: 1rem;
   display: inline-block;
   vertical-align: text-top;
-  white-space: pre-line;
+  white-space: normal;
   max-width: 100%;
 }
 dl.m-doc dd {

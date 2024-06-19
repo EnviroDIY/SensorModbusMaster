@@ -1,0 +1,68 @@
+{
+  "version": "1.11.0",
+  "compound": {
+    "kind": "page",
+    "id": "page_hardware",
+    "name": "Hardware for using ModbusRTU with RS-485 on Arduino",
+    "url_base": "page_hardware",
+    "url": "page_hardware.html",
+    "include": null,
+    "has_template_details": false,
+    "templates": null,
+    "brief": "",
+    "description": "<p><a name=\"md_hardware_2_r_e_a_d_m_e\"></a></p><aside class=\"m-note m-info\"><h4>Note</h4><p>Hardware designs have been moved to the <a href=\"https://github.com/EnviroDIY/Mayfly-Modbus-Wing\">Mayfly-Modbus-Wing</a> repo!</p></aside><section id=\"readme_why-modbus-hardware-is-required-for-arduino\"><h2>Why Modbus Hardware is Required for Arduino</h2><p>The <a href=\"https://en.wikipedia.org/wiki/Modbus\">Modbus RTU</a> <em>logical</em> communication protocol is typically transmitted using the <em>physical</em> <a href=\"https://en.wikipedia.org/wiki/RS-485\">RS-485</a> serial communication signaling standard.</p><p>Arduino-framework micro-controllers, on the other hand, transmit serial signals using transistor-to-transistor logic, or <a href=\"https://learn.sparkfun.com/tutorials/serial-communication/wiring-and-hardware\">TTL serial</a>.</p><p>Therefore, most sensors using this library will need to an RS485-to-TTL adapter module to communicate. Also, most Modbus sensors require 5-12V of power, so a separate step-up power converter may be necessary to run it off a 3.3V Arduino micro-controller. Last, the electrical &quot;logic level&quot; signals returned from a sensor will typically have a HIGH (or &quot;1&quot;) returned at the same voltage that powers the sensor, which means that a logic-level shifter/converter is required to ensure that communication signals being received by the Arduino micro-controller are 3.3V. Luckily, most RS485-to-TTL adapter modules also perform logic-level voltage conversions.</p><p>For all these reasons, additional hardware is usually required to interface a Modbus sensor with an Arduino micro-controller.</p><p>We have developed some guidance, designs and documentation different interface hardware solutions that have worked for us. This information is now available in the <a href=\"https://github.com/EnviroDIY/Mayfly-Modbus-Wing\">EnviroDIY/<wbr />Mayfly-Modbus-Wing</a> repo.</p></section>",
+    "sections": [],
+    "deprecated": null,
+    "since": null,
+    "example_navigation": null,
+    "footer_navigation": null,
+    "modules": [],
+    "dirs": [],
+    "files": [],
+    "namespaces": [],
+    "classes": [],
+    "base_classes": [],
+    "derived_classes": [],
+    "enums": [],
+    "typedefs": [],
+    "funcs": [],
+    "vars": [],
+    "defines": [],
+    "public_types": [],
+    "public_static_funcs": [],
+    "typeless_funcs": [],
+    "public_funcs": [],
+    "signals": [],
+    "public_slots": [],
+    "public_static_vars": [],
+    "public_vars": [],
+    "protected_types": [],
+    "protected_static_funcs": [],
+    "protected_funcs": [],
+    "protected_slots": [],
+    "protected_static_vars": [],
+    "protected_vars": [],
+    "private_funcs": [],
+    "private_slots": [],
+    "related": [],
+    "friend_funcs": [],
+    "groups": [],
+    "has_enum_details": false,
+    "has_typedef_details": false,
+    "has_func_details": false,
+    "has_var_details": false,
+    "has_define_details": false,
+    "breadcrumb": [
+      [
+        "Hardware for using ModbusRTU with RS-485 on Arduino",
+        "page_hardware.html"
+      ]
+    ],
+    "breadcrumbGroup": [
+      [
+        "Hardware for using ModbusRTU with RS-485 on Arduino",
+        "page_hardware.html"
+      ]
+    ]
+  }
+}

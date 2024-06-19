@@ -1,0 +1,159 @@
+{
+  "version": "1.11.0",
+  "index": {
+    "symbols": [
+      {
+        "id": "unionle_frame",
+        "kind": "union",
+        "name": "leFrame",
+        "url": "unionle_frame.html",
+        "brief": "A frame for holding parts of a response. Define a little-endian frame as a union - that is a special class type that can hold only one of its non-static data members at a time.",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false,
+        "is_final": false
+      },
+      {
+        "id": "classmodbus_master",
+        "kind": "class",
+        "name": "modbusMaster",
+        "url": "classmodbus_master.html",
+        "brief": "The class for communicating with modbus devices.",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false,
+        "is_final": false
+      }
+    ],
+    "files": [
+      {
+        "id": "dir_49e56c817e5e54854c35e136979f97ca",
+        "kind": "dir",
+        "name": "docs",
+        "url": "dir_49e56c817e5e54854c35e136979f97ca.html",
+        "brief": "Contains extra documentation and files to help build the documentation.",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      },
+      {
+        "id": "dir_d28a4824dc47e487b107a5db32ef43c4",
+        "kind": "dir",
+        "name": "examples",
+        "url": "dir_d28a4824dc47e487b107a5db32ef43c4.html",
+        "brief": "Contains all of the example sketches.",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      },
+      {
+        "id": "dir_f4316de2dfb04db90651672103de31d6",
+        "kind": "dir",
+        "name": "hardware",
+        "url": "dir_f4316de2dfb04db90651672103de31d6.html",
+        "brief": "Contains documentation on RS-485 hardware.",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      },
+      {
+        "id": "dir_68267d1309a1af8e8297ef4c3efbcdba",
+        "kind": "dir",
+        "name": "src",
+        "url": "dir_68267d1309a1af8e8297ef4c3efbcdba.html",
+        "brief": "Contains the source code for the SensorModbusMaster library.",
+        "children": [
+          {
+            "id": "_sensor_modbus_master_8cpp",
+            "kind": "file",
+            "name": "SensorModbusMaster.cpp",
+            "url": "_sensor_modbus_master_8cpp.html",
+            "brief": "Contains the <a href=\"classmodbus_master.html\" class=\"m-doc\">modbusMaster</a> class definitions.",
+            "children": [],
+            "deprecated": null,
+            "since": null,
+            "has_nestable_children": false
+          },
+          {
+            "id": "_sensor_modbus_master_8h",
+            "kind": "file",
+            "name": "SensorModbusMaster.h",
+            "url": "_sensor_modbus_master_8h.html",
+            "brief": "Contains the <a href=\"classmodbus_master.html\" class=\"m-doc\">modbusMaster</a> class declarations.",
+            "children": [],
+            "deprecated": null,
+            "since": null,
+            "has_nestable_children": false
+          }
+        ],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      }
+    ],
+    "pages": [
+      {
+        "id": "change_log",
+        "kind": "page",
+        "name": "ChangeLog",
+        "url": "change_log.html",
+        "brief": "",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      },
+      {
+        "id": "page_the_examples",
+        "kind": "page",
+        "name": "Examples Using SensorModbusMaster",
+        "url": "page_the_examples.html",
+        "brief": "",
+        "children": [
+          {
+            "id": "example_read_write_register",
+            "kind": "page",
+            "name": "Reading and Writing Registers",
+            "url": "example_read_write_register.html",
+            "brief": "",
+            "children": [],
+            "deprecated": null,
+            "since": null,
+            "has_nestable_children": false
+          },
+          {
+            "id": "example_scan_registers",
+            "kind": "page",
+            "name": "Scanning Registers",
+            "url": "example_scan_registers.html",
+            "brief": "",
+            "children": [],
+            "deprecated": null,
+            "since": null,
+            "has_nestable_children": false
+          }
+        ],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      },
+      {
+        "id": "page_hardware",
+        "kind": "page",
+        "name": "Hardware for using ModbusRTU with RS-485 on Arduino",
+        "url": "page_hardware.html",
+        "brief": "",
+        "children": [],
+        "deprecated": null,
+        "since": null,
+        "has_nestable_children": false
+      }
+    ],
+    "modules": []
+  }
+}

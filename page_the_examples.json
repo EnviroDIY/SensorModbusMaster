@@ -1,0 +1,79 @@
+{
+  "version": "1.11.0",
+  "compound": {
+    "kind": "page",
+    "id": "page_the_examples",
+    "name": "Examples Using SensorModbusMaster",
+    "url_base": "page_the_examples",
+    "url": "page_the_examples.html",
+    "include": null,
+    "has_template_details": false,
+    "templates": null,
+    "brief": "",
+    "description": "<p><a name=\"md_examples_2_read_me\"></a> These example programs demonstrate how to use the SensorModbusMaster library.</p><hr/><section id=\"examples_read_write_register\"><h2>Reading and Writing Registers</h2><p>This example writes a setting value to a holding register, reads it to confirm the value has changed, and then reads several data values from holding registers.</p><ul><li><a href=\"https://envirodiy.github.io/SensorModbusMaster/example_read_write_register.html\">Instructions for the reading and writing example</a></li><li><a href=\"https://github.com/EnviroDIY/SensorModbusMaster/tree/master/examples/readWriteRegister\">The reading and writing example on GitHub</a></li></ul></section><section id=\"examples_scan_registers\"><h2>Scanning Registers</h2><p>This is a testing program to scan through all possible holding registers. This was written to try to guess the structure of the modbus registers when a map isn&#x27;t available.</p><ul><li><a href=\"https://envirodiy.github.io/SensorModbusMaster/example_scan_registers.html\">Instructions for the registry scanning example</a></li><li><a href=\"https://github.com/EnviroDIY/SensorModbusMaster/tree/master/examples/scanRegisters\">The registry scanning example on GitHub</a></li></ul></section>",
+    "sections": [
+      [
+        "examples_read_write_register",
+        "Reading and Writing Registers",
+        []
+      ],
+      [
+        "examples_scan_registers",
+        "Scanning Registers",
+        []
+      ]
+    ],
+    "deprecated": null,
+    "since": null,
+    "example_navigation": null,
+    "footer_navigation": null,
+    "modules": [],
+    "dirs": [],
+    "files": [],
+    "namespaces": [],
+    "classes": [],
+    "base_classes": [],
+    "derived_classes": [],
+    "enums": [],
+    "typedefs": [],
+    "funcs": [],
+    "vars": [],
+    "defines": [],
+    "public_types": [],
+    "public_static_funcs": [],
+    "typeless_funcs": [],
+    "public_funcs": [],
+    "signals": [],
+    "public_slots": [],
+    "public_static_vars": [],
+    "public_vars": [],
+    "protected_types": [],
+    "protected_static_funcs": [],
+    "protected_funcs": [],
+    "protected_slots": [],
+    "protected_static_vars": [],
+    "protected_vars": [],
+    "private_funcs": [],
+    "private_slots": [],
+    "related": [],
+    "friend_funcs": [],
+    "groups": [],
+    "has_enum_details": false,
+    "has_typedef_details": false,
+    "has_func_details": false,
+    "has_var_details": false,
+    "has_define_details": false,
+    "breadcrumb": [
+      [
+        "Examples Using SensorModbusMaster",
+        "page_the_examples.html"
+      ]
+    ],
+    "breadcrumbGroup": [
+      [
+        "Examples Using SensorModbusMaster",
+        "page_the_examples.html"
+      ]
+    ]
+  }
+}
