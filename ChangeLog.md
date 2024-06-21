@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update examples to apply to more processors
 - Implement testing of more processors
+- Set the platforms/architectures supported list to "*" (all)
 
 ### Added
 

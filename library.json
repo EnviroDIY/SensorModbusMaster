@@ -18,7 +18,7 @@
     ],
     "license": "BSD-3-Clause",
     "frameworks": "arduino",
-    "platforms": "atmelavr, atmelsam",
+    "platforms": "*",
     "examples":
     [
         "examples/*/*.ino",

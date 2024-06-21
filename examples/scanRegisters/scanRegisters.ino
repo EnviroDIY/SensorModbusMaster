@@ -30,8 +30,6 @@ const int DEREPin = -1;  // The pin controlling Receive Enable and Driver Enable
                          // on the RS485 adapter, if applicable (else, -1)
                          // Setting HIGH enables the driver (arduino) to send text
                          // Setting LOW enables the receiver (sensor) to send text
-const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
-const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 
 
 // Construct a Serial object for Modbus
