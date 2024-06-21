@@ -13,6 +13,6 @@ jobs:
     if: ${{ ! contains(github.event.head_commit.message, 'ci skip') }}
     uses: EnviroDIY/workflows/.github/workflows/build_examples.yaml@main
     with:
-      boards_to_build: 'mayfly,uno,megaatmega2560,leonardo,dueUSB,zeroUSB,mkrvidor4000,nano_every,uno_wifi_rev2,arduino_nano_esp32,pico,uno_r4_wifi,adafruit_feather_m0,adafruit_feather_m4,adafruit_grandcentral_m4,nodemcu,nodemcuv2,esp32dev,esp32-c3-devkitm-1,esp32-s3-devkitm-1'
+      boards_to_build: 'all'
       examples_to_build: 'examples/readWriteRegister,examples/scanRegisters'
     secrets: inherit

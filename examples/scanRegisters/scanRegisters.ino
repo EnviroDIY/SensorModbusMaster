@@ -22,7 +22,8 @@
 // ---------------------------------------------------------------------------
 
 // Define the sensor's modbus address
-byte modbusAddress = 0x01;  // The sensor's modbus address, or SlaveID
+byte modbusAddress  = 0x01;   // The sensor's modbus address, or SlaveID
+long modbusBaudRate = 38400;  // The baud rate the sensor uses
 
 // Define pin number variables
 const int DEREPin = -1;  // The pin controlling Receive Enable and Driver Enable
@@ -32,10 +33,36 @@ const int DEREPin = -1;  // The pin controlling Receive Enable and Driver Enable
 const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
 const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 
-// Construct software serial object for Modbus
-#if defined(ARDUINO_AVR_UNO)
+
+// Construct a Serial object for Modbus
+#if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
+// The Uno only has 1 hardware serial port, which is dedicated to comunication with the
+// computer. If using an Uno, you will be restricted to using AltSofSerial or
+// SoftwareSerial
 #include <SoftwareSerial.h>
+const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
+const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
+#pragma message("Using Software Serial for the Uno on pins 10 and 11")
 SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
+// AltSoftSerial modbusSerial;
+#elif defined ESP8266
+#pragma message("Using Software Serial for the ESP8266")
+#include <SoftwareSerial.h>
+SoftwareSerial modbusSerial;
+#elif defined(NRF52832_FEATHER) || defined(ARDUINO_NRF52840_FEATHER)
+#pragma message("Using TinyUSB for the NRF52")
+#include <Adafruit_TinyUSB.h>
+HardwareSerial& modbusSerial = Serial1;
+#elif !defined(NO_GLOBAL_SERIAL1) && !defined(STM32_CORE_VERSION)
+// This is just a assigning another name to the same port, for convienence
+// Unless it is unavailable, always prefer hardware serial.
+#pragma message("Using HarwareSerial / Serial1")
+HardwareSerial& modbusSerial = Serial1;
+#else
+// This is just a assigning another name to the same port, for convienence
+// Unless it is unavailable, always prefer hardware serial.
+#pragma message("Using HarwareSerial / Serial")
+HardwareSerial& modbusSerial = Serial;
 #endif
 
 // Construct the modbus instance
@@ -150,24 +177,47 @@ void printPaddedInt16(uint16_t val) {
         Serial.print(val);
 }
 
-// ---------------------------------------------------------------------------
+// ==========================================================================
 // Main setup function
-// ---------------------------------------------------------------------------
+// ==========================================================================
 void setup() {
-    if (DEREPin > 0) pinMode(DEREPin, OUTPUT);
+    if (DEREPin >= 0) { pinMode(DEREPin, OUTPUT); }
 
-    Serial.begin(57600);  // Main serial port for debugging via USB Serial Monitor
+    // Turn on the "main" serial port for debugging via USB Serial Monitor
+    Serial.begin(57600);
 
-#if defined(ARDUINO_AVR_UNO)
-    modbusSerial.begin(38400);  // port for communicating with sensor
-    modbus.begin(modbusAddress, modbusSerial, DEREPin);
+    // Turn on your modbus serial port
+#if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P) || \
+    defined(ARDUINO_SAM_DUE) || not defined(SERIAL_8O1)
+    modbusSerial.begin(modbusBaudRate);
+    // NOTE:  The AVR implementation of SoftwareSerial only supports 8N1
+    // The hardware serial implementation of the Due also only supports 8N1
+#elif defined(ESP8266)
+    const int SSRxPin = 13;  // Receive pin for software serial (Rx on RS485 adapter)
+    const int SSTxPin = 14;  // Send pin for software serial (Tx on RS485 adapter)
+    modbusSerial.begin(modbusBaudRate, SWSERIAL_8O1, SSRxPin, SSTxPin, false);
+    // NOTE:  See
+    // https://github.com/plerup/espsoftwareserial/blob/40038df/src/SoftwareSerial.h#L120-L160
+    // for a list of data/parity/stop bit configurations that apply to the ESP8266's
+    // implementation of SoftwareSerial
 #else
-    Serial1.begin(38400, SERIAL_8O1);  // port for communicating with sensor
-    modbus.begin(modbusAddress, &Serial1, DEREPin);
+    modbusSerial.begin(modbusBaudRate, SERIAL_8O1);
+    // ^^ use this for 8 data bits - odd parity - 1 stop bit
+    // Serial1.begin(modbusBaudRate, SERIAL_8E1);
+    // ^^ use this for 8 data bits - even parity - 1 stop bit
+    // Serial1.begin(modbusBaudRate, SERIAL_8N2);
+    // ^^ use this for 8 data bits - no parity - 2 stop bits
+    // Serial1.begin(modbusBaudRate);
+    // ^^ use this for 8 data bits - no parity - 1 stop bits
+    // Despite being technically "non-compliant" with the modbus specifications
+    // 8N1 parity is very common.
 #endif
 
-    // Turn on debugging
+    // Turn on debugging, if desired
     // modbus.setDebugStream(&Serial);
+
+    // Start the modbus instance
+    modbus.begin(modbusAddress, modbusSerial, DEREPin);
 
     // Start up note
     Serial.println("Full scan of all input and holding registers");
@@ -257,7 +307,7 @@ void setup() {
     Serial.println("=======================");
 }
 
-// ---------------------------------------------------------------------------
+// ==========================================================================
 // Main loop function
-// ---------------------------------------------------------------------------
+// ==========================================================================
 void loop() {}

@@ -36,27 +36,43 @@ const int DEREPin       = 7;   // The pin controlling Receive Enable and Driver 
                                // Setting HIGH enables the driver (arduino) to send text
                                // Setting LOW enables the receiver (sensor) to send text
 
-// Construct software serial object for Modbus
-#if defined(ARDUINO_AVR_UNO)
+// Construct a Serial object for Modbus
+#if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
 // The Uno only has 1 hardware serial port, which is dedicated to comunication with the
-// computer If using an Uno, you will be restricted to using AltSofSerial or
+// computer. If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
 #include <SoftwareSerial.h>
-const int      SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
-const int      SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
+const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
+const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
+#pragma message("Using Software Serial for the Uno on pins 10 and 11")
 SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
+// AltSoftSerial modbusSerial;
+#elif defined ESP8266
+#pragma message("Using Software Serial for the ESP8266")
+#include <SoftwareSerial.h>
+SoftwareSerial modbusSerial;
+#elif defined(NRF52832_FEATHER) || defined(ARDUINO_NRF52840_FEATHER)
+#pragma message("Using TinyUSB for the NRF52")
+#include <Adafruit_TinyUSB.h>
+HardwareSerial& modbusSerial = Serial1;
+#elif !defined(NO_GLOBAL_SERIAL1) && !defined(STM32_CORE_VERSION)
+// This is just a assigning another name to the same port, for convienence
+// Unless it is unavailable, always prefer hardware serial.
+#pragma message("Using HarwareSerial / Serial1")
+HardwareSerial& modbusSerial = Serial1;
 #else
 // This is just a assigning another name to the same port, for convienence
 // Unless it is unavailable, always prefer hardware serial.
-HardwareSerial* modbusSerial = &Serial1;
+#pragma message("Using HarwareSerial / Serial")
+HardwareSerial& modbusSerial = Serial;
 #endif
 
 // Construct the modbus instance
 modbusMaster modbus;
 
-// ---------------------------------------------------------------------------
+// ==========================================================================
 // Main setup function
-// ---------------------------------------------------------------------------
+// ==========================================================================
 void setup() {
     // Set various pins as needed
     if (DEREPin >= 0) { pinMode(DEREPin, OUTPUT); }
@@ -73,11 +89,21 @@ void setup() {
     Serial.begin(57600);
 
     // Turn on your modbus serial port
-#if defined(ARDUINO_AVR_UNO)
+#if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P) || \
+    defined(ARDUINO_SAM_DUE) || not defined(SERIAL_8O1)
     modbusSerial.begin(modbusBaudRate);
-    // NOTE:  Software serial only supports 8N1
+    // NOTE:  The AVR implementation of SoftwareSerial only supports 8N1
+    // The hardware serial implementation of the Due also only supports 8N1
+#elif defined(ESP8266)
+    const int SSRxPin = 13;  // Receive pin for software serial (Rx on RS485 adapter)
+    const int SSTxPin = 14;  // Send pin for software serial (Tx on RS485 adapter)
+    modbusSerial.begin(modbusBaudRate, SWSERIAL_8O1, SSRxPin, SSTxPin, false);
+    // NOTE:  See
+    // https://github.com/plerup/espsoftwareserial/blob/40038df/src/SoftwareSerial.h#L120-L160
+    // for a list of data/parity/stop bit configurations that apply to the ESP8266's
+    // implementation of SoftwareSerial
 #else
-    Serial1.begin(modbusBaudRate, SERIAL_8O1);
+    modbusSerial.begin(modbusBaudRate, SERIAL_8O1);
     // ^^ use this for 8 data bits - odd parity - 1 stop bit
     // Serial1.begin(modbusBaudRate, SERIAL_8E1);
     // ^^ use this for 8 data bits - even parity - 1 stop bit
@@ -107,9 +133,9 @@ void setup() {
     Serial.println(doUnitMode);
 }
 
-// ---------------------------------------------------------------------------
-// Main setup function
-// ---------------------------------------------------------------------------
+// ==========================================================================
+// Main loop function
+// ==========================================================================
 void loop() {
     // Get data values from read-only input registers (0x04)
     // Just for show, we will do the exact same thing 2 ways
