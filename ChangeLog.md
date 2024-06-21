@@ -12,15 +12,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update examples to apply to more processors
-- Implement testing of more processors
-- Set the platforms/architectures supported list to "*" (all)
-
 ### Added
 
 ### Removed
 
 ### Fixed
+
+***
+
+## [0.7.1]
+
+### Changed
+
+- Update examples to apply to more processors
+- Implement testing of more processors
+- Set the platforms/architectures supported list to "*" (all)
 
 ***
 
@@ -139,6 +145,7 @@ This information can now be found in its [own repository](https://github.com/Env
 ***
 
 [Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v0.7.0...HEAD
+[0.7.1]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.1
 [0.7.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.0
 [0.6.8]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.8
 [0.6.7]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.7
