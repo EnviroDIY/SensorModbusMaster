@@ -6,6 +6,7 @@ on:
     paths:
       - 'VERSION' # Push events when the VERSION file changes
   workflow_dispatch:
+  if: ${{ ! contains(github.event.head_commit.message, 'ci skip') }}
 
 name: Create a New Release
 
@@ -14,6 +15,7 @@ env:
 
 jobs:
   wait_for_checks:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       matrix:
         req_workflow:
@@ -38,7 +40,9 @@ jobs:
   release:
     name: Prepare a new release
     needs: [wait_for_checks]
-    if: ${{ ! contains(github.event.head_commit.message, 'ci skip') }}
+    if: |
+      always() &&
+      (needs.wait_for_checks.result == 'success' || needs.wait_for_checks.result == 'skipped')
     uses: EnviroDIY/workflows/.github/workflows/prepare_release.yaml@main
     secrets: inherit
     with:
