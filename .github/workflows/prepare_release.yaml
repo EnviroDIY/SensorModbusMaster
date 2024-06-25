@@ -7,7 +7,7 @@ on:
       - 'VERSION' # Push events when the VERSION file changes
   workflow_dispatch:
 
-name: Prepare a new release and add release assets
+name: Create a New Release
 
 env:
   PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
@@ -28,7 +28,7 @@ jobs:
       - name: Wait on Workflow
         uses: ArcticLampyrid/action-wait-for-workflow@v1.2.0
         with:
-          workflows: ${{ matrix.req_workflow }}
+          workflow: ${{ matrix.req_workflow }}
           sha: ${{ github.sha || github.event.pull_request.head.sha || github.event.pull_request.head.ref }} # optional
           allowed-conclusions: |
             success
