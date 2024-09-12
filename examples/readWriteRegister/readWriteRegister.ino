@@ -182,16 +182,16 @@ void setup() {
     Serial.print(F(", hexidecimal: "));
     Serial.println(prettyprintAddressHex(modbusAddress));
 
-    // // Write to a holding register
-    // // In this case, we are changing the output units of a dissolved oxygen sensor
-    // Serial.println("Setting DO units to ppm");
-    // modbus.int16ToRegister(0x01, 1, bigEndian);
-    // // Verify that the register changed
-    // // 0x03 = holding register
-    // // only holding registers are writeable
-    // int16_t doUnitMode = modbus.int16FromRegister(0x03, 0x01, bigEndian);
-    // Serial.print("Current unit mode is ");
-    // Serial.println(doUnitMode);
+    // Write to a holding register
+    // In this case, we are changing the output units of a dissolved oxygen sensor
+    Serial.println("Setting DO units to ppm");
+    modbus.int16ToRegister(0x01, 1, bigEndian);
+    // Verify that the register changed
+    // 0x03 = holding register
+    // only holding registers are writeable
+    int16_t doUnitMode = modbus.int16FromRegister(0x03, 0x01, bigEndian);
+    Serial.print("Current unit mode is ");
+    Serial.println(doUnitMode);
 }
 
 // ==========================================================================
