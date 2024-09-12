@@ -19,25 +19,51 @@
 #include <Arduino.h>
 #include <SensorModbusMaster.h>
 
-// ---------------------------------------------------------------------------
-// Set up the sensor specific information
-//   ie, pin locations, addresses, calibrations and related settings
-// ---------------------------------------------------------------------------
+// ==========================================================================
+//  Sensor Settings
+// ==========================================================================
 
 // Define the sensor's modbus address
-byte modbusAddress  = 0x01;   // The sensor's modbus address, or SlaveID
-long modbusBaudRate = 38400;  // The baud rate the sensor uses
+byte modbusAddress = 0x01;   // The sensor's modbus address, or SlaveID
+
+// The Modbus baud rate the sensor uses
+int32_t modbusBaudRate = 9600;  // The baud rate the sensor uses
+
+// Sensor Timing
+// Edit these to explore
+#define WARM_UP_TIME 1500  // milliseconds for sensor to respond to commands.
+
+
+// ==========================================================================
+//  Data Logger Options
+// ==========================================================================
+const int32_t serialBaud = 115200;  // Baud rate for serial monitor
 
 // Define pin number variables
 const int sensorPwrPin  = 10;  // The pin sending power to the sensor
 const int adapterPwrPin = 22;  // The pin sending power to the RS485 adapter
-const int DEREPin       = 7;   // The pin controlling Receive Enable and Driver Enable
+const int DEREPin       = -1;   // The pin controlling Receive Enable and Driver Enable
                                // on the RS485 adapter, if applicable (else, -1)
                                // Setting HIGH enables the driver (arduino) to send text
                                // Setting LOW enables the receiver (sensor) to send text
 
-// Construct a Serial object for Modbus
-#if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
+// Turn on debugging outputs (i.e. raw Modbus requests & responses)
+// by uncommenting next line (i.e. `#define DEBUG`)
+#define DEBUG
+
+// ==========================================================================
+// Create and Assign a Serial Port for Modbus
+// ==========================================================================
+// Harware serial ports are prefered when available.
+// AltSoftSerial is the most stable alternative for modbus.
+//   Select over alternatives with the define below.
+#define BUILD_ALTSOFTSERIAL // Comment-out if you prefer alternatives
+
+#if defined(BUILD_ALTSOFTSERIAL)
+#include <AltSoftSerial.h>
+AltSoftSerial modbusSerial;
+
+#elif defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
 // The Uno only has 1 hardware serial port, which is dedicated to comunication with the
 // computer. If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
@@ -46,20 +72,23 @@ const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter
 const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 #pragma message("Using Software Serial for the Uno on pins 10 and 11")
 SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
-// AltSoftSerial modbusSerial;
-#elif defined ESP8266
-#pragma message("Using Software Serial for the ESP8266")
+
+#elif defined(ESP8266)
 #include <SoftwareSerial.h>
+#pragma message("Using Software Serial for the ESP8266")
 SoftwareSerial modbusSerial;
+
 #elif defined(NRF52832_FEATHER) || defined(ARDUINO_NRF52840_FEATHER)
 #pragma message("Using TinyUSB for the NRF52")
 #include <Adafruit_TinyUSB.h>
 HardwareSerial& modbusSerial = Serial1;
+
 #elif !defined(NO_GLOBAL_SERIAL1) && !defined(STM32_CORE_VERSION)
 // This is just a assigning another name to the same port, for convienence
 // Unless it is unavailable, always prefer hardware serial.
 #pragma message("Using HarwareSerial / Serial1")
 HardwareSerial& modbusSerial = Serial1;
+
 #else
 // This is just a assigning another name to the same port, for convienence
 // Unless it is unavailable, always prefer hardware serial.
@@ -69,6 +98,20 @@ HardwareSerial& modbusSerial = Serial;
 
 // Construct the modbus instance
 modbusMaster modbus;
+
+
+// ==========================================================================
+// Working Functions
+// ==========================================================================
+// A function for pretty-printing the Modbuss Address in Hexadecimal notation,
+// from ModularSensors `sensorLocation()`
+String prettyprintAddressHex(byte _modbusAddress) {
+    String addressHex = F("0x");
+    if (_modbusAddress < 0x10) { addressHex += "0"; }
+    addressHex += String(_modbusAddress, HEX);
+    return addressHex;
+}
+
 
 // ==========================================================================
 // Main setup function
@@ -86,7 +129,7 @@ void setup() {
     }
 
     // Turn on the "main" serial port for debugging via USB Serial Monitor
-    Serial.begin(57600);
+    Serial.begin(serialBaud);
 
     // Turn on your modbus serial port
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P) || \
@@ -103,34 +146,52 @@ void setup() {
     // for a list of data/parity/stop bit configurations that apply to the ESP8266's
     // implementation of SoftwareSerial
 #else
-    modbusSerial.begin(modbusBaudRate, SERIAL_8O1);
+    // modbusSerial.begin(modbusBaudRate, SERIAL_8O1);
     // ^^ use this for 8 data bits - odd parity - 1 stop bit
     // Serial1.begin(modbusBaudRate, SERIAL_8E1);
     // ^^ use this for 8 data bits - even parity - 1 stop bit
     // Serial1.begin(modbusBaudRate, SERIAL_8N2);
     // ^^ use this for 8 data bits - no parity - 2 stop bits
-    // Serial1.begin(modbusBaudRate);
+    Serial1.begin(modbusBaudRate);
     // ^^ use this for 8 data bits - no parity - 1 stop bits
     // Despite being technically "non-compliant" with the modbus specifications
     // 8N1 parity is very common.
 #endif
 
-    // Turn on debugging, if desired
-    // modbus.setDebugStream(&Serial);
-
-    // Start the modbus instance
+    // Start the modbusMaster instance
     modbus.begin(modbusAddress, modbusSerial, DEREPin);
 
-    // Write to a holding register
-    // In this case, we are changing the output units of a dissolved oxygen sensor
-    Serial.println("Setting DO units to ppm");
-    modbus.int16ToRegister(0x01, 1, bigEndian);
-    // Verify that the register changed
-    // 0x03 = holding register
-    // only holding registers are writeable
-    int16_t doUnitMode = modbus.int16FromRegister(0x03, 0x01, bigEndian);
-    Serial.print("Current unit mode is ");
-    Serial.println(doUnitMode);
+    // Turn on debugging
+#ifdef DEBUG
+    modbus.setDebugStream(&Serial);
+#endif
+
+    // Start up note
+    Serial.print(F("\nreadWriteRegister() Example "));
+
+    // Allow the sensor and converter to warm up
+    Serial.println(F("\nWaiting for sensor and adapter to be ready."));
+    Serial.print(F("    Warm up time (ms): "));
+    Serial.println(WARM_UP_TIME);
+    delay(WARM_UP_TIME);
+
+    // Confirm Modbus Address
+    Serial.println(F("\nSelected modbus address:"));
+    Serial.print(F("    integer: "));
+    Serial.print(modbusAddress, DEC);
+    Serial.print(F(", hexidecimal: "));
+    Serial.println(prettyprintAddressHex(modbusAddress));
+
+    // // Write to a holding register
+    // // In this case, we are changing the output units of a dissolved oxygen sensor
+    // Serial.println("Setting DO units to ppm");
+    // modbus.int16ToRegister(0x01, 1, bigEndian);
+    // // Verify that the register changed
+    // // 0x03 = holding register
+    // // only holding registers are writeable
+    // int16_t doUnitMode = modbus.int16FromRegister(0x03, 0x01, bigEndian);
+    // Serial.print("Current unit mode is ");
+    // Serial.println(doUnitMode);
 }
 
 // ==========================================================================
