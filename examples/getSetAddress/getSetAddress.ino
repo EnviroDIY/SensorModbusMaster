@@ -22,17 +22,29 @@
 //  Sensor/Slave Settings
 // ==========================================================================
 
-// Define the sensor or slave modbus address used by default to broadcast 
-// commands to any or all slave devices
+// The sensor slave modbus address used by default to broadcast 
+// commands to any or all slave devices.  
+//   0x00 (0)   used by many manufactuers
+//   0xFF (255) used by some manufactuers, such as YosemiTech
 byte modbusBroadcastAddress = 0xFF;   
-  // 0x00 (0)   used by many manufactuers
-  // 0xFF (255) used by some manufactuers, such as YosemiTech
 
-int16_t addressRegister = 12288;
-  // Registers are always two byte integers (int16_t) but are often provided 
-  // in Hexadecmial form in modbus register maps. Use an online "HEX to DEC Converter".
-  // Common registers for storing device address, by manufacturer
-  // 0x3000 (12288) for YosemiTech
+// Your desired modbus address for your slave device.  
+byte newModbusAddress = 0x05; 
+
+
+// Set the registers for your device
+// NOTE: Registers are always two byte integers (int16_t) but are often 
+// provided in Hexadecmial form in modbus register maps. C++ can auto-convert 
+// from HEC to DEC, and an online "HEX to DEC Converter" can confirm values.
+
+int16_t addressRegister = 0x3000;
+  // Common registers for storing device address, by manufacturer:
+    // 0x3000 = 12288 for YosemiTech
+
+int16_t serialNumberRegister = 0x0900;
+  // Common registers for storing device serial number, by manufacturer:
+    // 0x0900 = 2304 for most YosemiTech sensors
+    // 0x1400 = 5120 for the YosemiTech Y4000 Multi-parameter sonde
 
 // The Modbus baud rate the sensor uses
 int32_t modbusBaudRate = 9600;  // The baud rate the sensor uses
@@ -49,7 +61,7 @@ const int32_t serialBaud = 115200;  // Baud rate for serial monitor
 // Define pin number variables
 const int sensorPwrPin  = 10;  // The pin sending power to the sensor
 const int adapterPwrPin = 22;  // The pin sending power to the RS485 adapter
-const int DEREPin       = -1;   // The pin controlling Receive Enable and Driver Enable
+const int DEREPin       = -1;  // The pin controlling Receive Enable and Driver Enable
                                // on the RS485 adapter, if applicable (else, -1)
                                // Setting HIGH enables the driver (arduino) to send text
                                // Setting LOW enables the receiver (sensor) to send text
@@ -106,6 +118,9 @@ HardwareSerial& modbusSerial = Serial;
 // Construct the modbus instance
 modbusMaster modbus;
 
+// Initialize success flag for set commands
+bool       success;
+
 
 // ==========================================================================
 // Working Functions
@@ -121,7 +136,7 @@ String prettyprintAddressHex(byte _modbusAddress) {
 
 
 // ==========================================================================
-// Main setup function
+//  Arduino Setup Function
 // ==========================================================================
 void setup() {
     // Set various pins as needed
@@ -167,7 +182,7 @@ void setup() {
     // 8N1 parity is very common.
 #endif
 
-    // Start the modbusMaster instance
+    // Start the modbusMaster instance with the broadcast address
     modbus.begin(modbusBroadcastAddress, modbusSerial, DEREPin);
 
     // Turn on debugging
@@ -176,7 +191,7 @@ void setup() {
 #endif
 
     // Start up note
-    Serial.print(F("\ngetSetAddress() Example "));
+    Serial.println(F("\nRunning the 'getSetAddress()' example sketch."));
 
     // Allow the sensor and converter to warm up
     Serial.println(F("\nWaiting for sensor and adapter to be ready."));
@@ -191,31 +206,53 @@ void setup() {
     Serial.print(F(", Hexidecimal: "));
     Serial.println(prettyprintAddressHex(modbusBroadcastAddress));
 
-    Serial.println(F("Discovered modbus address."));
+    // Get the current Modbus Address
+    Serial.println(F("Getting current modbus address..."));
+    // Read a byte from a single holding register
+    byte oldModbusAddress = modbus.byteFromRegister(0x03, addressRegister, 1);
     Serial.print(F("    Decimal: "));
-    byte modbusAddress = modbus.byteFromRegister(0x03, addressRegister, 1);
-    Serial.print(modbusAddress, DEC);
+    Serial.print(oldModbusAddress, DEC);
     Serial.print(F(", Hexidecimal: "));
-    Serial.println(prettyprintAddressHex(modbusAddress));
+    Serial.println(prettyprintAddressHex(oldModbusAddress));
 
-    if (modbusAddress == 0) {
+    // Scan method if broadcast address does not work
+    if (oldModbusAddress == 0) {
         Serial.println(F("Modbus Address not found!"));
         Serial.println(F("Will scan possible addresses (in future)..."));
+        // Add future scan loop function here
     };
 
-    Serial.print(F("Updating sensor modbus address to: "));
-    Serial.println(prettyprintAddressHex(modbusAddress));
-    Serial.println();
-    // Restart the modbusMaster instance
-    modbus.begin(modbusAddress, modbusSerial, DEREPin);
-    delay(1500);
+    // Reset to current address
+    Serial.print(F("\nRestart the modbusMaster instance with the "));
+    Serial.println(F("current device address."));
+    modbus.begin(oldModbusAddress, modbusSerial, DEREPin);
+    delay(WARM_UP_TIME);
 
     // Get the sensor serial number
-    Serial.println(F("\nGetting sensor serial number."));
-    String SN = modbus.StringFromRegister(0x03, 0x0900, 14);
+    Serial.println(F("\nGetting sensor serial number..."));
+    // Read a string from several holding registers
+    String SN = modbus.StringFromRegister(0x03, serialNumberRegister, 14);
     Serial.print(F("    Serial Number: "));
     Serial.println(SN);
 
+    // Set modbus address
+    Serial.print(F("\nSetting sensor modbus address to: "));
+    Serial.println(prettyprintAddressHex(newModbusAddress));
+    // Write to a holding register
+    success = modbus.byteToRegister(addressRegister, 1, newModbusAddress, true);
+    if (success)
+        Serial.println(F("    Success!"));
+    else
+        Serial.println(F("    Failed!"));
+    // Restart the modbusMaster instance to use new address
+    modbus.begin(newModbusAddress, modbusSerial, DEREPin);
+    delay(WARM_UP_TIME);
+
+    Serial.println(F("\nGetting sensor serial number using the new address."));
+    SN = modbus.StringFromRegister(0x03, serialNumberRegister, 14);
+    Serial.print(F("    Serial Number: "));
+    Serial.println(SN);
+    
 }
 
 // ==========================================================================
