@@ -256,58 +256,8 @@ void setup() {
 }
 
 // ==========================================================================
-// Main loop function
+//  Arduino Loop Function
 // ==========================================================================
 void loop() {
-    // // Get data values from read-only input registers (0x04)
-    // // Just for show, we will do the exact same thing 2 ways
-    // // All values will be read as bigEndian
-
-    // // Some variables to hold results
-    // uint16_t deviceStatus = 0;
-    // int16_t  doPPM        = 0;
-    // uint16_t temperature  = 0;
-
-    // // Method 1:
-    // // Get three values one at a time from 3 different registers.
-    // // This code is easier to follow, but it requires more back-and-forth between
-    // // the Arduino and the sensor so it is a little "slower".
-    // deviceStatus = modbus.uint16FromRegister(0x04, 0x00, bigEndian);
-    // doPPM        = modbus.int16FromRegister(0x04, 0x01, bigEndian);
-    // temperature  = modbus.uint16FromRegister(0x04, 0x02, bigEndian);
-
-    // // Print results
-    // Serial.print("Device Status:");
-    // Serial.println(deviceStatus);
-    // Serial.print("Dissolved Oxygen in ppm:");
-    // Serial.println(doPPM);
-    // Serial.print("Temperature in °C:");
-    // Serial.println(temperature);
-    // Serial.println();
-
-    // // Method 2:
-    // // Read all three registers at once and parse the values from the response.
-    // // This is faster, especially when getting many readings, but it's trickier to
-    // // write and understand the code.
-    // bool success = modbus.getRegisters(0x04, 0x00, 3);
-    // // ^ This gets the values and stores them in an internal "frame" with the hex values
-    // // of the response
-    // if (success) {
-    //     deviceStatus = modbus.uint16FromFrame(bigEndian, 3);
-    //     // ^ The first data value is at position 3 in the modbus response frame
-    //     // 0 = modbus address, 1 = modbus method, 2 = # registers returned, 3 = 1st
-    //     // value returned
-    //     doPPM = modbus.int16FromFrame(bigEndian, 5);
-    //     // ^ The next data value is at position 5 since each register occupies 2 places
-    //     temperature = modbus.uint16FromFrame(bigEndian, 7);
-    // }
-
-    // // Print results
-    // Serial.print("Device Status:");
-    // Serial.println(deviceStatus);
-    // Serial.print("Dissolved Oxygen in ppm:");
-    // Serial.println(doPPM);
-    // Serial.print("Temperature in °C:");
-    // Serial.println(temperature);
-    // Serial.println();
+    // This all runs from setup!
 }
