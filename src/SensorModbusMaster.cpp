@@ -734,7 +734,7 @@ void modbusMaster::printFrameHex(byte modbusFrame[], int frameLength) {
     for (int i = 0; i < frameLength; i++) {
         debugPrint("0x");
         if (modbusFrame[i] < 16) debugPrint("0");
-        debugPrint(modbusFrame[i], HEX);
+        debugPrint(String(modbusFrame[i], HEX));
         if (i < frameLength - 1) debugPrint(", ");
     }
     debugPrint("}\n");

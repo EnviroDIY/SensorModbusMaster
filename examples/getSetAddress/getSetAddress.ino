@@ -1,13 +1,12 @@
 /** =========================================================================
- * @example{lineno} readWriteRegister.ino
- * @author Sara Geleskie Damiano <sdamiano@stroudcenter.org>
+ * @example{lineno} getSetAddress.ino
+ * @author Anthony Aufdenkampe <aaufdenkampe@limno.com>
  * @copyright Stroud Water Research Center
  * @license This example is published under the BSD-3 license.
  *
- * @brief This example writes a setting value to a holding register, reads it to confirm
- * the value has changed, and then reads several data values from holding registers.
- *
- * The register numbers in this example happen to be for an S::CAN oxy::lyser.
+ * @brief This example gets the Modbus address for a sensor and optionally
+ * sets it to a new address. This example can be used on sensors from 
+ * any manufacturer, as long as you know the register for the device address.
  *
  * @m_examplenavigation{example_read_write_register,}
  * @m_footernavigation
@@ -20,18 +19,38 @@
 #include <SensorModbusMaster.h>
 
 // ==========================================================================
-//  Sensor Settings
+//  Sensor/Slave Settings
 // ==========================================================================
 
-// Define the sensor's modbus address
-byte modbusAddress = 0x01;   // The sensor's modbus address, or SlaveID
+// The sensor slave modbus address used by default to broadcast 
+// commands to any or all slave devices.  
+//   0x00 (0)   used by many manufactuers
+//   0xFF (255) used by some manufactuers, such as YosemiTech
+byte modbusBroadcastAddress = 0xFF;   
+
+// Your desired modbus address for your slave device.  
+byte newModbusAddress = 0x05; 
+
+
+// Set the registers for your device
+// NOTE: Registers are always two byte integers (int16_t) but are often 
+// provided in Hexadecmial form in modbus register maps. C++ can auto-convert 
+// from HEC to DEC, and an online "HEX to DEC Converter" can confirm values.
+
+int16_t addressRegister = 0x3000;
+  // Common registers for storing device address, by manufacturer:
+    // 0x3000 = 12288 for YosemiTech
+
+int16_t serialNumberRegister = 0x0900;
+  // Common registers for storing device serial number, by manufacturer:
+    // 0x0900 = 2304 for most YosemiTech sensors
+    // 0x1400 = 5120 for the YosemiTech Y4000 Multi-parameter sonde
 
 // The Modbus baud rate the sensor uses
 int32_t modbusBaudRate = 9600;  // The baud rate the sensor uses
 
-// Sensor Timing
-// Edit these to explore
-#define WARM_UP_TIME 1500  // milliseconds for sensor to respond to commands.
+// Time in milliseconds after powering up for the slave device to respond
+#define WARM_UP_TIME 1500  
 
 
 // ==========================================================================
@@ -42,7 +61,7 @@ const int32_t serialBaud = 115200;  // Baud rate for serial monitor
 // Define pin number variables
 const int sensorPwrPin  = 10;  // The pin sending power to the sensor
 const int adapterPwrPin = 22;  // The pin sending power to the RS485 adapter
-const int DEREPin       = -1;   // The pin controlling Receive Enable and Driver Enable
+const int DEREPin       = -1;  // The pin controlling Receive Enable and Driver Enable
                                // on the RS485 adapter, if applicable (else, -1)
                                // Setting HIGH enables the driver (arduino) to send text
                                // Setting LOW enables the receiver (sensor) to send text
@@ -99,6 +118,9 @@ HardwareSerial& modbusSerial = Serial;
 // Construct the modbus instance
 modbusMaster modbus;
 
+// Initialize success flag for set commands
+bool       success;
+
 
 // ==========================================================================
 // Working Functions
@@ -114,7 +136,7 @@ String prettyprintAddressHex(byte _modbusAddress) {
 
 
 // ==========================================================================
-// Main setup function
+//  Arduino Setup Function
 // ==========================================================================
 void setup() {
     // Set various pins as needed
@@ -148,7 +170,7 @@ void setup() {
 #else
     modbusSerial.begin(modbusBaudRate);
     // Hardware Serial Options:
-    // modbusSerial.begin(modbusBaudRate, SERIAL_8O1);
+    // Serial1.begin(modbusBaudRate, SERIAL_8O1);
     // ^^ use this for 8 data bits - odd parity - 1 stop bit
     // Serial1.begin(modbusBaudRate, SERIAL_8E1);
     // ^^ use this for 8 data bits - even parity - 1 stop bit
@@ -160,8 +182,8 @@ void setup() {
     // 8N1 parity is very common.
 #endif
 
-    // Start the modbusMaster instance
-    modbus.begin(modbusAddress, modbusSerial, DEREPin);
+    // Start the modbusMaster instance with the broadcast address
+    modbus.begin(modbusBroadcastAddress, modbusSerial, DEREPin);
 
     // Turn on debugging
 #ifdef DEBUG
@@ -169,7 +191,7 @@ void setup() {
 #endif
 
     // Start up note
-    Serial.print(F("\nreadWriteRegister() Example "));
+    Serial.println(F("\nRunning the 'getSetAddress()' example sketch."));
 
     // Allow the sensor and converter to warm up
     Serial.println(F("\nWaiting for sensor and adapter to be ready."));
@@ -178,77 +200,64 @@ void setup() {
     delay(WARM_UP_TIME);
 
     // Confirm Modbus Address
-    Serial.println(F("\nSelected modbus address:"));
-    Serial.print(F("    integer: "));
-    Serial.print(modbusAddress, DEC);
-    Serial.print(F(", hexidecimal: "));
-    Serial.println(prettyprintAddressHex(modbusAddress));
+    Serial.println(F("\nBroadcast modbus address:"));
+    Serial.print(F("    Decimal: "));
+    Serial.print(modbusBroadcastAddress, DEC);
+    Serial.print(F(", Hexidecimal: "));
+    Serial.println(prettyprintAddressHex(modbusBroadcastAddress));
 
+    // Get the current Modbus Address
+    Serial.println(F("Getting current modbus address..."));
+    // Read a byte from a single holding register
+    byte oldModbusAddress = modbus.byteFromRegister(0x03, addressRegister, 1);
+    Serial.print(F("    Decimal: "));
+    Serial.print(oldModbusAddress, DEC);
+    Serial.print(F(", Hexidecimal: "));
+    Serial.println(prettyprintAddressHex(oldModbusAddress));
+
+    // Scan method if broadcast address does not work
+    if (oldModbusAddress == 0) {
+        Serial.println(F("Modbus Address not found!"));
+        Serial.println(F("Will scan possible addresses (in future)..."));
+        // Add future scan loop function here
+    };
+
+    // Reset to current address
+    Serial.print(F("\nRestart the modbusMaster instance with the "));
+    Serial.println(F("current device address."));
+    modbus.begin(oldModbusAddress, modbusSerial, DEREPin);
+    delay(WARM_UP_TIME);
+
+    // Get the sensor serial number
+    Serial.println(F("\nGetting sensor serial number..."));
+    // Read a string from several holding registers
+    String SN = modbus.StringFromRegister(0x03, serialNumberRegister, 14);
+    Serial.print(F("    Serial Number: "));
+    Serial.println(SN);
+
+    // Set modbus address
+    Serial.print(F("\nSetting sensor modbus address to: "));
+    Serial.println(prettyprintAddressHex(newModbusAddress));
     // Write to a holding register
-    // In this case, we are changing the output units of a dissolved oxygen sensor
-    Serial.println("Setting DO units to ppm");
-    modbus.int16ToRegister(0x01, 1, bigEndian);
-    // Verify that the register changed
-    // 0x03 = holding register
-    // only holding registers are writeable
-    int16_t doUnitMode = modbus.int16FromRegister(0x03, 0x01, bigEndian);
-    Serial.print("Current unit mode is ");
-    Serial.println(doUnitMode);
+    success = modbus.byteToRegister(addressRegister, 1, newModbusAddress, true);
+    if (success)
+        Serial.println(F("    Success!"));
+    else
+        Serial.println(F("    Failed!"));
+    // Restart the modbusMaster instance to use new address
+    modbus.begin(newModbusAddress, modbusSerial, DEREPin);
+    delay(WARM_UP_TIME);
+
+    Serial.println(F("\nGetting sensor serial number using the new address."));
+    SN = modbus.StringFromRegister(0x03, serialNumberRegister, 14);
+    Serial.print(F("    Serial Number: "));
+    Serial.println(SN);
+    
 }
 
 // ==========================================================================
-// Main loop function
+//  Arduino Loop Function
 // ==========================================================================
 void loop() {
-    // Get data values from read-only input registers (0x04)
-    // Just for show, we will do the exact same thing 2 ways
-    // All values will be read as bigEndian
-
-    // Some variables to hold results
-    uint16_t deviceStatus = 0;
-    int16_t  doPPM        = 0;
-    uint16_t temperature  = 0;
-
-    // Method 1:
-    // Get three values one at a time from 3 different registers.
-    // This code is easier to follow, but it requires more back-and-forth between
-    // the Arduino and the sensor so it is a little "slower".
-    deviceStatus = modbus.uint16FromRegister(0x04, 0x00, bigEndian);
-    doPPM        = modbus.int16FromRegister(0x04, 0x01, bigEndian);
-    temperature  = modbus.uint16FromRegister(0x04, 0x02, bigEndian);
-
-    // Print results
-    Serial.print("Device Status:");
-    Serial.println(deviceStatus);
-    Serial.print("Dissolved Oxygen in ppm:");
-    Serial.println(doPPM);
-    Serial.print("Temperature in °C:");
-    Serial.println(temperature);
-    Serial.println();
-
-    // Method 2:
-    // Read all three registers at once and parse the values from the response.
-    // This is faster, especially when getting many readings, but it's trickier to
-    // write and understand the code.
-    bool success = modbus.getRegisters(0x04, 0x00, 3);
-    // ^ This gets the values and stores them in an internal "frame" with the hex values
-    // of the response
-    if (success) {
-        deviceStatus = modbus.uint16FromFrame(bigEndian, 3);
-        // ^ The first data value is at position 3 in the modbus response frame
-        // 0 = modbus address, 1 = modbus method, 2 = # registers returned, 3 = 1st
-        // value returned
-        doPPM = modbus.int16FromFrame(bigEndian, 5);
-        // ^ The next data value is at position 5 since each register occupies 2 places
-        temperature = modbus.uint16FromFrame(bigEndian, 7);
-    }
-
-    // Print results
-    Serial.print("Device Status:");
-    Serial.println(deviceStatus);
-    Serial.print("Dissolved Oxygen in ppm:");
-    Serial.println(doPPM);
-    Serial.print("Temperature in °C:");
-    Serial.println(temperature);
-    Serial.println();
+    // This all runs from setup!
 }
