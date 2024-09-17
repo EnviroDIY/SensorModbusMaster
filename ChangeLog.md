@@ -20,6 +20,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ***
 
+## [0.7.3]
+
+### Changed
+
+- Re-release of 0.7.2 with updates to VERSION and library properties/json
+
+***
+
+## [0.7.2]
+
+### Changed
+
+- Update `readWriteRegister.ino` example to work with AltSoftSerial
+
+### Added
+
+- Add a new `getSetAddress.ino` example #30
+
+### Fixed
+
+- Fix `printFrameHex()` that was broken with v0.7.0 #29
+
+***
+
 ## [0.7.1]
 
 ### Changed

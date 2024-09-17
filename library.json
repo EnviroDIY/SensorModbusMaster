@@ -1,27 +1,31 @@
 {
     "name": "SensorModbusMaster",
-    "version": "0.7.1",
+    "version": "0.7.3",
     "keywords": "sensor, modbus, master, EnviroDIY",
     "description": "Arduino library for communicating via modbus with the Arduino acting as master",
-    "repository":
-    {
+    "repository": {
         "type": "git",
         "url": "https://github.com/EnviroDIY/SensorModbusMaster.git"
     },
-    "authors":
-    [
-        {
-            "name": "Sara Damiano",
-            "email": "sdamiano@stroudcenter.org",
-            "maintainer": true
-        }
-    ],
-    "license": "BSD-3-Clause",
-    "frameworks": "arduino",
-    "platforms": "*",
-    "examples":
-    [
-        "examples/*/*.ino",
-        "utils/*/*.ino"
-    ]
+    "authors": [
+    {
+        "name": "Sara Damiano",
+        "email": "sdamiano@stroudcenter.org",
+        "maintainer": true
+    },
+    {
+        "name": "Anthony Aufdenkampe",
+        "email": "aaufdenkampe@limno.com"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "frameworks": "arduino",
+  "platforms": "*",
+  "examples": [
+    "examples/*/*.ino",
+    "utils/*/*.ino"
+  ],
+  "export": {
+    "exclude": ["doc/*"]
+  }
 }
