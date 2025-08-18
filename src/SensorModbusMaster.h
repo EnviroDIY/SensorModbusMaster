@@ -622,6 +622,7 @@ class modbusMaster {
      *
      * @param startInput The starting input number.
      * @param numInputs The number of discrete inputs to read.
+     * @param buff A pre-allocated buffer to store the retrieved coil values.
      * @return True if the modbus slave returned the expected number of input
      * values; false if there was a failure.
      */

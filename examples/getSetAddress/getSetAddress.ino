@@ -8,7 +8,7 @@
  * sets it to a new address. This example can be used on sensors from
  * any manufacturer, as long as you know the register for the device address.
  *
- * @m_examplenavigation{example_read_write_register,}
+ * @m_examplenavigation{example_get_set_address,}
  * @m_footernavigation
  * ======================================================================= */
 

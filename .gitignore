@@ -170,3 +170,8 @@ clang-format-all.py
 installWorkingDependencies.bat
 run_mcss.bat
 pio_common_libdeps.ini
+Ubuntu-Bold.ttf
+docs/clipboard.js
+docs/enviroDIY_favicon.png
+docs/css/m-EnviroDIY+documentation.compiled.css
+docs/examples.dox

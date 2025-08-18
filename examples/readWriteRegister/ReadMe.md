@@ -1,4 +1,4 @@
-# Reading and Writing Registers<!-- {#example_read_write_register} -->
+# Reading and Writing Registers<!--! {#example_read_write_register} -->
 
 This example writes a setting value to a holding register, reads it to confirm the value has changed, and then reads several data values from holding registers.
 

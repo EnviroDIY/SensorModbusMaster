@@ -1,4 +1,4 @@
-# SensorModbusMaster<!-- {#mainpage} -->
+# SensorModbusMaster<!--! {#mainpage} -->
 
 This library is designed to use an Arduino as a Modbus master to communicate with a sensor/slave via the [Modbus RTU](https://en.wikipedia.org/wiki/Modbus) communication protocol.
 It's specifically written with lots of "higher-level" functions to help out users who are largely unfamiliar with the Modbus protocol and want an easy way to get information from a Modbus device.
