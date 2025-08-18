@@ -1012,7 +1012,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1076,7 +1076,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1140,7 +1140,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1204,7 +1204,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1268,7 +1268,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1332,7 +1332,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1388,7 +1388,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1452,7 +1452,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1524,7 +1524,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1588,7 +1588,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1652,7 +1652,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1716,7 +1716,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
@@ -1780,7 +1780,7 @@
                   "type": "byte",
                   "type_name": "byte regType",
                   "default": null,
-                  "description": "The register type; use 0x03 for a holding register (read only) or 0x04 for an input register (read/write)",
+                  "description": "The register type; use 0x03 for a holding register (read/write) or 0x04 for an input register (read only)",
                   "direction": ""
                 },
                 {
