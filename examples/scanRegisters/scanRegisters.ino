@@ -52,14 +52,14 @@ SoftwareSerial modbusSerial;
 #include <Adafruit_TinyUSB.h>
 HardwareSerial& modbusSerial = Serial1;
 #elif !defined(NO_GLOBAL_SERIAL1) && !defined(STM32_CORE_VERSION)
-// This is just a assigning another name to the same port, for convienence
+// This is just a assigning another name to the same port, for convenience
 // Unless it is unavailable, always prefer hardware serial.
-#pragma message("Using HarwareSerial / Serial1")
+#pragma message("Using HardwareSerial / Serial1")
 HardwareSerial& modbusSerial = Serial1;
 #else
-// This is just a assigning another name to the same port, for convienence
+// This is just a assigning another name to the same port, for convenience
 // Unless it is unavailable, always prefer hardware serial.
-#pragma message("Using HarwareSerial / Serial")
+#pragma message("Using HardwareSerial / Serial")
 HardwareSerial& modbusSerial = Serial;
 #endif
 

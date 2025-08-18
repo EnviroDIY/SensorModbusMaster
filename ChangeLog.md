@@ -18,6 +18,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- Fixed spelling errors
+
 ***
 
 ## [0.7.3]
@@ -80,7 +82,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ### Added
 
-- Added documetation for the wing shield.
+- Added documentation for the wing shield.
 
 ***
 
@@ -97,7 +99,7 @@ This information can now be found in its [own repository](https://github.com/Env
 ### Fixed
 
 - Fixed attoseconds for TAI64NA time formats.
-- Fixed compiler warnings when compiling with stricter -Wextra flag.
+- Fixed compiler warnings when compiling with stricter `-Wextra` flag.
 
 ***
 
@@ -178,7 +180,6 @@ This information can now be found in its [own repository](https://github.com/Env
 [0.5.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.5.3
 [0.5.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.5.2
 [0.4.8]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.8
-[0.4.7]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.7
 [0.4.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.3
 [0.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.0
 [0.1.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.1.2

@@ -102,7 +102,7 @@ typedef union leFrame {
 #define TAI64NA_SIZE \
     16  ///< The size of a 64-bit timestamp plus a 32-bit nanosecond plus a 32-bit
         ///< attosecond in bytes
-#define POINTER_SIZE 2  ///< The size of a pointer in bytes (when using Ardino system)
+#define POINTER_SIZE 2  ///< The size of a pointer in bytes (when using Arduino system)
 
 // NOTE:  The TAI64 is a 64 bit (4 register) data type BUT:
 // The first 32 bits (two registers) will be 0x4000 0000 until the year 2106;
@@ -992,7 +992,7 @@ class modbusMaster {
     void printFrameHex(byte modbusFrame[], int frameLength);
 
     /**
-     * @brief Calculates a Modbus RTC cyclical redudancy code (CRC)
+     * @brief Calculates a Modbus RTC cyclical redundancy code (CRC)
      *
      * @param modbusFrame The modbus frame to calculate the CRC from
      * @param frameLength The length of the frame

@@ -666,7 +666,7 @@ int modbusMaster::sendCommand(byte command[], int commandLength) {
         }
 
         // Check for exception response
-        // An execption response sets the highest bit of the function code in the
+        // An exception response sets the highest bit of the function code in the
         // response.
         if ((responseBuffer[1] & 0b10000000) == 0b10000000) {
             debugPrint("Exception:  ");
@@ -741,7 +741,7 @@ void modbusMaster::printFrameHex(byte modbusFrame[], int frameLength) {
 }
 
 
-// Calculates a Modbus RTC cyclical redudancy code (CRC)
+// Calculates a Modbus RTC cyclical redundancy code (CRC)
 // and adds it to the last two bytes of a frame
 // From: https://ctlsys.com/support/how_to_compute_the_modbus_rtu_message_crc/
 // and: https://stackoverflow.com/questions/19347685/calculating-modbus-rtu-crc-16
@@ -822,3 +822,5 @@ leFrame modbusMaster::leFrameFromFrame(int varBytes, endianness endian,
     // Return the little-endian frame
     return fram;
 }
+
+// cspell:words fram byte_offset_attosec end_index_attosec

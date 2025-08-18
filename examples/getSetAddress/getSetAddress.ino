@@ -5,7 +5,7 @@
  * @license This example is published under the BSD-3 license.
  *
  * @brief This example gets the Modbus address for a sensor and optionally
- * sets it to a new address. This example can be used on sensors from 
+ * sets it to a new address. This example can be used on sensors from
  * any manufacturer, as long as you know the register for the device address.
  *
  * @m_examplenavigation{example_read_write_register,}
@@ -22,35 +22,35 @@
 //  Sensor/Slave Settings
 // ==========================================================================
 
-// The sensor slave modbus address used by default to broadcast 
-// commands to any or all slave devices.  
-//   0x00 (0)   used by many manufactuers
-//   0xFF (255) used by some manufactuers, such as YosemiTech
-byte modbusBroadcastAddress = 0xFF;   
+// The sensor slave modbus address used by default to broadcast
+// commands to any or all slave devices.
+//   0x00 (0)   used by many manufacturers
+//   0xFF (255) used by some manufacturers, such as YosemiTech
+byte modbusBroadcastAddress = 0xFF;
 
-// Your desired modbus address for your slave device.  
-byte newModbusAddress = 0x05; 
+// Your desired modbus address for your slave device.
+byte newModbusAddress = 0x05;
 
 
 // Set the registers for your device
-// NOTE: Registers are always two byte integers (int16_t) but are often 
-// provided in Hexadecmial form in modbus register maps. C++ can auto-convert 
+// NOTE: Registers are always two byte integers (int16_t) but are often
+// provided in Hexadecimal form in modbus register maps. C++ can auto-convert
 // from HEC to DEC, and an online "HEX to DEC Converter" can confirm values.
 
 int16_t addressRegister = 0x3000;
-  // Common registers for storing device address, by manufacturer:
-    // 0x3000 = 12288 for YosemiTech
+// Common registers for storing device address, by manufacturer:
+// 0x3000 = 12288 for YosemiTech
 
 int16_t serialNumberRegister = 0x0900;
-  // Common registers for storing device serial number, by manufacturer:
-    // 0x0900 = 2304 for most YosemiTech sensors
-    // 0x1400 = 5120 for the YosemiTech Y4000 Multi-parameter sonde
+// Common registers for storing device serial number, by manufacturer:
+// 0x0900 = 2304 for most YosemiTech sensors
+// 0x1400 = 5120 for the YosemiTech Y4000 Multi-parameter sonde
 
 // The Modbus baud rate the sensor uses
 int32_t modbusBaudRate = 9600;  // The baud rate the sensor uses
 
 // Time in milliseconds after powering up for the slave device to respond
-#define WARM_UP_TIME 1500  
+#define WARM_UP_TIME 1500
 
 
 // ==========================================================================
@@ -73,22 +73,22 @@ const int DEREPin       = -1;  // The pin controlling Receive Enable and Driver 
 // ==========================================================================
 // Create and Assign a Serial Port for Modbus
 // ==========================================================================
-// Harware serial ports are prefered when available.
+// Hardware serial ports are preferred when available.
 // AltSoftSerial is the most stable alternative for modbus.
 //   Select over alternatives with the define below.
-#define BUILD_ALTSOFTSERIAL // Comment-out if you prefer alternatives
+#define BUILD_ALTSOFTSERIAL  // Comment-out if you prefer alternatives
 
 #if defined(BUILD_ALTSOFTSERIAL)
 #include <AltSoftSerial.h>
 AltSoftSerial modbusSerial;
 
 #elif defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
-// The Uno only has 1 hardware serial port, which is dedicated to comunication with the
+// The Uno only has 1 hardware serial port, which is dedicated to communication with the
 // computer. If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
 #include <SoftwareSerial.h>
-const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
-const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
+const int      SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
+const int      SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 #pragma message("Using Software Serial for the Uno on pins 10 and 11")
 SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
 
@@ -103,15 +103,15 @@ SoftwareSerial modbusSerial;
 HardwareSerial& modbusSerial = Serial1;
 
 #elif !defined(NO_GLOBAL_SERIAL1) && !defined(STM32_CORE_VERSION)
-// This is just a assigning another name to the same port, for convienence
+// This is just a assigning another name to the same port, for convenience
 // Unless it is unavailable, always prefer hardware serial.
-#pragma message("Using HarwareSerial / Serial1")
+#pragma message("Using HardwareSerial / Serial1")
 HardwareSerial& modbusSerial = Serial1;
 
 #else
-// This is just a assigning another name to the same port, for convienence
+// This is just a assigning another name to the same port, for convenience
 // Unless it is unavailable, always prefer hardware serial.
-#pragma message("Using HarwareSerial / Serial")
+#pragma message("Using HardwareSerial / Serial")
 HardwareSerial& modbusSerial = Serial;
 #endif
 
@@ -119,7 +119,7 @@ HardwareSerial& modbusSerial = Serial;
 modbusMaster modbus;
 
 // Initialize success flag for set commands
-bool       success;
+bool success;
 
 
 // ==========================================================================
@@ -252,7 +252,6 @@ void setup() {
     SN = modbus.StringFromRegister(0x03, serialNumberRegister, 14);
     Serial.print(F("    Serial Number: "));
     Serial.println(SN);
-    
 }
 
 // ==========================================================================
@@ -261,3 +260,5 @@ void setup() {
 void loop() {
     // This all runs from setup!
 }
+
+// cspell: words DERE SWSERIAL

@@ -6,7 +6,6 @@ any manufacturer, as long as you know the register for the device address.
 
 _______
 
-
 [//]: # ( @section example_get_set_address_pio_config PlatformIO Configuration )
 
 [//]: # ( @include{lineno} getSetAddress/platformio.ini )

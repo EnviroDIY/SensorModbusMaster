@@ -24,7 +24,7 @@
 // ==========================================================================
 
 // Define the sensor's modbus address
-byte modbusAddress = 0x01;   // The sensor's modbus address, or SlaveID
+byte modbusAddress = 0x01;  // The sensor's modbus address, or SlaveID
 
 // The Modbus baud rate the sensor uses
 int32_t modbusBaudRate = 9600;  // The baud rate the sensor uses
@@ -42,7 +42,7 @@ const int32_t serialBaud = 115200;  // Baud rate for serial monitor
 // Define pin number variables
 const int sensorPwrPin  = 10;  // The pin sending power to the sensor
 const int adapterPwrPin = 22;  // The pin sending power to the RS485 adapter
-const int DEREPin       = -1;   // The pin controlling Receive Enable and Driver Enable
+const int DEREPin       = -1;  // The pin controlling Receive Enable and Driver Enable
                                // on the RS485 adapter, if applicable (else, -1)
                                // Setting HIGH enables the driver (arduino) to send text
                                // Setting LOW enables the receiver (sensor) to send text
@@ -54,22 +54,22 @@ const int DEREPin       = -1;   // The pin controlling Receive Enable and Driver
 // ==========================================================================
 // Create and Assign a Serial Port for Modbus
 // ==========================================================================
-// Harware serial ports are prefered when available.
+// Hardware serial ports are preferred when available.
 // AltSoftSerial is the most stable alternative for modbus.
 //   Select over alternatives with the define below.
-#define BUILD_ALTSOFTSERIAL // Comment-out if you prefer alternatives
+#define BUILD_ALTSOFTSERIAL  // Comment-out if you prefer alternatives
 
 #if defined(BUILD_ALTSOFTSERIAL)
 #include <AltSoftSerial.h>
 AltSoftSerial modbusSerial;
 
 #elif defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
-// The Uno only has 1 hardware serial port, which is dedicated to comunication with the
+// The Uno only has 1 hardware serial port, which is dedicated to communication with the
 // computer. If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
 #include <SoftwareSerial.h>
-const int SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
-const int SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
+const int      SSRxPin = 10;  // Receive pin for software serial (Rx on RS485 adapter)
+const int      SSTxPin = 11;  // Send pin for software serial (Tx on RS485 adapter)
 #pragma message("Using Software Serial for the Uno on pins 10 and 11")
 SoftwareSerial modbusSerial(SSRxPin, SSTxPin);
 
@@ -84,15 +84,15 @@ SoftwareSerial modbusSerial;
 HardwareSerial& modbusSerial = Serial1;
 
 #elif !defined(NO_GLOBAL_SERIAL1) && !defined(STM32_CORE_VERSION)
-// This is just a assigning another name to the same port, for convienence
+// This is just a assigning another name to the same port, for convenience
 // Unless it is unavailable, always prefer hardware serial.
-#pragma message("Using HarwareSerial / Serial1")
+#pragma message("Using HardwareSerial / Serial1")
 HardwareSerial& modbusSerial = Serial1;
 
 #else
-// This is just a assigning another name to the same port, for convienence
+// This is just a assigning another name to the same port, for convenience
 // Unless it is unavailable, always prefer hardware serial.
-#pragma message("Using HarwareSerial / Serial")
+#pragma message("Using HardwareSerial / Serial")
 HardwareSerial& modbusSerial = Serial;
 #endif
 
@@ -252,3 +252,5 @@ void loop() {
     Serial.println(temperature);
     Serial.println();
 }
+
+// cspell: words lyser DERE SWSERIAL

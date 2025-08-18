@@ -84,7 +84,7 @@ You need the following data from your Modbus map:
   - All input registers are read-only.
 If your map says a register is read/write (R/W), it is a holding register.
 - the register or coil number the data is stored in
-- the format of data within the registers/coils (ie, float, integer, bitmask, ascii text)
+- the format of data within the registers/coils (ie, float, integer, bit mask, ascii text)
 - whether multi-register numeric data is stored as ["big-endian" or "little-endian"](https://en.wikipedia.org/wiki/Endianness) values (That is, is it high _word_ first or low _word_ first.
 There are no specifications for this.)
 - whether single-register data is stored "big-endian" or "little-endian" (That is, is it high _byte_ first or low _byte_ first.
@@ -178,7 +178,7 @@ Again, mind your voltages and the method of direction control.
 
 ## Hardware interface suggestions for EnviroDIY Mayfly
 
-For use with the [EnviroDIY Mayfly datalogger](https://github.com/EnviroDIY/EnviroDIY_Mayfly_Logger) and other Arduino framework boards, you will likely need some additional [Hardware for using ModbusRTU with RS-485 on Arduino](https://github.com/EnviroDIY/SensorModbusMaster/tree/master/hardware).
+For use with the [EnviroDIY Mayfly data logger](https://github.com/EnviroDIY/EnviroDIY_Mayfly_Logger) and other Arduino framework boards, you will likely need some additional [Hardware for using ModbusRTU with RS-485 on Arduino](https://github.com/EnviroDIY/SensorModbusMaster/tree/master/hardware).
 
 We have developed a [Modbus-Mayfly-WingShield](https://github.com/EnviroDIY/SensorModbusMaster/tree/master/hardware/Modbus-Mayfly_WingShield) that combines AltSoftSerial TTL to RS-485 conversion with an optional power boost to 9V or 12V.
 This has worked quite well for us for a variety of deployment configurations and sensors.
