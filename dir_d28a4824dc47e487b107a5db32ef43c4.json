@@ -1,5 +1,5 @@
 {
-  "version": "1.11.0",
+  "version": "1.14.0",
   "compound": {
     "kind": "dir",
     "id": "dir_d28a4824dc47e487b107a5db32ef43c4",
@@ -16,8 +16,30 @@
     "since": null,
     "example_navigation": null,
     "footer_navigation": null,
-    "modules": [],
-    "dirs": [],
+    "topics": [],
+    "dirs": [
+      {
+        "url": "dir_80072a2c8d5f879c1adb1ef96037e309.html",
+        "name": "getSetAddress",
+        "brief": "Contains the getSetAddress example.",
+        "deprecated": null,
+        "since": null
+      },
+      {
+        "url": "dir_728e641d499dbb01b0d4039bc6b9f007.html",
+        "name": "readWriteRegister",
+        "brief": "Contains the readWriteRegister example.",
+        "deprecated": null,
+        "since": null
+      },
+      {
+        "url": "dir_16c76ff1f2a0767b55b09635847f4c4c.html",
+        "name": "scanRegisters",
+        "brief": "Contains the scanRegisters example.",
+        "deprecated": null,
+        "since": null
+      }
+    ],
     "files": [],
     "namespaces": [],
     "classes": [],

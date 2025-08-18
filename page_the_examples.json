@@ -1,5 +1,5 @@
 {
-  "version": "1.11.0",
+  "version": "1.14.0",
   "compound": {
     "kind": "page",
     "id": "page_the_examples",
@@ -10,7 +10,7 @@
     "has_template_details": false,
     "templates": null,
     "brief": "",
-    "description": "<p><a name=\"md_examples_2_read_me\"></a> These example programs demonstrate how to use the SensorModbusMaster library.</p><hr/><section id=\"examples_read_write_register\"><h2>Reading and Writing Registers</h2><p>This example writes a setting value to a holding register, reads it to confirm the value has changed, and then reads several data values from holding registers.</p><ul><li><a href=\"https://envirodiy.github.io/SensorModbusMaster/example_read_write_register.html\">Instructions for the reading and writing example</a></li><li><a href=\"https://github.com/EnviroDIY/SensorModbusMaster/tree/master/examples/readWriteRegister\">The reading and writing example on GitHub</a></li></ul></section><section id=\"examples_scan_registers\"><h2>Scanning Registers</h2><p>This is a testing program to scan through all possible holding registers. This was written to try to guess the structure of the modbus registers when a map isn&#x27;t available.</p><ul><li><a href=\"https://envirodiy.github.io/SensorModbusMaster/example_scan_registers.html\">Instructions for the registry scanning example</a></li><li><a href=\"https://github.com/EnviroDIY/SensorModbusMaster/tree/master/examples/scanRegisters\">The registry scanning example on GitHub</a></li></ul></section>",
+    "description": "<p><a name=\"md_examples_2_read_me\"></a></p><p>These example programs demonstrate how to use the SensorModbusMaster library.</p><hr/><section id=\"examples_read_write_register\"><h2>Reading and Writing Registers</h2><p>This example writes a setting value to a holding register, reads it to confirm the value has changed, and then reads several data values from holding registers.</p><ul><li><a href=\"example_read_write_register.html\" class=\"m-doc\">Instructions for the reading and writing example</a></li><li><a href=\"https://github.com/EnviroDIY/SensorModbusMaster/tree/master/examples/readWriteRegister\">The reading and writing example on GitHub</a></li></ul></section><section id=\"examples_scan_registers\"><h2>Scanning Registers</h2><p>This is a testing program to scan through all possible holding registers. This was written to try to guess the structure of the modbus registers when a map isn&#x27;t available.</p><ul><li><a href=\"example_scan_registers.html\" class=\"m-doc\">Instructions for the registry scanning example</a></li><li><a href=\"https://github.com/EnviroDIY/SensorModbusMaster/tree/master/examples/scanRegisters\">The registry scanning example on GitHub</a></li></ul></section>",
     "sections": [
       [
         "examples_read_write_register",
@@ -27,7 +27,7 @@
     "since": null,
     "example_navigation": null,
     "footer_navigation": null,
-    "modules": [],
+    "topics": [],
     "dirs": [],
     "files": [],
     "namespaces": [],

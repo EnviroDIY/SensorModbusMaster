@@ -1,0 +1,20 @@
+{
+  "is_final": null,
+  "parent": null,
+  "parentGroup": null,
+  "id": "page_the_examples",
+  "kind": "page",
+  "name": "Examples Using SensorModbusMaster",
+  "url": "page_the_examples.html",
+  "brief": "",
+  "has_details": 7,
+  "children": [
+    "example_read_write_register",
+    "example_scan_registers"
+  ],
+  "childrenClasses": [],
+  "childrenNamespaces": [],
+  "childrenCompoundRefs": [],
+  "deprecated": null,
+  "since": null
+}

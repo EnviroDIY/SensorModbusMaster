@@ -1,0 +1,17 @@
+{
+  "is_final": null,
+  "parent": null,
+  "parentGroup": null,
+  "id": "dir_f4316de2dfb04db90651672103de31d6",
+  "kind": "dir",
+  "name": "hardware",
+  "url": "dir_f4316de2dfb04db90651672103de31d6.html",
+  "brief": "Contains documentation on RS-485 hardware.",
+  "has_details": true,
+  "children": [],
+  "childrenClasses": [],
+  "childrenNamespaces": [],
+  "childrenCompoundRefs": [],
+  "deprecated": null,
+  "since": null
+}

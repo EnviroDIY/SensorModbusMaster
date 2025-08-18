@@ -1,0 +1,17 @@
+{
+  "is_final": null,
+  "parent": null,
+  "parentGroup": null,
+  "id": "page_hardware",
+  "kind": "page",
+  "name": "Hardware for using ModbusRTU with RS-485 on Arduino",
+  "url": "page_hardware.html",
+  "brief": "",
+  "has_details": 3,
+  "children": [],
+  "childrenClasses": [],
+  "childrenNamespaces": [],
+  "childrenCompoundRefs": [],
+  "deprecated": null,
+  "since": null
+}

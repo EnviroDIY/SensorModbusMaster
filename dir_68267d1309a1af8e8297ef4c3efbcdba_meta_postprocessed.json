@@ -1,0 +1,21 @@
+{
+  "is_final": null,
+  "parent": null,
+  "parentGroup": null,
+  "id": "dir_68267d1309a1af8e8297ef4c3efbcdba",
+  "kind": "dir",
+  "name": "src",
+  "url": "dir_68267d1309a1af8e8297ef4c3efbcdba.html",
+  "brief": "Contains the source code for the SensorModbusMaster library.",
+  "has_details": true,
+  "children": [
+    "_sensor_modbus_master_8cpp",
+    "_sensor_modbus_master_8h"
+  ],
+  "childrenClasses": [],
+  "childrenNamespaces": [],
+  "childrenCompoundRefs": [],
+  "deprecated": null,
+  "since": null,
+  "leaf_name": "src"
+}
