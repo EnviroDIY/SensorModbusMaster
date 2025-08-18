@@ -20,6 +20,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.0.0]
+
+### Added
+
+- Added functions to read coils
+- Added functions to write single and multiple coils
+- Added functions to read discrete inputs
+- Added functions to read holding and input registers without requiring the command type as input
+- Added functions to read coils, discrete inputs, holding, and input registers into a user buffer
+- Added code spell configuration
+
+### Fixed
+
+- Fixed spelling errors
+
+***
+
 ## [0.7.3]
 
 ### Changed
@@ -80,7 +97,7 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ### Added
 
-- Added documetation for the wing shield.
+- Added documentation for the wing shield.
 
 ***
 
@@ -97,7 +114,7 @@ This information can now be found in its [own repository](https://github.com/Env
 ### Fixed
 
 - Fixed attoseconds for TAI64NA time formats.
-- Fixed compiler warnings when compiling with stricter -Wextra flag.
+- Fixed compiler warnings when compiling with stricter `-Wextra` flag.
 
 ***
 
@@ -168,7 +185,10 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.3
+[0.7.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.3
+[0.7.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.2
 [0.7.1]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.1
 [0.7.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.0
 [0.6.8]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.6.8
@@ -178,7 +198,6 @@ This information can now be found in its [own repository](https://github.com/Env
 [0.5.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.5.3
 [0.5.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.5.2
 [0.4.8]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.8
-[0.4.7]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.7
 [0.4.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.3
 [0.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.4.0
 [0.1.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.1.2

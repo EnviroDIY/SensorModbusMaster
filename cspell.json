@@ -1,0 +1,77 @@
+{
+  "language": "en-US",
+  "ignoreRegExpList": [
+    "header-defines",
+    "doxygen-commands",
+    "doxygen-commands-custom",
+    "example_tags"
+  ],
+  "patterns": [
+    {
+      "name": "header-defines",
+      "pattern": "/SRC_[A-Z0-9_]+_H_/g"
+    },
+    {
+      "name": "latex-command",
+      "pattern": "/\\\\\\\\[a-z]+/g"
+    },
+    {
+      "name": "javadoc-command",
+      "pattern": "/@[a-z_]+/g"
+    },
+    {
+      "name": "doxygen-commands",
+      "pattern": ["latex-command", "javadoc-command"]
+    },
+    {
+      "name": "hash-reference",
+      "pattern": "/#[a-z0-9_]+/g"
+    },
+    {
+      "name": "ref-command",
+      "pattern": "/@ref\\s[a-z0-9_]+/g"
+    },
+    {
+      "name": "anchor-command",
+      "pattern": "/@anchor\\s[a-z0-9_]+/g"
+    },
+    {
+      "name": "group-command",
+      "pattern": "/@(?:def|in)group\\s[a-z0-9_]+/g"
+    },
+    {
+      "name": "section-command",
+      "pattern": "/@(?:sub)*section\\s[a-z0-9_]+/g"
+    },
+    {
+      "name": "doxygen-commands-custom",
+      "pattern": [
+        "hash-reference",
+        "ref-command",
+        "anchor-command",
+        "group-command",
+        "section-command"
+      ]
+    }
+  ],
+  "words": [
+    "attosecond",
+    "attoseconds",
+    "Aufdenkampe",
+    "Damiano",
+    "datasheet",
+    "doxyfile",
+    "enviro_diy",
+    "EnviroDIY",
+    "Geleskie",
+    "Modbus",
+    "neilh10",
+    "SRGD",
+    "SRGDamia1",
+    "USBVIRTUAL",
+    "Wextra",
+    "YosemiTech"
+  ],
+  "ignoreWords": [],
+  "ignorePaths": ["platformio.ini", "*doxyfile*", ".vscode"]
+}

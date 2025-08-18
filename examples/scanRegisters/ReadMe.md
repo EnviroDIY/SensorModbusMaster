@@ -1,4 +1,4 @@
-# Scanning Registers<!-- {#example_scan_registers} -->
+# Scanning Registers<!--! {#example_scan_registers} -->
 
 This is a testing program to scan through all possible holding registers.
 This was written to try to guess the structure of the modbus registers when a map isn't available.
