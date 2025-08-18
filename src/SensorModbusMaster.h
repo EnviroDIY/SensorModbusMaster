@@ -191,8 +191,8 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return it as an uint16_t.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the uint16_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
@@ -203,8 +203,8 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return it as an int16_t.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the int16_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
@@ -215,8 +215,8 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a 32-bit float.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
      * @param endian The endianness of the 32-bit float in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications. Only
@@ -228,8 +228,8 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as an uint32_t
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
      * @param endian The endianness of the uint32_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications. Only
@@ -242,8 +242,8 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as an int32_t
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
      * @param endian The endianness of the int32_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications. Only
@@ -256,8 +256,8 @@ class modbusMaster {
      * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
      * unix timestamp.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the four registers of interest.
      * @return The equivalent 32-bit unix timestamp.
      */
@@ -267,8 +267,8 @@ class modbusMaster {
      * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
      * count), and return an equivalent 32-bits unix timestamp.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the six registers of interest.
      * @param nanoseconds A reference to another uint32_t to populate with the
      * nanoseconds.
@@ -281,8 +281,8 @@ class modbusMaster {
      * and then a 32-bit attosecond count), and return an equivalent 32-bits unix
      * timestamp.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the eight registers of interest.
      * @param nanoseconds A reference to another uint32_t to populate with the
      * nanoseconds.
@@ -295,8 +295,8 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return one byte of it.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param byteNum The byte number to return (1 for upper or 2 for lower)
      * @return The byte held in the register.
@@ -308,8 +308,8 @@ class modbusMaster {
      *
      * This should be a pointer to another registry address within the modbus registers.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the 16-bit pointer in the modbus register.
      * Optional with a default of big endian, which is required by modbus
@@ -325,8 +325,8 @@ class modbusMaster {
      * This should be the type of register pointed to by pointer contained within a
      * different modbus register.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the pointer type in the modbus register.
      * Optional with a default of big endian, which is required by modbus
@@ -340,8 +340,8 @@ class modbusMaster {
      * @brief Get a group of input or holding registers, convert them to characters,
      * combine them, and return a single String.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
      * @param charLength The number of characters to return. NOTE: There are *TWO*
      * characters per register!
@@ -354,8 +354,8 @@ class modbusMaster {
      *
      * There is no return from this function.
      *
-     * @param regType The register type; use 0x03 for a holding register (read only) or
-     * 0x04 for an input register (read/write)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
      * @param outChar A character array to fill with the content of the registers.
      * @param charLength The number of characters to return. NOTE: There are *TWO*
