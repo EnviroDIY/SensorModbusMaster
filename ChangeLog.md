@@ -14,6 +14,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- Added functions to read coils
+- Added functions to write single and multiple coils
+- Added functions to read discrete inputs
+- Added functions to read holding and input registers without requiring the command type as input
+- Added functions to read coils, discrete inputs, holding, and input registers into a user buffer
+- Added code spell configuration
+
 ### Removed
 
 ### Fixed
