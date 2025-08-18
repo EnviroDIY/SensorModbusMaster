@@ -577,7 +577,7 @@ bool modbusMaster::getDiscreteInputs(int16_t startInput, int16_t numInputs) {
 }
 
 bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
-                                 int16_t numChunks, uint8_t expectedReturnBytes = 0) {
+                                 int16_t numChunks, uint8_t expectedReturnBytes) {
     // Create an array for the command
     byte command[8];
 
