@@ -1,0 +1,13 @@
+{
+  "action_cache_version": 1,
+  "dependencies": [
+    {
+      "name": "NeoSWSerial",
+      "version": "https://github.com/SRGDamia1/NeoSWSerial.git"
+    },
+    {
+      "name": "AltSoftSerial",
+      "version": "https://github.com/PaulStoffregen/AltSoftSerial.git"
+    }
+  ]
+}

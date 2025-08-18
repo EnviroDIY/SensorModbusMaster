@@ -165,3 +165,8 @@ sync.ffs_db
 runDoxygen_args.bat
 docs/markdown_prefilter.py
 docs/Doxyfile.bak
+clang_format_all.bat
+clang-format-all.py
+installWorkingDependencies.bat
+run_mcss.bat
+pio_common_libdeps.ini
