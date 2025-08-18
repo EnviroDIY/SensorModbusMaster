@@ -57,13 +57,14 @@ const int DEREPin       = -1;  // The pin controlling Receive Enable and Driver 
 // Hardware serial ports are preferred when available.
 // AltSoftSerial is the most stable alternative for modbus.
 //   Select over alternatives with the define below.
-#define BUILD_ALTSOFTSERIAL  // Comment-out if you prefer alternatives
+// #define BUILD_ALTSOFTSERIAL  // Comment-out if you prefer alternatives
 
 #if defined(BUILD_ALTSOFTSERIAL)
 #include <AltSoftSerial.h>
 AltSoftSerial modbusSerial;
 
-#elif defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
+#elif defined(BUILD_SOFTWARE_SERIAL) && \
+    (defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P))
 // The Uno only has 1 hardware serial port, which is dedicated to communication with the
 // computer. If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
