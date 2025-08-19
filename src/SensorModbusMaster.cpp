@@ -43,6 +43,24 @@ bool modbusMaster::begin(byte modbusSlaveID, Stream* stream, int8_t enablePin) {
 bool modbusMaster::begin(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
     return begin(modbusSlaveID, &stream, enablePin);
 }
+    void modbusMaster::setEnablePin(int8_t enablePin){
+        _enablePin = enablePin;
+    }
+    int8_t modbusMaster::getEnablePin(){
+        return _enablePin;
+    }
+    void modbusMaster::setCommandTimeout(uint32_t timeout){
+        modbusTimeout = timeout;
+    }
+    uint32_t modbusMaster::getCommandTimeout(){
+        return modbusTimeout;
+    }
+    void modbusMaster::setFrameTimeout(uint32_t timeout){
+        modbusFrameTimeout = timeout;
+    }
+    uint32_t modbusMaster::getFrameTimeout(){
+        return modbusFrameTimeout;
+    }
 
 
 // These functions return a variety of data from a data register

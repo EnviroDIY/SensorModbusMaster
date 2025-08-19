@@ -20,6 +20,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.1.0]
+
+### Added
+
+- Added setters and getters for the enable pin, modbus command timeout, and modbus frame timeout.
+
+***
+
 ## [1.0.1]
 
 ### Fixed
@@ -193,7 +201,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.1.0
 [1.0.1]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.0.1
 [1.0.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.3
 [0.7.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.7.3

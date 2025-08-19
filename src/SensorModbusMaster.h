@@ -175,6 +175,60 @@ class modbusMaster {
      * @return True if the starting communication was successful, false if not.
      */
     bool begin(byte modbusSlaveID, Stream& stream, int8_t enablePin = -1);
+
+    /**
+     * @brief Set the enable pin
+     *
+     * @param enablePin The pin connected the the enable (direction control) of an RS485
+     * to TTL adapter.
+     */
+    void setEnablePin(int8_t enablePin);
+    /**
+     * @brief Get the enable pin
+     *
+     * @return The pin connected the the enable (direction control) of an RS485 to TTL
+     * adapter.
+     */
+    int8_t getEnablePin();
+    /**
+     * @brief Set the timeout to wait for a response from a sensor after a modbus
+     * command.
+     *
+     * By default, this is #MODBUS_TIMEOUT (500 milliseconds).
+     *
+     * @param timeout The timeout value in milliseconds.
+     */
+    void setCommandTimeout(uint32_t timeout);
+    /**
+     * @brief Get the command timeout
+     *
+     * By default, this is #MODBUS_TIMEOUT (500 milliseconds).
+     *
+     * @return The command timeout value in milliseconds.
+     */
+    uint32_t getCommandTimeout();
+    /**
+     * @brief Set the frame timeout - the time to wait between characters within a frame
+     * (in ms)
+     *
+     * The modbus protocol defines that there can be no more than 1.5 characters of
+     * silence between characters in a frame and any space over 3.5 characters defines a
+     * new frame.
+     *
+     * By default, this is #MODBUS_FRAME_TIMEOUT (4 milliseconds).
+     *
+     * @param timeout The timeout value in milliseconds.
+     */
+    void setFrameTimeout(uint32_t timeout);
+    /**
+     * @brief Get the frame timeout - the time to wait between characters within a frame
+     * (in ms)
+     *
+     * By default, this is #MODBUS_FRAME_TIMEOUT (4 milliseconds).
+     *
+     * @return The frame timeout value in milliseconds.
+     */
+    uint32_t getFrameTimeout();
     /**@}*/
 
 
@@ -1289,7 +1343,7 @@ class modbusMaster {
     /**
      * @brief The time to wait for response after a command (in ms)
      */
-    const uint32_t modbusTimeout = MODBUS_TIMEOUT;
+    uint32_t modbusTimeout = MODBUS_TIMEOUT;
     /**
      * @brief The time to wait between characters within a frame (in ms)
      *
@@ -1297,7 +1351,7 @@ class modbusMaster {
      * silence between characters in a frame and any space over 3.5 characters defines a
      * new frame.
      */
-    const int modbusFrameTimeout = MODBUS_FRAME_TIMEOUT;
+    int modbusFrameTimeout = MODBUS_FRAME_TIMEOUT;
 };
 
 #endif
