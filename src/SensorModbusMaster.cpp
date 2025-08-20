@@ -61,6 +61,12 @@ void modbusMaster::setFrameTimeout(uint32_t timeout) {
 uint32_t modbusMaster::getFrameTimeout() {
     return modbusFrameTimeout;
 }
+void modbusMaster::setCommandRetries(uint8_t retries) {
+    commandRetries = retries;
+}
+uint8_t modbusMaster::getCommandRetries() {
+    return commandRetries;
+}
 
 
 // These functions return a variety of data from a data register
@@ -732,10 +738,10 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
         }
     }
 
-    // Try up to 10 times to get the right results
+    // Try up to commandRetries times to get the right results
     int     tries    = 0;
     int16_t respSize = 0;
-    while (respSize != expectedReturnBytes && tries < 10) {
+    while (respSize != expectedReturnBytes && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(command, 8);
@@ -818,11 +824,11 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
         for (int i = 4; i < numRegisters * 2 + 4; i++) { command[i] = value[i - 4]; }
     }
 
-    // Try up to 10 times to get the right results
+    // Try up to commandRetries times to get the right results
     int     tries    = 0;
     int16_t respSize = 0;
     bool    success  = false;
-    while (!success && tries < 10) {
+    while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(command, commandLength);
@@ -876,11 +882,11 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
     command[4] = value ? 0xff : 0x00;
     command[5] = 0x00;
 
-    // Try up to 10 times to get the right results
+    // Try up to commandRetries times to get the right results
     int     tries    = 0;
     int16_t respSize = 0;
     bool    success  = false;
-    while (!success && tries < 10) {
+    while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(command, commandLength);
@@ -937,11 +943,11 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
     // Put in the data, allowing 7 extra spaces for the modbus frame structure
     for (int i = 7; i < ceil(numCoils / 8.0) + 7; i++) { command[i] = value[i - 7]; }
 
-    // Try up to 10 times to get the right results
+    // Try up to commandRetries times to get the right results
     int     tries    = 0;
     int16_t respSize = 0;
     bool    success  = false;
-    while (!success && tries < 10) {
+    while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(command, commandLength);

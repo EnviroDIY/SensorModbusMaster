@@ -229,6 +229,23 @@ class modbusMaster {
      * @return The frame timeout value in milliseconds.
      */
     uint32_t getFrameTimeout();
+
+    /**
+     * @brief Set the number of times to retry a command before giving up
+     *
+     * By default, this is 10.
+     *
+     * @param retries The number of times to retry a command before giving up
+     */
+    void setCommandRetries(uint8_t retries);
+    /**
+     * @brief Get the current number of times to retry a command before giving up
+     *
+     * By default, this is 10.
+     *
+     * @return The number of times to retry a command before giving up
+     */
+    uint8_t getCommandRetries();
     /**@}*/
 
 
@@ -1640,6 +1657,11 @@ class modbusMaster {
      * new frame.
      */
     int modbusFrameTimeout = MODBUS_FRAME_TIMEOUT;
+
+    /**
+     * @brief The number of times to retry a command before giving up
+     */
+    uint8_t commandRetries = 10;
 };
 
 #endif

@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - Added extra functions specifying "holding" or "input" in the function name.
+- Added the ability to change the number of times to retry commands.
 
 ### Removed
 
