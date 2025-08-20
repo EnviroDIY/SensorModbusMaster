@@ -134,24 +134,19 @@ void modbusMaster::charFromRegister(byte regType, int regNum, char outChar[],
 }
 
 
-uint16_t modbusMaster::uint16FromInputRegister(int        regNum,
-                                               endianness endian = bigEndian) {
+uint16_t modbusMaster::uint16FromInputRegister(int regNum, endianness endian) {
     return uint16FromRegister(0x04, regNum, endian);
 }
-int16_t modbusMaster::int16FromInputRegister(int        regNum,
-                                             endianness endian = bigEndian) {
+int16_t modbusMaster::int16FromInputRegister(int regNum, endianness endian) {
     return int16FromRegister(0x04, regNum, endian);
 }
-float modbusMaster::float32FromInputRegister(int        regNum,
-                                             endianness endian = bigEndian) {
+float modbusMaster::float32FromInputRegister(int regNum, endianness endian) {
     return float32FromRegister(0x04, regNum, endian);
 }
-uint32_t modbusMaster::uint32FromInputRegister(int        regNum,
-                                               endianness endian = bigEndian) {
+uint32_t modbusMaster::uint32FromInputRegister(int regNum, endianness endian) {
     return uint32FromRegister(0x04, regNum, endian);
 }
-int32_t modbusMaster::int32FromInputRegister(int        regNum,
-                                             endianness endian = bigEndian) {
+int32_t modbusMaster::int32FromInputRegister(int regNum, endianness endian) {
     return int32FromRegister(0x04, regNum, endian);
 }
 uint32_t modbusMaster::TAI64FromInputRegister(int regNum) {
@@ -167,12 +162,10 @@ uint32_t modbusMaster::TAI64NAFromInputRegister(int regNum, uint32_t& nanosecond
 byte modbusMaster::byteFromInputRegister(int regNum, int byteNum) {
     return byteFromRegister(0x04, regNum, byteNum);
 }
-uint16_t modbusMaster::pointerFromInputRegister(int        regNum,
-                                                endianness endian = bigEndian) {
+uint16_t modbusMaster::pointerFromInputRegister(int regNum, endianness endian) {
     return pointerFromRegister(0x04, regNum, endian);
 }
-int8_t modbusMaster::pointerTypeFromInputRegister(int        regNum,
-                                                  endianness endian = bigEndian) {
+int8_t modbusMaster::pointerTypeFromInputRegister(int regNum, endianness endian) {
     return pointerTypeFromRegister(0x04, regNum, endian);
 }
 String modbusMaster::StringFromInputRegister(int regNum, int charLength) {
@@ -183,24 +176,19 @@ void modbusMaster::charFromInputRegister(int regNum, char outChar[], int charLen
 }
 
 
-uint16_t modbusMaster::uint16FromHoldingRegister(int        regNum,
-                                                 endianness endian = bigEndian) {
+uint16_t modbusMaster::uint16FromHoldingRegister(int regNum, endianness endian) {
     return uint16FromRegister(0x03, regNum, endian);
 }
-int16_t modbusMaster::int16FromHoldingRegister(int        regNum,
-                                               endianness endian = bigEndian) {
+int16_t modbusMaster::int16FromHoldingRegister(int regNum, endianness endian) {
     return int16FromRegister(0x03, regNum, endian);
 }
-float modbusMaster::float32FromHoldingRegister(int        regNum,
-                                               endianness endian = bigEndian) {
+float modbusMaster::float32FromHoldingRegister(int regNum, endianness endian) {
     return float32FromRegister(0x03, regNum, endian);
 }
-uint32_t modbusMaster::uint32FromHoldingRegister(int        regNum,
-                                                 endianness endian = bigEndian) {
+uint32_t modbusMaster::uint32FromHoldingRegister(int regNum, endianness endian) {
     return uint32FromRegister(0x03, regNum, endian);
 }
-int32_t modbusMaster::int32FromHoldingRegister(int        regNum,
-                                               endianness endian = bigEndian) {
+int32_t modbusMaster::int32FromHoldingRegister(int regNum, endianness endian) {
     return int32FromRegister(0x03, regNum, endian);
 }
 uint32_t modbusMaster::TAI64FromHoldingRegister(int regNum) {
@@ -216,12 +204,10 @@ uint32_t modbusMaster::TAI64NAFromHoldingRegister(int regNum, uint32_t& nanoseco
 byte modbusMaster::byteFromHoldingRegister(int regNum, int byteNum) {
     return byteFromRegister(0x03, regNum, byteNum);
 }
-uint16_t modbusMaster::pointerFromHoldingRegister(int        regNum,
-                                                  endianness endian = bigEndian) {
+uint16_t modbusMaster::pointerFromHoldingRegister(int regNum, endianness endian) {
     return pointerFromRegister(0x03, regNum, endian);
 }
-int8_t modbusMaster::pointerTypeFromHoldingRegister(int        regNum,
-                                                    endianness endian = bigEndian) {
+int8_t modbusMaster::pointerTypeFromHoldingRegister(int regNum, endianness endian) {
     return pointerTypeFromRegister(0x03, regNum, endian);
 }
 String modbusMaster::StringFromHoldingRegister(int regNum, int charLength) {
