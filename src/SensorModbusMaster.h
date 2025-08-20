@@ -416,6 +416,294 @@ class modbusMaster {
      * characters per register!
      */
     void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
+
+
+    /**
+     * @brief Get the numbered input register and return it as an uint16_t.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the uint16_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @return The uint16_t held in the register.
+     */
+    uint16_t uint16FromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get the numbered input register and return it as an int16_t.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the int16_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @return The int16_t held in the register.
+     */
+    int16_t int16FromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get two input registers starting at the specified number and return them
+     * as a 32-bit float.
+     *
+     * @param regNum The number of the first of the two registers of interest.
+     * @param endian The endianness of the 32-bit float in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return The 32 bit float held in the register.
+     */
+    float float32FromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get two input registers starting at the specified number and return them
+     * as an uint32_t
+     *
+     * @param regNum The number of the first of the two registers of interest.
+     * @param endian The endianness of the uint32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return The uint32_t held in the register.
+     */
+    uint32_t uint32FromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get two input registers starting at the specified number and return them
+     * as an int32_t
+     *
+     * @param regNum The number of the first of the two registers of interest.
+     * @param endian The endianness of the int32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return The int32_t held in the register.
+     */
+    int32_t int32FromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get four input registers starting at the specified number, convert them to
+     * a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.
+     *
+     * @param regNum The number of the first of the four registers of interest.
+     * @return The equivalent 32-bit unix timestamp.
+     */
+    uint32_t TAI64FromInputRegister(int regNum);
+    /**
+     * @brief Get six input registers starting at the specified number, convert them to
+     * a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return an
+     * equivalent 32-bits unix timestamp.
+     *
+     * @param regNum The number of the first of the six registers of interest.
+     * @param nanoseconds A reference to another uint32_t to populate with the
+     * nanoseconds.
+     * @return The equivalent 32-bit unix timestamp.
+     */
+    uint32_t TAI64NFromInputRegister(int regNum, uint32_t& nanoseconds);
+    /**
+     * @brief Get eight input registers starting at the specified number, convert them
+     * to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a
+     * 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.
+     *
+     * @param regNum The number of the first of the eight registers of interest.
+     * @param nanoseconds A reference to another uint32_t to populate with the
+     * nanoseconds.
+     * @param attoseconds A reference to another uint32_t to populate with the
+     * attoseconds.
+     * @return The equivalent 32-bit unix timestamp.
+     */
+    uint32_t TAI64NAFromInputRegister(int regNum, uint32_t& nanoseconds,
+                                      uint32_t& attoseconds);
+    /**
+     * @brief Get the numbered input register and return one byte of it.
+     *
+     * @param regNum The register number of interest.
+     * @param byteNum The byte number to return (1 for upper or 2 for lower)
+     * @return The byte held in the register.
+     */
+    byte byteFromInputRegister(int regNum, int byteNum);
+    /**
+     * @brief Get the numbered input register and return it as an 16-bit
+     * pointer.
+     *
+     * This should be a pointer to another registry address within the modbus registers.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the 16-bit pointer in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @return The 16-bit pointer held in the register.
+     */
+    uint16_t pointerFromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get the numbered input register and return it as a 8-bit
+     * pointer type.
+     *
+     * This should be the type of register pointed to by pointer contained within a
+     * different modbus register.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the pointer type in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @return The 8-bit pointer type held in the register. This will be an
+     * object of type #pointerType.
+     */
+    int8_t pointerTypeFromInputRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get a group of input registers, convert them to characters,
+     * combine them, and return a single String.
+     *
+     * @param regNum The number of the first of the registers of interest.
+     * @param charLength The number of characters to return. NOTE: There are *TWO*
+     * characters per register!
+     * @return The text from the registers.
+     */
+    String StringFromInputRegister(int regNum, int charLength);
+    /**
+     * @brief Get a group of input registers, convert them to characters and
+     * put them into the given character array.
+     *
+     * There is no return from this function.
+     *
+     * @param regNum The number of the first of the registers of interest.
+     * @param outChar A character array to fill with the content of the registers.
+     * @param charLength The number of characters to return. NOTE: There are *TWO*
+     * characters per register!
+     */
+    void charFromInputRegister(int regNum, char outChar[], int charLength);
+
+
+    /**
+     * @brief Get the numbered holding register and return it as an uint16_t.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the uint16_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @return The uint16_t held in the register.
+     */
+    uint16_t uint16FromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get the numbered holding register and return it as an int16_t.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the int16_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @return The int16_t held in the register.
+     */
+    int16_t int16FromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get two holding registers starting at the specified number and return them
+     * as a 32-bit float.
+     *
+     * @param regNum The number of the first of the two registers of interest.
+     * @param endian The endianness of the 32-bit float in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return The 32 bit float held in the register.
+     */
+    float float32FromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get two holding registers starting at the specified number and return them
+     * as an uint32_t
+     *
+     * @param regNum The number of the first of the two registers of interest.
+     * @param endian The endianness of the uint32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return The uint32_t held in the register.
+     */
+    uint32_t uint32FromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get two holding registers starting at the specified number and return them
+     * as an int32_t
+     *
+     * @param regNum The number of the first of the two registers of interest.
+     * @param endian The endianness of the int32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return The int32_t held in the register.
+     */
+    int32_t int32FromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get four holding registers starting at the specified number, convert them
+     * to a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.
+     *
+     * @param regNum The number of the first of the four registers of interest.
+     * @return The equivalent 32-bit unix timestamp.
+     */
+    uint32_t TAI64FromHoldingRegister(int regNum);
+    /**
+     * @brief Get six holding registers starting at the specified number, convert them
+     * to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return
+     * an equivalent 32-bits unix timestamp.
+     *
+     * @param regNum The number of the first of the six registers of interest.
+     * @param nanoseconds A reference to another uint32_t to populate with the
+     * nanoseconds.
+     * @return The equivalent 32-bit unix timestamp.
+     */
+    uint32_t TAI64NFromHoldingRegister(int regNum, uint32_t& nanoseconds);
+    /**
+     * @brief Get eight holding registers starting at the specified number, convert them
+     * to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a
+     * 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.
+     *
+     * @param regNum The number of the first of the eight registers of interest.
+     * @param nanoseconds A reference to another uint32_t to populate with the
+     * nanoseconds.
+     * @param attoseconds A reference to another uint32_t to populate with the
+     * attoseconds.
+     * @return The equivalent 32-bit unix timestamp.
+     */
+    uint32_t TAI64NAFromHoldingRegister(int regNum, uint32_t& nanoseconds,
+                                        uint32_t& attoseconds);
+    /**
+     * @brief Get the numbered holding register and return one byte of it.
+     *
+     * @param regNum The register number of interest.
+     * @param byteNum The byte number to return (1 for upper or 2 for lower)
+     * @return The byte held in the register.
+     */
+    byte byteFromHoldingRegister(int regNum, int byteNum);
+    /**
+     * @brief Get the numbered holding register and return it as an 16-bit
+     * pointer.
+     *
+     * This should be a pointer to another registry address within the modbus registers.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the 16-bit pointer in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @return The 16-bit pointer held in the register.
+     */
+    uint16_t pointerFromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get the numbered holding register and return it as a 8-bit
+     * pointer type.
+     *
+     * This should be the type of register pointed to by pointer contained within a
+     * different modbus register.
+     *
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the pointer type in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @return The 8-bit pointer type held in the register. This will be an
+     * object of type #pointerType.
+     */
+    int8_t pointerTypeFromHoldingRegister(int regNum, endianness endian = bigEndian);
+    /**
+     * @brief Get a group of holding registers, convert them to characters,
+     * combine them, and return a single String.
+     *
+     * @param regNum The number of the first of the registers of interest.
+     * @param charLength The number of characters to return. NOTE: There are *TWO*
+     * characters per register!
+     * @return The text from the registers.
+     */
+    String StringFromHoldingRegister(int regNum, int charLength);
+    /**
+     * @brief Get a group of holding registers, convert them to characters and
+     * put them into the given character array.
+     *
+     * There is no return from this function.
+     *
+     * @param regNum The number of the first of the registers of interest.
+     * @param outChar A character array to fill with the content of the registers.
+     * @param charLength The number of characters to return. NOTE: There are *TWO*
+     * characters per register!
+     */
+    void charFromHoldingRegister(int regNum, char outChar[], int charLength);
     /**@}*/
 
 
