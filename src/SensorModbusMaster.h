@@ -64,6 +64,39 @@ typedef enum pointerType {
     outputCoil            ///< pointer to a output coil
 } pointerType;
 
+/**
+ * @brief The types of errors that can occur during Modbus communication.
+ */
+typedef enum modbusErrorCode {
+    // standard error codes
+    NO_ERROR         = 0x00,      ///< All good
+    ILLEGAL_FUNCTION = 0x01,      ///< The function code received in the query is not an
+                                  ///< allowable action for the slave.
+    ILLEGAL_DATA_ADDRESS = 0x02,  ///< The data address received in the query is not an
+                                  ///< allowable address for the slave.
+    ILLEGAL_DATA_VALUE = 0x03,  ///< A value contained in the query data field is not an
+                                ///< allowable value for the slave.
+    SLAVE_DEVICE_FAILURE = 0x04,  ///< An unrecoverable error occurred while the slave
+                                  ///< was attempting to perform the requested action.
+    ACKNOWLEDGE = 0x05,  ///< The server has accepted the request and is processing it,
+                         ///< but a long duration of time is required to do so.
+    SLAVE_DEVICE_BUSY = 0x06,  ///< The server is engaged in processing a long-duration
+                               ///< program command. The client should retransmit the
+                               ///< message later when the server is free.
+    NEGATIVE_ACKNOWLEDGE = 0x07,  ///< The server cannot perform the program function
+                                  ///< received in the query.
+    MEMORY_PARITY = 0x08,         ///< The server attempted to read extended memory, but
+                                  ///< detected a parity error in the memory.
+    GATEWAY_PATH_UNAVAILABLE = 0x0A,  ///< The gateway is not available
+    GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND =
+        0x0B,  ///< The gateway target device failed to respond
+    // additional codes in this library
+    WRONG_SLAVE_ID = 0xD,  ///< The response is not from the correct modbus slave
+    BAD_CRC        = 0xE,  ///< The CRC check on the response failed
+    NO_RESPONSE    = 0xF,  ///< No response was received at all
+
+} modbusErrorCode;
+
 
 /**
  * @brief A frame for holding parts of a response.
@@ -1488,13 +1521,19 @@ class modbusMaster {
      *
      * If it receives a response from the wrong slave, an incorrect CRC, or an
      * exception, it will print notice of the error to the debugging stream and return
-     * 0.
+     * 0xn0FF where n is the error code.
+     *
+     * If no response is received, this returns 0.
+     *
+     * @note The maximum response size for a Modbus RTU frame is 256 bytes (125
+     * registers plus overhead).  If you get a return value of >256, it means there
+     * was an error and you should parse the error code.
      *
      * @param command The fully formed command to send to the Modbus slave.
      * @param commandLength The length of the outgoing command.
      * @return The number of bytes received from the Modbus slave.
      */
-    int sendCommand(byte command[], int commandLength);
+    uint16_t sendCommand(byte command[], int commandLength);
 
     // These are purely debugging functions to print out the raw hex data
     // sent between the Arduino and the modbus slave.
@@ -1519,6 +1558,22 @@ class modbusMaster {
     void stopDebugging(void) {
         _debugStream = nullptr;
     }
+
+    /**
+     * @brief Get last modbus error code
+     *
+     * @return The last modbus error code
+     */
+    modbusErrorCode getLastError(void) {
+        return lastError;
+    }
+
+    /**
+     * @brief Prints information about the last error to the debugging stream
+     *
+     * @note If there is not a debugging stream set, this function will have no effect.
+     */
+    void printLastError(void);
 
 
     /**
@@ -1662,6 +1717,11 @@ class modbusMaster {
      * @brief The number of times to retry a command before giving up
      */
     uint8_t commandRetries = 10;
+
+    /**
+     * @brief The last error code returned by the modbus command
+     */
+    modbusErrorCode lastError = NO_ERROR;
 };
 
 #endif

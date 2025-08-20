@@ -744,6 +744,10 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
 
             delay(25);
         }
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;  // exit the loop
+        }
         tries++;
     }
 
@@ -856,6 +860,10 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
             }
             delay(25);
         }
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;  // exit the loop
+        }
         tries++;
     }
 
@@ -916,6 +924,10 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
                            : F("does not "),
                        F("match the command\n"));
             delay(25);
+        }
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;  // exit the loop
         }
         tries++;
     }
@@ -984,6 +996,10 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
                        F(" of expected "), numCoils, F(" coils\n"));
             delay(25);
         }
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;  // exit the loop
+        }
         tries++;
     }
 
@@ -996,7 +1012,7 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
 //----------------------------------------------------------------------------
 
 // This sends a command to the sensor bus and listens for a response
-int modbusMaster::sendCommand(byte command[], int commandLength) {
+uint16_t modbusMaster::sendCommand(byte command[], int commandLength) {
     // Empty the response buffer
     for (int i = 0; i < RESPONSE_BUFFER_SIZE; i++) {
         modbusMaster::responseBuffer[i] = 0x00;
@@ -1020,9 +1036,11 @@ int modbusMaster::sendCommand(byte command[], int commandLength) {
     while (_stream->available() == 0 && millis() - start < modbusTimeout) { delay(1); }
 
 
+    bool gotGoodResponse = false;
+    int  bytesRead       = 0;
     if (_stream->available() > 0) {
         // Read the incoming bytes
-        int bytesRead = _stream->readBytes(responseBuffer, 135);
+        bytesRead = _stream->readBytes(responseBuffer, 135);
         emptySerialBuffer(_stream);
 
         // Print the raw response (for debugging)
@@ -1031,46 +1049,64 @@ int modbusMaster::sendCommand(byte command[], int commandLength) {
 
         // Verify that the values match with the commands
         if (responseBuffer[0] != _slaveID) {
-            debugPrint("Response is not from the correct modbus slave!\n");
-            return 0;
+            gotGoodResponse = false;
+            lastError       = WRONG_SLAVE_ID;
         }
 
         // Verify that the CRC is correct
         calculateCRC(responseBuffer, bytesRead);
         if (crcFrame[0] != responseBuffer[bytesRead - 2] ||
             crcFrame[1] != responseBuffer[bytesRead - 1]) {
-            debugPrint("CRC of response is not correct!\n");
-            return 0;
+            gotGoodResponse = false;
+            lastError       = BAD_CRC;
         }
 
         // Check for exception response
         // An exception response sets the highest bit of the function code in the
         // response.
         if ((responseBuffer[1] & 0b10000000) == 0b10000000) {
-            debugPrint("Exception:  ");
-            switch (responseBuffer[2]) {
-                case 0x01: debugPrint("Illegal Function!\n"); break;
-                case 0x02: debugPrint("Illegal Data Address!\n"); break;
-                case 0x03: debugPrint("Illegal Data Value!\n"); break;
-                case 0x04: debugPrint("Slave Device Failure!\n"); break;
-                case 0x05: debugPrint("Acknowledge...\n"); break;
-                case 0x06: debugPrint("Slave Device Busy!\n"); break;
-                case 0x07: debugPrint("Negative Acknowledge!\n"); break;
-                case 0x08: debugPrint("Memory Parity Error!\n"); break;
-                case 0x0A: debugPrint("Gateway Path Unavailable!\n"); break;
-                case 0x0B:
-                    debugPrint("Gateway Target Device Failed to Respond!\n");
-                    break;
-            }
-
-            return 0;
+            gotGoodResponse = false;
+            lastError       = static_cast<modbusErrorCode>(responseBuffer[2]);
+            return responseBuffer[2] >> 24;
         }
-
-        // If everything passes, return the number of bytes
-        return bytesRead;
     } else {
-        debugPrint("No response received.\n");
-        return 0;
+        gotGoodResponse = false;
+        lastError       = NO_RESPONSE;
+    }
+
+    if (gotGoodResponse) {
+        // If everything passes, return the number of bytes
+        lastError = NO_ERROR;
+        return bytesRead;
+    }
+
+    // If we get here, something went wrong
+    printLastError();
+    return static_cast<uint16_t>(lastError) >> 24;
+}
+
+
+void modbusMaster::printLastError(void) {
+    _debugStream->print("Last Modbus error: ");
+    switch (lastError) {
+        case NO_ERROR: debugPrint("No Error\n"); break;
+        case ILLEGAL_FUNCTION: debugPrint("Illegal Function!\n"); break;
+        case ILLEGAL_DATA_ADDRESS: debugPrint("Illegal Data Address!\n"); break;
+        case ILLEGAL_DATA_VALUE: debugPrint("Illegal Data Value!\n"); break;
+        case SLAVE_DEVICE_FAILURE: debugPrint("Slave Device Failure!\n"); break;
+        case ACKNOWLEDGE: debugPrint("Acknowledge...\n"); break;
+        case SLAVE_DEVICE_BUSY: debugPrint("Slave Device Busy!\n"); break;
+        case NEGATIVE_ACKNOWLEDGE: debugPrint("Negative Acknowledge!\n"); break;
+        case MEMORY_PARITY: debugPrint("Memory Parity Error!\n"); break;
+        case GATEWAY_PATH_UNAVAILABLE: debugPrint("Gateway Path Unavailable!\n"); break;
+        case GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND:
+            debugPrint("Gateway Target Device Failed to Respond!\n");
+            break;
+        case WRONG_SLAVE_ID:
+            debugPrint("Response is not from the correct modbus slave!\n");
+            break;
+        case BAD_CRC: debugPrint("CRC check failed!\n"); break;
+        case NO_RESPONSE: debugPrint("No Response!\n"); break;
     }
 }
 

@@ -12,10 +12,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- The sendCommand function will now return a value of > 4095 (0x0FFF) if there has been an error. The upper most byte of the uint16_t response to the command is the modbus error code. This makes it much easier to differentiate error responses and no responses.
+
 ### Added
 
 - Added extra functions specifying "holding" or "input" in the function name.
 - Added the ability to change the number of times to retry commands.
+- Added an enum for modbus error codes.
+- Added a variable to store the last error code, which can be checked with `getLastError()` and printed with `printLastError()`.
 
 ### Removed
 
