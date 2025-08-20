@@ -21,6 +21,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- Fixed calculate of expected return size
+
 ***
 
 ## [1.2.0]

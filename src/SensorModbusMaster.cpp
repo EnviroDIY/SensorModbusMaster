@@ -683,7 +683,7 @@ void modbusMaster::charToFrame(char inChar[], int charLength, byte modbusFrame[]
 // For an input register readCommand = 0x04
 bool modbusMaster::getRegisters(byte readCommand, int16_t startRegister,
                                 int16_t numRegisters) {
-    return getModbusData(readCommand, startRegister, numRegisters, numRegisters * 2);
+    return getModbusData(readCommand, startRegister, numRegisters);
 }
 bool modbusMaster::getHoldingRegisters(int16_t startRegister, int16_t numRegisters) {
     return getRegisters(0x03, startRegister, numRegisters);
@@ -692,10 +692,10 @@ bool modbusMaster::getInputRegisters(int16_t startRegister, int16_t numRegisters
     return getRegisters(0x04, startRegister, numRegisters);
 }
 bool modbusMaster::getCoils(int16_t startCoil, int16_t numCoils) {
-    return getModbusData(0x01, startCoil, numCoils, ceil(numCoils / 8.0));
+    return getModbusData(0x01, startCoil, numCoils);
 }
 bool modbusMaster::getDiscreteInputs(int16_t startInput, int16_t numInputs) {
-    return getModbusData(0x02, startInput, numInputs, ceil(numInputs / 8.0));
+    return getModbusData(0x02, startInput, numInputs);
 }
 
 bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
@@ -726,35 +726,42 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
         switch (readCommand) {
             case 0x01:  // Coils
             case 0x02:  // Discrete Inputs
-                expectedReturnBytes = ceil(numChunks / 8.0) + 5;
-                break;
+                expectedReturnBytes = ceil(numChunks / 8.0);
             case 0x03:  // Holding Registers
             case 0x04:  // Input Registers
-                expectedReturnBytes = numChunks * 2 + 5;
+                expectedReturnBytes = numChunks * 2;
                 break;
             default:
                 // If the read command is not recognized, return false
                 return false;
         }
     }
+    uint8_t returnFrameSize = expectedReturnBytes + 5;
 
     // Try up to commandRetries times to get the right results
-    int     tries    = 0;
-    int16_t respSize = 0;
-    while (respSize != expectedReturnBytes && tries < commandRetries) {
+    int  tries   = 0;
+    bool success = false;
+    while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
-        respSize = sendCommand(command, 8);
+        // The structure of the responses should be:
+        // {slaveID, fxnCode, # bytes, data, CRC (hi/lo)}
+        int16_t respSize = sendCommand(command, 8);
+        success          = (respSize == returnFrameSize &&
+                   responseBuffer[2] == expectedReturnBytes);
+        if (!success) {
+            debugPrint(F("Failed to get requested data on try "), tries + 1, '\n');
+            debugPrint(F("  Got back "), respSize, F(" of expected "), returnFrameSize,
+                       F(" bytes from slave\n"));
+            debugPrint(F("  The slave said it is returning "), responseBuffer[2],
+                       F(" bytes of expected "), expectedReturnBytes, '\n');
+
+            delay(25);
+        }
         tries++;
-
-        delay(25);
     }
 
-    if (respSize == expectedReturnBytes) {
-        return true;
-    } else {
-        return false;
-    }
+    return success;
 };
 
 // This sets the value of one or more holding registers
@@ -834,19 +841,36 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
         respSize = sendCommand(command, commandLength);
         // The structure of the response for 0x10 should be:
         // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
-        if ((numRegisters > 1 || forceMultiple) && respSize == 8 &&
-            int16FromFrame(bigEndian, 4) == numRegisters) {
-            success = true;
+        if (numRegisters > 1 || forceMultiple) {
+            success = respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
+                int16FromFrame(bigEndian, 4) == numRegisters;
         }
         // The structure of the response for 0x06 should be:
         // {slaveID, fxnCode, Address of 1st register, Value written, CRC}
-        if (numRegisters == 1 && respSize == 8 && responseBuffer[4] == value[0] &&
-            responseBuffer[5] == value[1]) {
-            success = true;
+        if (numRegisters == 1) {
+            success = respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
+                responseBuffer[4] == value[0] && responseBuffer[5] == value[1];
+        }
+        if (!success) {
+            debugPrint(F("Failed to set register[s] on try "), tries + 1, '\n');
+            debugPrint(F("  Got back "), respSize, F(" of expected "), 8,
+                       F(" bytes\n"));
+            debugPrint(F("  The slave said it set registers starting at register "),
+                       int16FromFrame(bigEndian, 2), F(" of expected "), startRegister,
+                       '\n');
+            if (numRegisters > 1 || forceMultiple) {
+                debugPrint(F("  The slave said it set "), int16FromFrame(bigEndian, 4),
+                           F(" of expected "), numRegisters, F(" registers on try "),
+                           tries + 1, '\n');
+            }
+            if (numRegisters == 1) {
+                debugPrint(F("  The slave said it set the register to "),
+                           responseBuffer[4], responseBuffer[5], F(" when "), value[0],
+                           value[1], F(" was expected"), '\n');
+            }
+            delay(25);
         }
         tries++;
-
-        delay(25);
     }
 
     return success;
@@ -896,9 +920,18 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
         if (respSize == 8 && strncmp((char*)responseBuffer, (char*)command, 8) == 0) {
             success = true;
         }
+        if (!success) {
+            debugPrint(F("Failed to set a single coil on try "), tries + 1, '\n');
+            debugPrint(F("  Got back "), respSize, F(" of expected "), 8,
+                       F(" bytes from slave\n"));
+            debugPrint(F("  The slave response "),
+                       strncmp((char*)responseBuffer, (char*)command, 8) == 0
+                           ? F("does ")
+                           : F("does not "),
+                       F("match the command\n"));
+            delay(25);
+        }
         tries++;
-
-        delay(25);
     }
 
     return success;
@@ -952,14 +985,20 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
         // the right slave and has the correct CRC
         respSize = sendCommand(command, commandLength);
         // The structure of the response for 0x0F should be:
-        // {slaveID, fxnCode, Address of 1st register (hi/lo), # coils (hi/lo), CRC
+        // {slaveID, fxnCode, Address of 1st coil (hi/lo), # coils (hi/lo), CRC
         // (hi/lo)}
-        if (respSize == 8 && int16FromFrame(bigEndian, 4) == numCoils) {
-            success = true;
+        success = (respSize == 8 && int16FromFrame(bigEndian, 2) == startCoil &&
+                   int16FromFrame(bigEndian, 4) == numCoils);
+        if (!success) {
+            debugPrint(F("Failed to set multiple coils on try "), tries + 1, '\n');
+            debugPrint(F("Got back "), respSize, F(" of expected "), 8, F(" bytes\n"));
+            debugPrint(F("The slave said it set coils starting at coil "),
+                       int16FromFrame(bigEndian, 2), F(" of expected "), startCoil);
+            debugPrint(F("The slave said it set "), int16FromFrame(bigEndian, 4),
+                       F(" of expected "), numCoils, F(" coils\n"));
+            delay(25);
         }
         tries++;
-
-        delay(25);
     }
 
     return success;
