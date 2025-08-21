@@ -713,6 +713,7 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
             case 0x01:  // Coils
             case 0x02:  // Discrete Inputs
                 expectedReturnBytes = ceil(numChunks / 8.0);
+                break;
             case 0x03:  // Holding Registers
             case 0x04:  // Input Registers
                 expectedReturnBytes = numChunks * 2;
