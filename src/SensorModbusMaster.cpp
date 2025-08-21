@@ -736,8 +736,8 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
         int16_t respSize = sendCommand(command, 8);
         success          = (respSize == returnFrameSize &&
                    responseBuffer[2] == expectedReturnBytes);
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+        // if we got a valid modbusErrorCode, stop trying
+        if (static_cast<int8_t>(lastError) > 0 && static_cast<int8_t>(lastError) < 0x0C) {
             tries = commandRetries;                      // exit the loop
         } else if (!success && lastError == NO_ERROR) {  // print error info
             debugPrint(F("Failed to get requested data on try "), tries + 1, '\n');
@@ -841,8 +841,8 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
             success = respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
                 responseBuffer[4] == value[0] && responseBuffer[5] == value[1];
         }
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+        // if we got a valid modbusErrorCode, stop trying
+        if (static_cast<int8_t>(lastError) > 0 && static_cast<int8_t>(lastError) < 0x0C) {
             tries = commandRetries;                      // exit the loop
         } else if (!success && lastError == NO_ERROR) {  // print error info
             debugPrint(F("Failed to set register[s] on try "), tries + 1, '\n');
@@ -913,8 +913,8 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
         if (respSize == 8 && strncmp((char*)responseBuffer, (char*)command, 8) == 0) {
             success = true;
         }
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+        // if we got a valid modbusErrorCode, stop trying
+        if (static_cast<int8_t>(lastError) > 0 && static_cast<int8_t>(lastError) < 0x0C) {
             tries = commandRetries;                      // exit the loop
         } else if (!success && lastError == NO_ERROR) {  // print error info
             debugPrint(F("Failed to set a single coil on try "), tries + 1, '\n');
@@ -985,8 +985,8 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
         // (hi/lo)}
         success = (respSize == 8 && int16FromFrame(bigEndian, 2) == startCoil &&
                    int16FromFrame(bigEndian, 4) == numCoils);
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+        // if we got a valid modbusErrorCode, stop trying
+        if (static_cast<int8_t>(lastError) > 0 && static_cast<int8_t>(lastError) < 0x0C) {
             tries = commandRetries;                      // exit the loop
         } else if (!success && lastError == NO_ERROR) {  // print error info
             debugPrint(F("Failed to set multiple coils on try "), tries + 1, '\n');
