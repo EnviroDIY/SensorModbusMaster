@@ -735,7 +735,10 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
         int16_t respSize = sendCommand(command, 8);
         success          = (respSize == returnFrameSize &&
                    responseBuffer[2] == expectedReturnBytes);
-        if (!success) {
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;                      // exit the loop
+        } else if (!success && lastError != NO_ERROR) {  // print error info
             debugPrint(F("Failed to get requested data on try "), tries + 1, '\n');
             debugPrint(F("  Got back "), respSize, F(" of expected "), returnFrameSize,
                        F(" bytes from slave\n"));
@@ -743,10 +746,6 @@ bool modbusMaster::getModbusData(byte readCommand, int16_t startAddress,
                        F(" bytes of expected "), expectedReturnBytes, '\n');
 
             delay(25);
-        }
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
-            tries = commandRetries;  // exit the loop
         }
         tries++;
     }
@@ -841,7 +840,10 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
             success = respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
                 responseBuffer[4] == value[0] && responseBuffer[5] == value[1];
         }
-        if (!success) {
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;                      // exit the loop
+        } else if (!success && lastError != NO_ERROR) {  // print error info
             debugPrint(F("Failed to set register[s] on try "), tries + 1, '\n');
             debugPrint(F("  Got back "), respSize, F(" of expected "), 8,
                        F(" bytes\n"));
@@ -859,10 +861,6 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
                            value[1], F(" was expected"), '\n');
             }
             delay(25);
-        }
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
-            tries = commandRetries;  // exit the loop
         }
         tries++;
     }
@@ -914,7 +912,10 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
         if (respSize == 8 && strncmp((char*)responseBuffer, (char*)command, 8) == 0) {
             success = true;
         }
-        if (!success) {
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;                      // exit the loop
+        } else if (!success && lastError != NO_ERROR) {  // print error info
             debugPrint(F("Failed to set a single coil on try "), tries + 1, '\n');
             debugPrint(F("  Got back "), respSize, F(" of expected "), 8,
                        F(" bytes from slave\n"));
@@ -924,10 +925,6 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
                            : F("does not "),
                        F("match the command\n"));
             delay(25);
-        }
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
-            tries = commandRetries;  // exit the loop
         }
         tries++;
     }
@@ -987,7 +984,10 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
         // (hi/lo)}
         success = (respSize == 8 && int16FromFrame(bigEndian, 2) == startCoil &&
                    int16FromFrame(bigEndian, 4) == numCoils);
-        if (!success) {
+        // if we got a modbusErrorCode, stop trying
+        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
+            tries = commandRetries;                      // exit the loop
+        } else if (!success && lastError != NO_ERROR) {  // print error info
             debugPrint(F("Failed to set multiple coils on try "), tries + 1, '\n');
             debugPrint(F("Got back "), respSize, F(" of expected "), 8, F(" bytes\n"));
             debugPrint(F("The slave said it set coils starting at coil "),
@@ -995,10 +995,6 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte value[]) {
             debugPrint(F("The slave said it set "), int16FromFrame(bigEndian, 4),
                        F(" of expected "), numCoils, F(" coils\n"));
             delay(25);
-        }
-        // if we got a modbusErrorCode, stop trying
-        if (lastError != NO_ERROR && lastError != NO_RESPONSE) {
-            tries = commandRetries;  // exit the loop
         }
         tries++;
     }
@@ -1086,7 +1082,7 @@ uint16_t modbusMaster::sendCommand(byte command[], int commandLength) {
 
 
 void modbusMaster::printLastError(void) {
-    _debugStream->print("Last Modbus error: ");
+    _debugStream->print("Modbus Error: ");
     switch (lastError) {
         case NO_ERROR: debugPrint("No Error\n"); break;
         case ILLEGAL_FUNCTION: debugPrint("Illegal Function!\n"); break;
@@ -1106,6 +1102,11 @@ void modbusMaster::printLastError(void) {
             break;
         case BAD_CRC: debugPrint("CRC check failed!\n"); break;
         case NO_RESPONSE: debugPrint("No Response!\n"); break;
+        default:
+            debugPrint("Unknown Error Code: ");
+            debugPrint(String(lastError, HEX));
+            debugPrint("\n");
+            break;
     }
 }
 
