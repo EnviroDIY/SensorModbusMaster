@@ -1036,7 +1036,7 @@ uint16_t modbusMaster::sendCommand(byte command[], int commandLength) {
     while (_stream->available() == 0 && millis() - start < modbusTimeout) { delay(1); }
 
 
-    bool gotGoodResponse = false;
+    bool gotGoodResponse = true;
     int  bytesRead       = 0;
     if (_stream->available() > 0) {
         // Read the incoming bytes
@@ -1064,10 +1064,9 @@ uint16_t modbusMaster::sendCommand(byte command[], int commandLength) {
         // Check for exception response
         // An exception response sets the highest bit of the function code in the
         // response.
-        if ((responseBuffer[1] & 0b10000000) == 0b10000000) {
+        if (gotGoodResponse && ((responseBuffer[1] & 0b10000000) == 0b10000000)) {
             gotGoodResponse = false;
             lastError       = static_cast<modbusErrorCode>(responseBuffer[2]);
-            return responseBuffer[2] >> 24;
         }
     } else {
         gotGoodResponse = false;
