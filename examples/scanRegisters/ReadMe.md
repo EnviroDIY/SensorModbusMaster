@@ -6,10 +6,10 @@ This was written to try to guess the structure of the modbus registers when a ma
 _______
 
 
-[//]: # ( @section example_scan_registers_pio_config PlatformIO Configuration )
+<!--! @section example_scan_registers_pio_config PlatformIO Configuration -->
 
-[//]: # ( @include{lineno} scanRegisters/platformio.ini )
+<!--! @include{lineno} scanRegisters/platformio.ini -->
 
-[//]: # ( @section example_scan_registers_code The Complete Code )
+<!--! @section example_scan_registers_code The Complete Code -->
 
-[//]: # ( @include{lineno} scanRegisters/scanRegisters.ino )
+<!--! @include{lineno} scanRegisters/scanRegisters.ino -->

@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Added extra functions specifying "holding" or "input" in the function name.
 - Added the ability to change the number of times to retry commands.
+- Added the ability to change the command and frame timeouts.
 - Added an enum for modbus error codes.
 - Added a variable to store the last error code, which can be checked with `getLastError()` and printed with `printLastError()`.
 
@@ -239,4 +240,4 @@ This information can now be found in its [own repository](https://github.com/Env
 [0.1.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.1.2
 [0.1.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v0.1.0
 
-[//]: # ( @m_footernavigation )
+<!--! @m_footernavigation -->

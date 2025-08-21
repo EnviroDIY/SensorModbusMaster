@@ -4,17 +4,17 @@ These example programs demonstrate how to use the SensorModbusMaster library.
 
 ___
 
-[//]: # ( Start GitHub Only )
+<!--! @if GITHUB -->
 
 - [Examples Using SensorModbusMaster](#examples-using-sensormodbusmaster)
   - [Reading and Writing Registers](#reading-and-writing-registers)
   - [Scanning Registers](#scanning-registers)
 
-[//]: # ( End GitHub Only )
+<!--! @endif -->
 
-[//]: # ( @tableofcontents )
+<!--! @tableofcontents -->
 
-[//]: # ( @m_footernavigation )
+<!--! @m_footernavigation -->
 
 ## Reading and Writing Registers<!--! {#examples_read_write_register} -->
 

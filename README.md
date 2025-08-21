@@ -3,11 +3,11 @@
 This library is designed to use an Arduino as a Modbus master to communicate with a sensor/slave via the [Modbus RTU](https://en.wikipedia.org/wiki/Modbus) communication protocol.
 It's specifically written with lots of "higher-level" functions to help out users who are largely unfamiliar with the Modbus protocol and want an easy way to get information from a Modbus device.
 
-[//]: # ( @tableofcontents )
+<!--! @tableofcontents -->
 
-[//]: # ( @m_footernavigation )
+<!--! @m_footernavigation -->
 
-[//]: # ( Start GitHub Only )
+<!--! @if GITHUB -->
 
 - [SensorModbusMaster](#sensormodbusmaster)
   - [Using the library](#using-the-library)
@@ -16,7 +16,7 @@ It's specifically written with lots of "higher-level" functions to help out user
   - [Notes on TTL and RS485/RS322 electrical communications standards](#notes-on-ttl-and-rs485rs322-electrical-communications-standards)
   - [Hardware interface suggestions for EnviroDIY Mayfly](#hardware-interface-suggestions-for-envirodiy-mayfly)
 
-[//]: # ( End GitHub Only )
+<!--! @endif -->
 _____
 
 ## Using the library

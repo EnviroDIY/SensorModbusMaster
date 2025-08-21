@@ -4,10 +4,10 @@ This example writes a setting value to a holding register, reads it to confirm t
 
 _______
 
-[//]: # ( @section example_read_write_register_pio_config PlatformIO Configuration )
+<!--! @section example_read_write_register_pio_config PlatformIO Configuration -->
 
-[//]: # ( @include{lineno} readWriteRegister/platformio.ini )
+<!--! @include{lineno} readWriteRegister/platformio.ini -->
 
-[//]: # ( @section example_read_write_register_code The Complete Code )
+<!--! @section example_read_write_register_code The Complete Code -->
 
-[//]: # ( @include{lineno} readWriteRegister/readWriteRegister.ino )
+<!--! @include{lineno} readWriteRegister/readWriteRegister.ino -->
