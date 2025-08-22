@@ -12,6 +12,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+### Added
+
+### Removed
+
+### Fixed
+
+***
+
+## [1.3.0]
+
+### Changed
+
 - The sendCommand function will now return a value of > 4095 (0x0FFF) if there has been an error. The upper most byte of the uint16_t response to the command is the modbus error code. This makes it much easier to differentiate error responses and no responses.
 
 ### Added
@@ -21,8 +33,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Added the ability to change the command and frame timeouts.
 - Added an enum for modbus error codes.
 - Added a variable to store the last error code, which can be checked with `getLastError()` and printed with `printLastError()`.
-
-### Removed
 
 ### Fixed
 
@@ -219,7 +229,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.3.0
 [1.2.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.2.0
 [1.1.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.1.0
 [1.0.1]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.0.1
