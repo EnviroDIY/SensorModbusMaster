@@ -130,6 +130,149 @@
           }
         ],
         "has_value_details": true
+      },
+      {
+        "base_url": "_sensor_modbus_master_8h.html",
+        "id": "a32bdb92774b67a64a50bbf538fa10f05",
+        "include": null,
+        "has_details": true,
+        "type": "",
+        "name": "modbusErrorCode",
+        "brief": "The types of errors that can occur during Modbus communication.",
+        "description": "",
+        "deprecated": null,
+        "since": null,
+        "is_protected": false,
+        "is_strong": false,
+        "values": [
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05abf350750d0d4fabd8954c0f1e9bbae94",
+            "name": "NO_ERROR",
+            "initializer": "= 0x00",
+            "brief": "All good.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a97d280e34225670d055a0a3c0e179fe1",
+            "name": "ILLEGAL_FUNCTION",
+            "initializer": "= 0x01",
+            "brief": "The function code received in the query is not an allowable action for the slave.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05abe39a62c5d9bddc2f4310e5433af2f14",
+            "name": "ILLEGAL_DATA_ADDRESS",
+            "initializer": "= 0x02",
+            "brief": "The data address received in the query is not an allowable address for the slave.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a5bc3a4f16c36a52ba047bd34ea1f6762",
+            "name": "ILLEGAL_DATA_VALUE",
+            "initializer": "= 0x03",
+            "brief": "A value contained in the query data field is not an allowable value for the slave.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a389a0ee39db785f331185aca8af7ae14",
+            "name": "SLAVE_DEVICE_FAILURE",
+            "initializer": "= 0x04",
+            "brief": "An unrecoverable error occurred while the slave was attempting to perform the requested action.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05aae5e107da1615087380dd2c17f45ac37",
+            "name": "ACKNOWLEDGE",
+            "initializer": "= 0x05",
+            "brief": "The server has accepted the request and is processing it, but a long duration of time is required to do so.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a87e9484b297cb34a48d9ede4c01e41b0",
+            "name": "SLAVE_DEVICE_BUSY",
+            "initializer": "= 0x06",
+            "brief": "The server is engaged in processing a long-duration program command. The client should retransmit the message later when the server is free.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a4da7666fd4c0b042e6957c1b22b337cc",
+            "name": "NEGATIVE_ACKNOWLEDGE",
+            "initializer": "= 0x07",
+            "brief": "The server cannot perform the program function received in the query.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a3312cf797559c9389b3bf8bd0e724a99",
+            "name": "MEMORY_PARITY",
+            "initializer": "= 0x08",
+            "brief": "The server attempted to read extended memory, but detected a parity error in the memory.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05a8e97ff897b1e116e1b552809e2bc3189",
+            "name": "GATEWAY_PATH_UNAVAILABLE",
+            "initializer": "= 0x0A",
+            "brief": "The gateway is not available.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05ac894bede22d0868642f9aba3fac0ac1b",
+            "name": "GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND",
+            "initializer": "=\n        0x0B",
+            "brief": "The gateway target device failed to respond.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05af25c4a77a7696176acf9bfc510f7a384",
+            "name": "WRONG_SLAVE_ID",
+            "initializer": "= 0xD",
+            "brief": "The response is not from the correct modbus slave.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05acaf9087aa957d5994822a4815d2aed01",
+            "name": "BAD_CRC",
+            "initializer": "= 0xE",
+            "brief": "The CRC check on the response failed.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05ad63f235f0834a895fd6fd9a1bcc8ee55",
+            "name": "NO_RESPONSE",
+            "initializer": "= 0xF",
+            "brief": "No response was received at all.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          }
+        ],
+        "has_value_details": true
       }
     ],
     "typedefs": [
@@ -161,6 +304,23 @@
         "name": "pointerType",
         "brief": "The types of &quot;pointers&quot; to other modbus addresses.",
         "description": "<p>Sometimes values in registers are set as the address of a pointer to look at for the real value rather than being set as the values themselves. This pointer type tells you in what section of the memory map to look for the value being pointed to.</p>",
+        "deprecated": null,
+        "since": null,
+        "is_protected": false,
+        "has_template_details": false,
+        "templates": null
+      },
+      {
+        "base_url": "_sensor_modbus_master_8h.html",
+        "id": "ad2a582c9d6e7a88ea5af778ad7032fbc",
+        "include": null,
+        "has_details": false,
+        "is_using": false,
+        "type": "enum <a href=\"#a32bdb92774b67a64a50bbf538fa10f05\" class=\"m-doc\">modbusErrorCode</a>",
+        "args": "",
+        "name": "modbusErrorCode",
+        "brief": "The types of errors that can occur during Modbus communication.",
+        "description": "",
         "deprecated": null,
         "since": null,
         "is_protected": false,

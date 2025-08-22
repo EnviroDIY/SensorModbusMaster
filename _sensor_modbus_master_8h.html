@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="UTF-8" />
-  <title>src/SensorModbusMaster.h file | SensorModbusMaster1.2.0</title>
+  <title>src/SensorModbusMaster.h file | SensorModbusMaster1.3.0</title>
   <link rel="stylesheet" href="m-EnviroDIY+documentation.compiled.css" />
 
 <!-- clean talk scripts -->
@@ -1823,24 +1823,24 @@
     <header id="gp-main-header">
       <div class="gp-container">
         <div id="gp-logo">
-          <a href="index.html" title="SensorModbusMaster 1.2.0">
+          <a href="index.html" title="SensorModbusMaster 1.3.0">
             <img
               src="gp-desktop-logo.png"
-              alt="SensorModbusMaster 1.2.0"
+              alt="SensorModbusMaster 1.3.0"
               width="200"
               height="42"
               class="gp-desktop-logo"
             />
             <img
               src="gp-scrolling-logo.png"
-              alt="SensorModbusMaster 1.2.0"
+              alt="SensorModbusMaster 1.3.0"
               width="264"
               height="55"
               class="gp-scrolling-logo"
             />
             <img
               src="gp-mobile-logo.png"
-              alt="SensorModbusMaster 1.2.0"
+              alt="SensorModbusMaster 1.3.0"
               width="132"
               height="28"
               class="gp-mobile-logo"
@@ -2061,6 +2061,24 @@
               <a href="#a9b9360aa533153d15b6355695898bef1ab333cf93e88389149e1e8fb6c804d898" class="m-doc">outputCoil</a> }</span>
             </dt>
             <dd>The types of &quot;pointers&quot; to other modbus addresses.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">enum <a href="#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc">modbusErrorCode</a> { </span><span class="m-doc-wrap"><a href="#a32bdb92774b67a64a50bbf538fa10f05abf350750d0d4fabd8954c0f1e9bbae94" class="m-doc">NO_ERROR</a> = 0x00,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a97d280e34225670d055a0a3c0e179fe1" class="m-doc">ILLEGAL_FUNCTION</a> = 0x01,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05abe39a62c5d9bddc2f4310e5433af2f14" class="m-doc">ILLEGAL_DATA_ADDRESS</a> = 0x02,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a5bc3a4f16c36a52ba047bd34ea1f6762" class="m-doc">ILLEGAL_DATA_VALUE</a> = 0x03,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a389a0ee39db785f331185aca8af7ae14" class="m-doc">SLAVE_DEVICE_FAILURE</a> = 0x04,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05aae5e107da1615087380dd2c17f45ac37" class="m-doc">ACKNOWLEDGE</a> = 0x05,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a87e9484b297cb34a48d9ede4c01e41b0" class="m-doc">SLAVE_DEVICE_BUSY</a> = 0x06,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a4da7666fd4c0b042e6957c1b22b337cc" class="m-doc">NEGATIVE_ACKNOWLEDGE</a> = 0x07,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a3312cf797559c9389b3bf8bd0e724a99" class="m-doc">MEMORY_PARITY</a> = 0x08,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05a8e97ff897b1e116e1b552809e2bc3189" class="m-doc">GATEWAY_PATH_UNAVAILABLE</a> = 0x0A,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05ac894bede22d0868642f9aba3fac0ac1b" class="m-doc">GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND</a> =
+        0x0B,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05af25c4a77a7696176acf9bfc510f7a384" class="m-doc">WRONG_SLAVE_ID</a> = 0xD,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05acaf9087aa957d5994822a4815d2aed01" class="m-doc">BAD_CRC</a> = 0xE,
+              <a href="#a32bdb92774b67a64a50bbf538fa10f05ad63f235f0834a895fd6fd9a1bcc8ee55" class="m-doc">NO_RESPONSE</a> = 0xF }</span>
+            </dt>
+            <dd>The types of errors that can occur during Modbus communication.</dd>
           </dl>
         </section>
         <section id="typedef-members">
@@ -2074,6 +2092,10 @@
               using <a href="#afaa9b2da868a225ea0bd601361d9b4a6" class="m-doc">pointerType</a> = <span class="m-dim">enum <a href="#a9b9360aa533153d15b6355695898bef1" class="m-doc">pointerType</a></span>
             </dt>
             <dd>The types of &quot;pointers&quot; to other modbus addresses.</dd>
+            <dt id="ad2a582c9d6e7a88ea5af778ad7032fbc">
+              using <a href="#ad2a582c9d6e7a88ea5af778ad7032fbc" class="m-doc-self">modbusErrorCode</a> = <span class="m-dim">enum <a href="#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc">modbusErrorCode</a></span>
+            </dt>
+            <dd>The types of errors that can occur during Modbus communication.</dd>
             <dt>
               using <a href="#abede485d42773c73a36db82ef12cb553" class="m-doc">leFrame</a> = <span class="m-dim">union leFrame</span>
             </dt>
@@ -2197,6 +2219,104 @@
                   <td><a href="#a9b9360aa533153d15b6355695898bef1ab333cf93e88389149e1e8fb6c804d898" class="m-doc-self" id="a9b9360aa533153d15b6355695898bef1ab333cf93e88389149e1e8fb6c804d898">outputCoil</a></td>
                   <td>
                   <p>pointer to a output coil</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a32bdb92774b67a64a50bbf538fa10f05"><div>
+            <h3>
+              enum <a href="#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc-self">modbusErrorCode</a>
+            </h3>
+            <p>The types of errors that can occur during Modbus communication.</p>
+            <table class="m-table m-fullwidth m-flat m-doc">
+              <thead><tr><th style="width: 1%">Enumerators</th><th></th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05abf350750d0d4fabd8954c0f1e9bbae94" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05abf350750d0d4fabd8954c0f1e9bbae94">NO_ERROR</a></td>
+                  <td>
+                  <p>All good.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a97d280e34225670d055a0a3c0e179fe1" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a97d280e34225670d055a0a3c0e179fe1">ILLEGAL_FUNCTION</a></td>
+                  <td>
+                  <p>The function code received in the query is not an allowable action for the slave.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05abe39a62c5d9bddc2f4310e5433af2f14" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05abe39a62c5d9bddc2f4310e5433af2f14">ILLEGAL_DATA_ADDRESS</a></td>
+                  <td>
+                  <p>The data address received in the query is not an allowable address for the slave.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a5bc3a4f16c36a52ba047bd34ea1f6762" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a5bc3a4f16c36a52ba047bd34ea1f6762">ILLEGAL_DATA_VALUE</a></td>
+                  <td>
+                  <p>A value contained in the query data field is not an allowable value for the slave.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a389a0ee39db785f331185aca8af7ae14" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a389a0ee39db785f331185aca8af7ae14">SLAVE_DEVICE_FAILURE</a></td>
+                  <td>
+                  <p>An unrecoverable error occurred while the slave was attempting to perform the requested action.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05aae5e107da1615087380dd2c17f45ac37" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05aae5e107da1615087380dd2c17f45ac37">ACKNOWLEDGE</a></td>
+                  <td>
+                  <p>The server has accepted the request and is processing it, but a long duration of time is required to do so.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a87e9484b297cb34a48d9ede4c01e41b0" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a87e9484b297cb34a48d9ede4c01e41b0">SLAVE_DEVICE_BUSY</a></td>
+                  <td>
+                  <p>The server is engaged in processing a long-duration program command. The client should retransmit the message later when the server is free.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a4da7666fd4c0b042e6957c1b22b337cc" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a4da7666fd4c0b042e6957c1b22b337cc">NEGATIVE_ACKNOWLEDGE</a></td>
+                  <td>
+                  <p>The server cannot perform the program function received in the query.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a3312cf797559c9389b3bf8bd0e724a99" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a3312cf797559c9389b3bf8bd0e724a99">MEMORY_PARITY</a></td>
+                  <td>
+                  <p>The server attempted to read extended memory, but detected a parity error in the memory.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05a8e97ff897b1e116e1b552809e2bc3189" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05a8e97ff897b1e116e1b552809e2bc3189">GATEWAY_PATH_UNAVAILABLE</a></td>
+                  <td>
+                  <p>The gateway is not available.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05ac894bede22d0868642f9aba3fac0ac1b" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05ac894bede22d0868642f9aba3fac0ac1b">GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND</a></td>
+                  <td>
+                  <p>The gateway target device failed to respond.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05af25c4a77a7696176acf9bfc510f7a384" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05af25c4a77a7696176acf9bfc510f7a384">WRONG_SLAVE_ID</a></td>
+                  <td>
+                  <p>The response is not from the correct modbus slave.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05acaf9087aa957d5994822a4815d2aed01" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05acaf9087aa957d5994822a4815d2aed01">BAD_CRC</a></td>
+                  <td>
+                  <p>The CRC check on the response failed.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#a32bdb92774b67a64a50bbf538fa10f05ad63f235f0834a895fd6fd9a1bcc8ee55" class="m-doc-self" id="a32bdb92774b67a64a50bbf538fa10f05ad63f235f0834a895fd6fd9a1bcc8ee55">NO_RESPONSE</a></td>
+                  <td>
+                  <p>No response was received at all.</p>
                   </td>
                 </tr>
               </tbody>

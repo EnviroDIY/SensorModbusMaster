@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="UTF-8" />
-  <title>modbusMaster class | SensorModbusMaster1.2.0</title>
+  <title>modbusMaster class | SensorModbusMaster1.3.0</title>
   <link rel="stylesheet" href="m-EnviroDIY+documentation.compiled.css" />
 
 <!-- clean talk scripts -->
@@ -1823,24 +1823,24 @@
     <header id="gp-main-header">
       <div class="gp-container">
         <div id="gp-logo">
-          <a href="index.html" title="SensorModbusMaster 1.2.0">
+          <a href="index.html" title="SensorModbusMaster 1.3.0">
             <img
               src="gp-desktop-logo.png"
-              alt="SensorModbusMaster 1.2.0"
+              alt="SensorModbusMaster 1.3.0"
               width="200"
               height="42"
               class="gp-desktop-logo"
             />
             <img
               src="gp-scrolling-logo.png"
-              alt="SensorModbusMaster 1.2.0"
+              alt="SensorModbusMaster 1.3.0"
               width="264"
               height="55"
               class="gp-scrolling-logo"
             />
             <img
               src="gp-mobile-logo.png"
-              alt="SensorModbusMaster 1.2.0"
+              alt="SensorModbusMaster 1.3.0"
               width="132"
               height="28"
               class="gp-mobile-logo"
@@ -2090,8 +2090,8 @@
             </dt>
             <dd>A generic get data function that can be used for any data type or size.</dd>
                           <dt>
-              <span class="m-doc-wrap-bumper"><span class="m-dim">int </span><a href="#a87d658f24848b2f58142ba66f39815e9" class="m-doc">sendCommand</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte[]</span> <span class="m-param">command</span>,
-              <span class="m-dim">int</span> <span class="m-param">commandLength</span>) -&gt; int</span>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t </span><a href="#adca2e8b2f6c2928edfe9476cfc3c0edf" class="m-doc">sendCommand</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte[]</span> <span class="m-param">command</span>,
+              <span class="m-dim">int</span> <span class="m-param">commandLength</span>) -&gt; uint16_t</span>
             </dt>
             <dd>Send a command to the modbus slave.</dd>
                           <dt>
@@ -2106,6 +2106,14 @@
               <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#a06f481ac45211b2569730350f2a4e481" class="m-doc-self">stopDebugging</a>(</span><span class="m-doc-wrap"><span class="m-dim">void</span><span class="m-param"></span>)</span>
             </dt>
             <dd>Un-set the stream for debugging information to go to; stop debugging.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"><a href="_sensor_modbus_master_8h.html#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc">modbusErrorCode</a> </span><a href="#a3be2e3d20db13fecb77d94c3aa97aeca" class="m-doc">getLastError</a>(</span><span class="m-doc-wrap"><span class="m-dim">void</span><span class="m-param"></span>) -&gt; <a href="_sensor_modbus_master_8h.html#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc">modbusErrorCode</a></span>
+            </dt>
+            <dd>Get last modbus error code.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#a017edaf4b1a534c834c6a7571927bb2a" class="m-doc">printLastError</a>(</span><span class="m-doc-wrap"><span class="m-dim">void</span><span class="m-param"></span>)</span>
+            </dt>
+            <dd>Prints information about the last error to the debugging stream.</dd>
           </dl>
         </section>
         <hr>
@@ -2149,6 +2157,14 @@
               <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#a39b0ed8b20ecba4d5d01b739f17717db" class="m-doc">getFrameTimeout</a>(</span><span class="m-doc-wrap">) -&gt; uint32_t</span>
             </dt>
             <dd>Get the frame timeout - the time to wait between characters within a frame (in ms)</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#a55f19b2ed82a9b83b1e1b65044a6185b" class="m-doc">setCommandRetries</a>(</span><span class="m-doc-wrap"><span class="m-dim">uint8_t</span> <span class="m-param">retries</span>)</span>
+            </dt>
+            <dd>Set the number of times to retry a command before giving up.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint8_t </span><a href="#a9d85d474a0b89f2f46685d612cefb7e0" class="m-doc">getCommandRetries</a>(</span><span class="m-doc-wrap">) -&gt; uint8_t</span>
+            </dt>
+            <dd>Get the current number of times to retry a command before giving up.</dd>
           </dl>
         </section>
         <hr>
@@ -2235,6 +2251,138 @@
               <span class="m-dim">int</span> <span class="m-param">charLength</span>)</span>
             </dt>
             <dd>Get a group of input or holding registers, convert them to characters and put them into the given character array.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t </span><a href="#a457990c1949025bc7481a0bbd521a8d1" class="m-doc">uint16FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; uint16_t</span>
+            </dt>
+            <dd>Get the numbered input register and return it as an uint16_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int16_t </span><a href="#a5d300ea5d6f467b97c2de0d28a2d8e71" class="m-doc">int16FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; int16_t</span>
+            </dt>
+            <dd>Get the numbered input register and return it as an int16_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">float </span><a href="#a79e7363d79e3fa5c744c97aaa2e113dd" class="m-doc">float32FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; float</span>
+            </dt>
+            <dd>Get two input registers starting at the specified number and return them as a 32-bit float.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#ab53d2d75a486a7ea19b07aeef4e67f17" class="m-doc">uint32FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get two input registers starting at the specified number and return them as an uint32_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int32_t </span><a href="#a62791e6bf276e971b93fd1a5de6e28f7" class="m-doc">int32FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; int32_t</span>
+            </dt>
+            <dd>Get two input registers starting at the specified number and return them as an int32_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#adb702543059764830c3ca5b9956a52b5" class="m-doc">TAI64FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get four input registers starting at the specified number, convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#ae9e23046ca79c145f06f3af1d3dda374" class="m-doc">TAI64NFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span class="m-param">nanoseconds</span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get six input registers starting at the specified number, convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return an equivalent 32-bits unix timestamp.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#a186c9945777531733a5c222368c12191" class="m-doc">TAI64NAFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span class="m-param">nanoseconds</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span class="m-param">attoseconds</span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get eight input registers starting at the specified number, convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">byte </span><a href="#a37d39af83fe9bcd094aebae6eec71489" class="m-doc">byteFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span class="m-param">byteNum</span>) -&gt; byte</span>
+            </dt>
+            <dd>Get the numbered input register and return one byte of it.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t </span><a href="#af21bafb8e841afe58aec6a00a2768e38" class="m-doc">pointerFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; uint16_t</span>
+            </dt>
+            <dd>Get the numbered input register and return it as an 16-bit pointer.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int8_t </span><a href="#a40702ffa1436a3feb9f6a9ded5932744" class="m-doc">pointerTypeFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; int8_t</span>
+            </dt>
+            <dd>Get the numbered input register and return it as a 8-bit pointer type.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">String </span><a href="#ab05380d1878c60ca994255f564fe4d8b" class="m-doc">StringFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span class="m-param">charLength</span>) -&gt; String</span>
+            </dt>
+            <dd>Get a group of input registers, convert them to characters, combine them, and return a single String.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#add903deea90373c14624d83082b7cf53" class="m-doc">charFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">char[]</span> <span class="m-param">outChar</span>,
+              <span class="m-dim">int</span> <span class="m-param">charLength</span>)</span>
+            </dt>
+            <dd>Get a group of input registers, convert them to characters and put them into the given character array.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t </span><a href="#a6b2fb762b17283c1432a126a5cc78977" class="m-doc">uint16FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; uint16_t</span>
+            </dt>
+            <dd>Get the numbered holding register and return it as an uint16_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int16_t </span><a href="#af4dbb66eaead8ac0f18ca482699d7dfe" class="m-doc">int16FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; int16_t</span>
+            </dt>
+            <dd>Get the numbered holding register and return it as an int16_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">float </span><a href="#ad6dfddffbe394a190a6195ab190edc54" class="m-doc">float32FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; float</span>
+            </dt>
+            <dd>Get two holding registers starting at the specified number and return them as a 32-bit float.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#a027a1950108c22000fdd9a0138d358c4" class="m-doc">uint32FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get two holding registers starting at the specified number and return them as an uint32_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int32_t </span><a href="#a7b083ebd79bb905b8d6bc888f827b906" class="m-doc">int32FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; int32_t</span>
+            </dt>
+            <dd>Get two holding registers starting at the specified number and return them as an int32_t.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#a6755c8df34adddec0f99429c9967609c" class="m-doc">TAI64FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get four holding registers starting at the specified number, convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#ad585ac992152dab46818d654f501eeec" class="m-doc">TAI64NFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span class="m-param">nanoseconds</span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get six holding registers starting at the specified number, convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return an equivalent 32-bits unix timestamp.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t </span><a href="#ac7abd24cb04582e214b9a26cea356f6a" class="m-doc">TAI64NAFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span class="m-param">nanoseconds</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span class="m-param">attoseconds</span>) -&gt; uint32_t</span>
+            </dt>
+            <dd>Get eight holding registers starting at the specified number, convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">byte </span><a href="#a7de6a87a4194bf83eac63f6e1db0330e" class="m-doc">byteFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span class="m-param">byteNum</span>) -&gt; byte</span>
+            </dt>
+            <dd>Get the numbered holding register and return one byte of it.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t </span><a href="#ae31ae07621e671d3ebfe9a056d3bf7b3" class="m-doc">pointerFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; uint16_t</span>
+            </dt>
+            <dd>Get the numbered holding register and return it as an 16-bit pointer.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int8_t </span><a href="#ae723b5a013fe0026bc452bb8af6b67a9" class="m-doc">pointerTypeFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>) -&gt; int8_t</span>
+            </dt>
+            <dd>Get the numbered holding register and return it as a 8-bit pointer type.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">String </span><a href="#a75e7aa1319a96bfd16cf6d4a657e98cf" class="m-doc">StringFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span class="m-param">charLength</span>) -&gt; String</span>
+            </dt>
+            <dd>Get a group of holding registers, convert them to characters, combine them, and return a single String.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#a4397bf86225414070d2e32c7a85260ce" class="m-doc">charFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">char[]</span> <span class="m-param">outChar</span>,
+              <span class="m-dim">int</span> <span class="m-param">charLength</span>)</span>
+            </dt>
+            <dd>Get a group of holding registers, convert them to characters and put them into the given character array.</dd>
           </dl>
         </section>
         <hr>
@@ -2886,10 +3034,10 @@
             <hr>
           </div>
         </section>
-                      <section class="m-doc-details" id="a87d658f24848b2f58142ba66f39815e9"><div>
+                      <section class="m-doc-details" id="adca2e8b2f6c2928edfe9476cfc3c0edf"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"><span class="m-dim">int  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
-                    href="#a87d658f24848b2f58142ba66f39815e9" class="m-doc-self">sendCommand</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte[]</span> <span
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#adca2e8b2f6c2928edfe9476cfc3c0edf" class="m-doc-self">sendCommand</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte[]</span> <span
                     class="m-param">command</span>,
               <span class="m-dim">int</span> <span
                     class="m-param">commandLength</span>)</span></span>
@@ -2912,11 +3060,11 @@
               <tfoot>
                 <tr>
                   <th>Returns</th>
-                  <td><span class="m-dim">int</span> The number of bytes received from the Modbus slave.</td>
+                  <td><span class="m-dim">uint16_t</span> The number of bytes received from the Modbus slave.</td>
                 </tr>
               </tfoot>
             </table>
-            <p>This is the lowest level function.</p><p>This takes a command, adds the proper CRC, sends it to the sensor bus, and listens for a response.</p><p>If it receives a response from the correct slave with the correct CRC, it returns the number of bytes received and put into the responseBuffer.</p><p>If it receives a response from the wrong slave, an incorrect CRC, or an exception, it will print notice of the error to the debugging stream and return 0.</p>
+            <p>This is the lowest level function.</p><p>This takes a command, adds the proper CRC, sends it to the sensor bus, and listens for a response.</p><p>If it receives a response from the correct slave with the correct CRC, it returns the number of bytes received and put into the responseBuffer.</p><p>If it receives a response from the wrong slave, an incorrect CRC, or an exception, it will print notice of the error to the debugging stream and return 0xn0FF where n is the error code.</p><p>If no response is received, this returns 0.</p><aside class="m-note m-info"><h4>Note</h4><p>The maximum response size for a Modbus RTU frame is 256 bytes (125 registers plus overhead). If you get a return value of &gt;256, it means there was an error and you should parse the error code.</p></aside>
 
             <hr>
           </div>
@@ -2961,6 +3109,37 @@
                 </tr>
               </tbody>
             </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a3be2e3d20db13fecb77d94c3aa97aeca"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"><a href="_sensor_modbus_master_8h.html#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc">modbusErrorCode</a>  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a3be2e3d20db13fecb77d94c3aa97aeca" class="m-doc-self">getLastError</a>(</span><span class="m-doc-wrap"><span class="m-dim">void</span><span
+                    class="m-param"></span>)</span></span>
+            </h3>
+            <p>Get last modbus error code.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td><span class="m-dim"><a href="_sensor_modbus_master_8h.html#a32bdb92774b67a64a50bbf538fa10f05" class="m-doc">modbusErrorCode</a></span> The last modbus error code</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a017edaf4b1a534c834c6a7571927bb2a"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a017edaf4b1a534c834c6a7571927bb2a" class="m-doc-self">printLastError</a>(</span><span class="m-doc-wrap"><span class="m-dim">void</span><span
+                    class="m-param"></span>)</span></span>
+            </h3>
+            <p>Prints information about the last error to the debugging stream.</p>
+            <aside class="m-note m-info"><h4>Note</h4><p>If there is not a debugging stream set, this function will have no effect.</p></aside>
 
             <hr>
           </div>
@@ -3167,6 +3346,48 @@
               </tfoot>
             </table>
             <p>By default, this is <a href="_sensor_modbus_master_8h.html#a4f4faaf6fc6fdad8c267e79a0472e929" class="m-doc">MODBUS_<wbr />FRAME_<wbr />TIMEOUT</a> (4 milliseconds).</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a55f19b2ed82a9b83b1e1b65044a6185b"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a55f19b2ed82a9b83b1e1b65044a6185b" class="m-doc-self">setCommandRetries</a>(</span><span class="m-doc-wrap"><span class="m-dim">uint8_t</span> <span
+                    class="m-param">retries</span>)</span></span>
+            </h3>
+            <p>Set the number of times to retry a command before giving up.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">retries</span></td>
+                  <td>The number of times to retry a command before giving up</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>By default, this is 10.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a9d85d474a0b89f2f46685d612cefb7e0"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint8_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a9d85d474a0b89f2f46685d612cefb7e0" class="m-doc-self">getCommandRetries</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Get the current number of times to retry a command before giving up.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td><span class="m-dim">uint8_t</span> The number of times to retry a command before giving up</td>
+                </tr>
+              </tfoot>
+            </table>
+            <p>By default, this is 10.</p>
 
             <hr>
           </div>
@@ -3677,6 +3898,896 @@
                 </tr>
                 <tr>
                   <td class="m-param" ><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">outChar</span></td>
+                  <td>A character array to fill with the content of the registers.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">charLength</span></td>
+                  <td>The number of characters to return. NOTE: There are <em>TWO</em> characters per register!</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>There is no return from this function.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a457990c1949025bc7481a0bbd521a8d1"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a457990c1949025bc7481a0bbd521a8d1" class="m-doc-self">uint16FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered input register and return it as an uint16_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the uint16_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint16_t</span> The uint16_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a5d300ea5d6f467b97c2de0d28a2d8e71"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a5d300ea5d6f467b97c2de0d28a2d8e71" class="m-doc-self">int16FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered input register and return it as an int16_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the int16_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">int16_t</span> The int16_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a79e7363d79e3fa5c744c97aaa2e113dd"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">float  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a79e7363d79e3fa5c744c97aaa2e113dd" class="m-doc-self">float32FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get two input registers starting at the specified number and return them as a 32-bit float.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the two registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the 32-bit float in the modbus register. Optional with a default of big endian, which is required by modbus specifications. Only big and little endian are supported. Mixed endianness is <em>NOT</em> supported.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">float</span> The 32 bit float held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ab53d2d75a486a7ea19b07aeef4e67f17"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ab53d2d75a486a7ea19b07aeef4e67f17" class="m-doc-self">uint32FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get two input registers starting at the specified number and return them as an uint32_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the two registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the uint32_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications. Only big and little endian are supported. Mixed endianness is <em>NOT</em> supported.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The uint32_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a62791e6bf276e971b93fd1a5de6e28f7"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a62791e6bf276e971b93fd1a5de6e28f7" class="m-doc-self">int32FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get two input registers starting at the specified number and return them as an int32_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the two registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the int32_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications. Only big and little endian are supported. Mixed endianness is <em>NOT</em> supported.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">int32_t</span> The int32_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="adb702543059764830c3ca5b9956a52b5"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#adb702543059764830c3ca5b9956a52b5" class="m-doc-self">TAI64FromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>)</span></span>
+            </h3>
+            <p>Get four input registers starting at the specified number, convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the four registers of interest.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The equivalent 32-bit unix timestamp.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ae9e23046ca79c145f06f3af1d3dda374"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ae9e23046ca79c145f06f3af1d3dda374" class="m-doc-self">TAI64NFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span
+                    class="m-param">nanoseconds</span>)</span></span>
+            </h3>
+            <p>Get six input registers starting at the specified number, convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return an equivalent 32-bits unix timestamp.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the six registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">nanoseconds</span></td>
+                  <td>A reference to another uint32_t to populate with the nanoseconds.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The equivalent 32-bit unix timestamp.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a186c9945777531733a5c222368c12191"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a186c9945777531733a5c222368c12191" class="m-doc-self">TAI64NAFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span
+                    class="m-param">nanoseconds</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span
+                    class="m-param">attoseconds</span>)</span></span>
+            </h3>
+            <p>Get eight input registers starting at the specified number, convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the eight registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">nanoseconds</span></td>
+                  <td>A reference to another uint32_t to populate with the nanoseconds.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">attoseconds</span></td>
+                  <td>A reference to another uint32_t to populate with the attoseconds.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The equivalent 32-bit unix timestamp.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a37d39af83fe9bcd094aebae6eec71489"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">byte  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a37d39af83fe9bcd094aebae6eec71489" class="m-doc-self">byteFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">byteNum</span>)</span></span>
+            </h3>
+            <p>Get the numbered input register and return one byte of it.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">byteNum</span></td>
+                  <td>The byte number to return (1 for upper or 2 for lower)</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">byte</span> The byte held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="af21bafb8e841afe58aec6a00a2768e38"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#af21bafb8e841afe58aec6a00a2768e38" class="m-doc-self">pointerFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered input register and return it as an 16-bit pointer.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the 16-bit pointer in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint16_t</span> The 16-bit pointer held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+            <p>This should be a pointer to another registry address within the modbus registers.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a40702ffa1436a3feb9f6a9ded5932744"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int8_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a40702ffa1436a3feb9f6a9ded5932744" class="m-doc-self">pointerTypeFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered input register and return it as a 8-bit pointer type.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the pointer type in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">int8_t</span> The 8-bit pointer type held in the register. This will be an object of type <a href="_sensor_modbus_master_8h.html#a9b9360aa533153d15b6355695898bef1" class="m-doc">pointerType</a>.</td>
+                </tr>
+              </tfoot>
+            </table>
+            <p>This should be the type of register pointed to by pointer contained within a different modbus register.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ab05380d1878c60ca994255f564fe4d8b"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">String  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ab05380d1878c60ca994255f564fe4d8b" class="m-doc-self">StringFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">charLength</span>)</span></span>
+            </h3>
+            <p>Get a group of input registers, convert them to characters, combine them, and return a single String.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">charLength</span></td>
+                  <td>The number of characters to return. NOTE: There are <em>TWO</em> characters per register!</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">String</span> The text from the registers.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="add903deea90373c14624d83082b7cf53"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#add903deea90373c14624d83082b7cf53" class="m-doc-self">charFromInputRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">char[]</span> <span
+                    class="m-param">outChar</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">charLength</span>)</span></span>
+            </h3>
+            <p>Get a group of input registers, convert them to characters and put them into the given character array.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">outChar</span></td>
+                  <td>A character array to fill with the content of the registers.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">charLength</span></td>
+                  <td>The number of characters to return. NOTE: There are <em>TWO</em> characters per register!</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>There is no return from this function.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a6b2fb762b17283c1432a126a5cc78977"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a6b2fb762b17283c1432a126a5cc78977" class="m-doc-self">uint16FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered holding register and return it as an uint16_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the uint16_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint16_t</span> The uint16_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="af4dbb66eaead8ac0f18ca482699d7dfe"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#af4dbb66eaead8ac0f18ca482699d7dfe" class="m-doc-self">int16FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered holding register and return it as an int16_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the int16_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">int16_t</span> The int16_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ad6dfddffbe394a190a6195ab190edc54"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">float  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad6dfddffbe394a190a6195ab190edc54" class="m-doc-self">float32FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get two holding registers starting at the specified number and return them as a 32-bit float.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the two registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the 32-bit float in the modbus register. Optional with a default of big endian, which is required by modbus specifications. Only big and little endian are supported. Mixed endianness is <em>NOT</em> supported.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">float</span> The 32 bit float held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a027a1950108c22000fdd9a0138d358c4"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a027a1950108c22000fdd9a0138d358c4" class="m-doc-self">uint32FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get two holding registers starting at the specified number and return them as an uint32_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the two registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the uint32_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications. Only big and little endian are supported. Mixed endianness is <em>NOT</em> supported.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The uint32_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a7b083ebd79bb905b8d6bc888f827b906"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a7b083ebd79bb905b8d6bc888f827b906" class="m-doc-self">int32FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get two holding registers starting at the specified number and return them as an int32_t.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the two registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the int32_t in the modbus register. Optional with a default of big endian, which is required by modbus specifications. Only big and little endian are supported. Mixed endianness is <em>NOT</em> supported.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">int32_t</span> The int32_t held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a6755c8df34adddec0f99429c9967609c"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a6755c8df34adddec0f99429c9967609c" class="m-doc-self">TAI64FromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>)</span></span>
+            </h3>
+            <p>Get four holding registers starting at the specified number, convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the four registers of interest.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The equivalent 32-bit unix timestamp.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ad585ac992152dab46818d654f501eeec"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad585ac992152dab46818d654f501eeec" class="m-doc-self">TAI64NFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span
+                    class="m-param">nanoseconds</span>)</span></span>
+            </h3>
+            <p>Get six holding registers starting at the specified number, convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return an equivalent 32-bits unix timestamp.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the six registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">nanoseconds</span></td>
+                  <td>A reference to another uint32_t to populate with the nanoseconds.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The equivalent 32-bit unix timestamp.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ac7abd24cb04582e214b9a26cea356f6a"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint32_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ac7abd24cb04582e214b9a26cea356f6a" class="m-doc-self">TAI64NAFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span
+                    class="m-param">nanoseconds</span>,
+              <span class="m-dim">uint32_t&amp;</span> <span
+                    class="m-param">attoseconds</span>)</span></span>
+            </h3>
+            <p>Get eight holding registers starting at the specified number, convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the eight registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">nanoseconds</span></td>
+                  <td>A reference to another uint32_t to populate with the nanoseconds.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">attoseconds</span></td>
+                  <td>A reference to another uint32_t to populate with the attoseconds.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint32_t</span> The equivalent 32-bit unix timestamp.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a7de6a87a4194bf83eac63f6e1db0330e"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">byte  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a7de6a87a4194bf83eac63f6e1db0330e" class="m-doc-self">byteFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">byteNum</span>)</span></span>
+            </h3>
+            <p>Get the numbered holding register and return one byte of it.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">byteNum</span></td>
+                  <td>The byte number to return (1 for upper or 2 for lower)</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">byte</span> The byte held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ae31ae07621e671d3ebfe9a056d3bf7b3"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">uint16_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ae31ae07621e671d3ebfe9a056d3bf7b3" class="m-doc-self">pointerFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered holding register and return it as an 16-bit pointer.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the 16-bit pointer in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">uint16_t</span> The 16-bit pointer held in the register.</td>
+                </tr>
+              </tfoot>
+            </table>
+            <p>This should be a pointer to another registry address within the modbus registers.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ae723b5a013fe0026bc452bb8af6b67a9"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">int8_t  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ae723b5a013fe0026bc452bb8af6b67a9" class="m-doc-self">pointerTypeFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim"><a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467ae" class="m-doc">endianness</a></span> <span
+                    class="m-param">endian</span><span class="m-dim"> = <a href="_sensor_modbus_master_8h.html#a8ba83d09160bd55999b0630dccc467aeafb28f96cadcbba103b51c2a667ad723b" class="m-doc">bigEndian</a></span>)</span></span>
+            </h3>
+            <p>Get the numbered holding register and return it as a 8-bit pointer type.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The register number of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">endian</span></td>
+                  <td>The endianness of the pointer type in the modbus register. Optional with a default of big endian, which is required by modbus specifications.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">int8_t</span> The 8-bit pointer type held in the register. This will be an object of type <a href="_sensor_modbus_master_8h.html#a9b9360aa533153d15b6355695898bef1" class="m-doc">pointerType</a>.</td>
+                </tr>
+              </tfoot>
+            </table>
+            <p>This should be the type of register pointed to by pointer contained within a different modbus register.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a75e7aa1319a96bfd16cf6d4a657e98cf"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">String  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a75e7aa1319a96bfd16cf6d4a657e98cf" class="m-doc-self">StringFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">charLength</span>)</span></span>
+            </h3>
+            <p>Get a group of holding registers, convert them to characters, combine them, and return a single String.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The number of the first of the registers of interest.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">charLength</span></td>
+                  <td>The number of characters to return. NOTE: There are <em>TWO</em> characters per register!</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">String</span> The text from the registers.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a4397bf86225414070d2e32c7a85260ce"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a4397bf86225414070d2e32c7a85260ce" class="m-doc-self">charFromHoldingRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">char[]</span> <span
+                    class="m-param">outChar</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">charLength</span>)</span></span>
+            </h3>
+            <p>Get a group of holding registers, convert them to characters and put them into the given character array.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
                   <td>The number of the first of the registers of interest.</td>
                 </tr>
                 <tr>
