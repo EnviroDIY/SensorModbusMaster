@@ -34,7 +34,7 @@ const int DEREPin = -1;  // The pin controlling Receive Enable and Driver Enable
 
 // Construct a Serial object for Modbus
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_FEATHER328P)
-// The Uno only has 1 hardware serial port, which is dedicated to comunication with the
+// The Uno only has 1 hardware serial port, which is dedicated to communication with the
 // computer. If using an Uno, you will be restricted to using AltSofSerial or
 // SoftwareSerial
 #include <SoftwareSerial.h>

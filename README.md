@@ -15,6 +15,7 @@ It's specifically written with lots of "higher-level" functions to help out user
   - [Supported Data Types](#supported-data-types)
   - [Notes on TTL and RS485/RS322 electrical communications standards](#notes-on-ttl-and-rs485rs322-electrical-communications-standards)
   - [Hardware interface suggestions for EnviroDIY Mayfly](#hardware-interface-suggestions-for-envirodiy-mayfly)
+  - [Library installation](#library-installation)
 
 <!--! @endif -->
 _____
@@ -182,3 +183,10 @@ For use with the [EnviroDIY Mayfly data logger](https://github.com/EnviroDIY/Env
 
 We have developed a [Modbus-Mayfly-WingShield](https://github.com/EnviroDIY/SensorModbusMaster/tree/master/hardware/Modbus-Mayfly_WingShield) that combines AltSoftSerial TTL to RS-485 conversion with an optional power boost to 9V or 12V.
 This has worked quite well for us for a variety of deployment configurations and sensors.
+
+## Library installation
+
+This library is available through both the Arduino and PlatformIO library registries.
+[Here is the PlatformIO registry page.](https://registry.platformio.org/libraries/envirodiy/SensorModbusMaster)
+Use the Arduino IDE to find the library in that registry.
+The build and ingest logs for this library into the Arduino library registry are available [here](https://downloads.arduino.cc/libraries/logs/github.com/EnviroDIY/SensorModbusMaster/).
