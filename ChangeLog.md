@@ -12,6 +12,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+### Added
+
+### Removed
+
+### Fixed
+
+***
+
+## [1.4.0]
+
+### Changed
+
 - Removed all variable length arrays within functions
 - No longer trimming returned Strings
 
@@ -20,8 +32,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Implemented a single static command buffer
 - Added the define `COMMAND_BUFFER_SIZE` to control the size of the command buffer.
 - Added `charToRegister(..)` and `charToFrame(..)` functions, each accepting a pointer to a constant char (const char*).
-
-### Removed
 
 ### Fixed
 
@@ -238,7 +248,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.4.0
 [1.3.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.3.0
 [1.2.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.2.0
 [1.1.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.1.0
