@@ -91,6 +91,7 @@ uint32_t modbusMaster::getCommandTimeout() {
 }
 
 void modbusMaster::setFrameTimeout(uint32_t timeout) {
+    _stream->setTimeout(timeout);
     modbusFrameTimeout = timeout;
 }
 uint32_t modbusMaster::getFrameTimeout() {
