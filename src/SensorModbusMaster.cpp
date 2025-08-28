@@ -1078,7 +1078,7 @@ uint16_t modbusMaster::sendCommand(byte command[], int commandLength) {
 
     // If we get here, something went wrong
     printLastError();
-    return static_cast<uint16_t>(lastError) >> 24;
+    return static_cast<uint16_t>(lastError) << 12;
 }
 
 
