@@ -20,16 +20,23 @@
 /**
  * @brief The size of the response buffer for the modbus devices.
  *
- * This needs to be bigger than the largest response.
- * Per the Specification and Implementation Guide for MODBUS over serial line, this
- * value is 256 bytes.  (This translates into a maximum of 125 registers to be read via
- * Modbus/RTU and 123 by Modbus/TCP.)
+ * Per the Specification and Implementation Guide for MODBUS over serial line, the
+ * maximum response size is 256 bytes - which is the size we use.
  *
- * If you know you will never make any modbus calls longer than this, decrease this
- * number to save memory space.
- *
+ * If you know you will never make any modbus requests for a modbus response this long,
+ * decrease this number to save memory space.
  */
 #define RESPONSE_BUFFER_SIZE 256
+/**
+ * @brief The size of the command buffer for the modbus devices.
+ *
+ * Per the Specification and Implementation Guide for MODBUS over serial line, the
+ * maximum command size is 256 bytes - which is the size we use.
+ *
+ * If you know in advance the size of the largest command you will send, you can
+ * decrease this number to save memory space.
+ */
+#define COMMAND_BUFFER_SIZE 256
 /**
  * @brief The default time to wait for response after a command (in ms)
  */
@@ -920,6 +927,20 @@ class modbusMaster {
      */
     bool charToRegister(int regNum, char inChar[], int charLength,
                         bool forceMultiple = false);
+    /**
+     * @brief Set a series of holding registers to the characters in a character array.
+     *
+     * @param regNum The first of the registers of interest
+     * @param inChar Pointer to a character array to set the registers to.
+     * @param charLength The number of characters to set from in the array.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). This only
+     * applies if the character array is two characters or less. Optional with a default
+     * value of false.
+     * @return True if the registers were successfully set, false if not.
+     */
+    bool charToRegister(int regNum, const char* inChar, int charLength,
+                        bool forceMultiple = false);
     /**@}*/
 
 
@@ -942,6 +963,8 @@ class modbusMaster {
      * It does **not** add the full returned modbus frame.  The data in the buffer will
      * be stripped of the modbus protocol characters.
      *
+     * @remark No more than 125 registers can be read at once.
+     *
      * @param readCommand The command to use to read data. For a holding register
      * readCommand = 0x03. For an input register readCommand = 0x04.
      * @param startRegister The starting register number.
@@ -960,6 +983,8 @@ class modbusMaster {
      * It does **not** add the full returned modbus frame.  The data in the buffer will
      * be stripped of the modbus protocol characters.
      *
+     * @remark No more than 125 registers can be read at once.
+     *
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to read.
      * @param buff The buffer to copy the output data to.
@@ -973,6 +998,8 @@ class modbusMaster {
      * @note This command puts only the **content of the registers** into the buffers.
      * It does **not** add the full returned modbus frame.  The data in the buffer will
      * be stripped of the modbus protocol characters.
+     *
+     * @remark No more than 125 registers can be read at once.
      *
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to read.
@@ -1339,6 +1366,17 @@ class modbusMaster {
      */
     void charToFrame(char inChar[], int charLength, byte modbusFrame[],
                      int start_index = 0);
+    /**
+     * @brief Insert a character array into the working byte frame.
+     *
+     * @param inChar A pointer to a character array to insert.
+     * @param charLength The number of characters to copy from in the array.
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the byte in the response frame.
+     * Optional with a default of 0.
+     */
+    void charToFrame(const char* inChar, int charLength, byte modbusFrame[],
+                     int start_index = 0);
     /**@}*/
 
 
@@ -1357,6 +1395,8 @@ class modbusMaster {
      * @note This command puts the content of the registers into the internal library
      * buffer, it does *not* return the data directly.
      *
+     * @remark No more than 125 registers can be read at once.
+     *
      * @param readCommand The command to use to read data. For a holding register
      * readCommand = 0x03. For an input register readCommand = 0x04.
      * @param startRegister The starting register number.
@@ -1370,6 +1410,8 @@ class modbusMaster {
      *
      * @note This command puts the content of the registers into the internal library
      * buffer, it does *not* return the data directly.
+     *
+     * @remark No more than 125 registers can be read at once.
      *
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to read.
@@ -1429,6 +1471,8 @@ class modbusMaster {
      * or 0x10 (16).
      *
      * Input registers cannot be written by a Modbus controller/master
+     *
+     * @remark No more than 123 registers can be set at once.
      *
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to write.
@@ -1578,12 +1622,13 @@ class modbusMaster {
 
     /**
      * @brief The response buffer for incoming messages from the Modbus slave.
-     *
-     * This needs to be bigger than the largest response.
-     * For 8 parameters with 8 registers each:
-     *   64 registers * 2 bytes per register + 5 frame bytes
      */
     static byte responseBuffer[RESPONSE_BUFFER_SIZE];
+
+    /**
+     * @brief The command buffer for outgoing messages to the Modbus slave.
+     */
+    static byte commandBuffer[COMMAND_BUFFER_SIZE];
     /**@}*/
 
 

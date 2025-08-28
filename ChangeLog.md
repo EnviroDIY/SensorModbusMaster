@@ -12,7 +12,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- Removed all variable length arrays within functions
+- No longer trimming returned Strings
+
 ### Added
+
+- Implemented a single static command buffer
+- Added the define `COMMAND_BUFFER_SIZE` to control the size of the command buffer.
+- Added `charToRegister(..)` and `charToFrame(..)` functions, each accepting a pointer to a constant char (const char*).
 
 ### Removed
 
