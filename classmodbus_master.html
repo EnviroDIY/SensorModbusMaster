@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="UTF-8" />
-  <title>modbusMaster class | SensorModbusMaster1.4.0</title>
+  <title>modbusMaster class | SensorModbusMaster1.5.0</title>
   <link rel="stylesheet" href="m-EnviroDIY+documentation.compiled.css" />
 
 <!-- clean talk scripts -->
@@ -1823,24 +1823,24 @@
     <header id="gp-main-header">
       <div class="gp-container">
         <div id="gp-logo">
-          <a href="index.html" title="SensorModbusMaster 1.4.0">
+          <a href="index.html" title="SensorModbusMaster 1.5.0">
             <img
               src="gp-desktop-logo.png"
-              alt="SensorModbusMaster 1.4.0"
+              alt="SensorModbusMaster 1.5.0"
               width="200"
               height="42"
               class="gp-desktop-logo"
             />
             <img
               src="gp-scrolling-logo.png"
-              alt="SensorModbusMaster 1.4.0"
+              alt="SensorModbusMaster 1.5.0"
               width="264"
               height="55"
               class="gp-scrolling-logo"
             />
             <img
               src="gp-mobile-logo.png"
-              alt="SensorModbusMaster 1.4.0"
+              alt="SensorModbusMaster 1.5.0"
               width="132"
               height="28"
               class="gp-mobile-logo"
@@ -2013,6 +2013,7 @@
               <ul>
                 <li><a href="#low-level-functions">Low level functions</a></li>
                 <li><a href="#constructors-and-begins">Constructors and Begins</a></li>
+                <li><a href="#object-setters-and-getters">Object setters and getters</a></li>
                 <li><a href="#high-level-register-fetching-functions">High level register fetching functions</a></li>
                 <li><a href="#high-level-register-setting-functions">High level register setting functions</a></li>
                 <li><a href="#functions-to-get-registers-in-bulk-and-to-get-one-or-more-coils-or-discrete">Functions to get registers in bulk and to get one or more coils or discrete</a></li>
@@ -2124,18 +2125,87 @@
           <h2>Constructors and Begins</h2>
             <p><a name="ctor_and_begin"></a></p><p>Functions to create the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object and set up the communication with the Arduino stream connected to the modbus device.</p>
           <dl class="m-doc">
+                          <dt id="a0ff1c39df04889422c186b8f6a9f532f">
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#a0ff1c39df04889422c186b8f6a9f532f" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Default constructor.</dd>
                           <dt>
-              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#aab2eb12266fc34b59bde0b963282f841" class="m-doc">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#a95d3ef2c72ad00a9fb83aa8166653d2a" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream*</span> <span class="m-param">stream</span>)</span>
+            </dt>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#ad40cf8ecc71295d2b813a2b680cb95aa" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>)</span>
+            </dt>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#a54d95e2e8a63113041cfcc4218193b23" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
               <span class="m-dim">Stream*</span> <span class="m-param">stream</span>,
-              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span><span class="m-dim"> = -1</span>) -&gt; bool</span>
+              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>)</span>
             </dt>
-            <dd>This function sets up the communication with the Arduino stream connected to the modbus device.</dd>
+            <dd>Construct a new modbus Master object.</dd>
                           <dt>
-              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#a3802863a060f76953c06763e9d2598a0" class="m-doc">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#ad4502b384cdf017a50627c341ef00c8e" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
               <span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>,
-              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span><span class="m-dim"> = -1</span>) -&gt; bool</span>
+              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>)</span>
             </dt>
-            <dd>This function sets up the communication with the Arduino stream connected to the modbus device.</dd>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#a6b3303d324935325a6001d451fc34fce" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream*</span> <span class="m-param">stream</span>)</span>
+            </dt>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#ad08627e2076bdb007f0fd0a83683a7e2" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>)</span>
+            </dt>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#ad9371e91e5fdb42ec86c89a175652565" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream*</span> <span class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>)</span>
+            </dt>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"></span><a href="#a91c60c34825d8cc1e5339bdcf41c48ed" class="m-doc">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>)</span>
+            </dt>
+            <dd>Construct a new modbus Master object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#a6a4ace31299aab2f7cdbe6a194b3d86a" class="m-doc">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream*</span> <span class="m-param">stream</span>) -&gt; bool</span>
+            </dt>
+            <dd>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#a5e0529a815cba8a7c2a8fd3a78504ece" class="m-doc">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>) -&gt; bool</span>
+            </dt>
+            <dd>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#af4f5cfc6488139dacb6607765c96e7a9" class="m-doc">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream*</span> <span class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>) -&gt; bool</span>
+            </dt>
+            <dd>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#afcda287264e31ca3caf01bdb409f795d" class="m-doc">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>) -&gt; bool</span>
+            </dt>
+            <dd>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</dd>
+          </dl>
+        </section>
+        <hr>
+        <section id="object-setters-and-getters">
+          <h2>Object setters and getters</h2>
+            <p><a name="setters_and_getters"></a></p><p>Functions to set and get properties of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</p>
+          <dl class="m-doc">
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#ab4f91d0dbe0fb5162f03f43a733f0115" class="m-doc">setSlaveID</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">slaveID</span>)</span>
+            </dt>
+            <dd>Set the slave id.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">byte </span><a href="#a0cc119a18fa90364d69a3b363d53e0ab" class="m-doc">getSlaveID</a>(</span><span class="m-doc-wrap">) -&gt; byte</span>
+            </dt>
+            <dd>Get the byte identifier of the modbus slave device.</dd>
                           <dt>
               <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#a653d069e4e558b4e30ffaa5018d2ab11" class="m-doc">setEnablePin</a>(</span><span class="m-doc-wrap"><span class="m-dim">int8_t</span> <span class="m-param">enablePin</span>)</span>
             </dt>
@@ -2168,6 +2238,18 @@
               <span class="m-doc-wrap-bumper"><span class="m-dim">uint8_t </span><a href="#a9d85d474a0b89f2f46685d612cefb7e0" class="m-doc">getCommandRetries</a>(</span><span class="m-doc-wrap">) -&gt; uint8_t</span>
             </dt>
             <dd>Get the current number of times to retry a command before giving up.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#abb659a72fab088cc1500cd63711d68df" class="m-doc">setStream</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream*</span> <span class="m-param">stream</span>)</span>
+            </dt>
+            <dd>Set the stream for communication.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#acbdbf5f2362cd3cf530863aeea5164d2" class="m-doc">setStream</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream&amp;</span> <span class="m-param">stream</span>)</span>
+            </dt>
+            <dd>Set the stream for communication.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">Stream* </span><a href="#a85feb7799b5032d2fba28f113af78df4" class="m-doc">getStream</a>(</span><span class="m-doc-wrap">) -&gt; Stream*</span>
+            </dt>
+            <dd>Get a pointer to the stream for communication.</dd>
           </dl>
         </section>
         <hr>
@@ -3161,17 +3243,73 @@
             <hr>
           </div>
         </section>
-                      <section class="m-doc-details" id="aab2eb12266fc34b59bde0b963282f841"><div>
+                      <section class="m-doc-details" id="a95d3ef2c72ad00a9fb83aa8166653d2a"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
-                    href="#aab2eb12266fc34b59bde0b963282f841" class="m-doc-self">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a95d3ef2c72ad00a9fb83aa8166653d2a" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream*</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Construct a new modbus Master object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">modbusSlaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">stream</span></td>
+                  <td>A pointer to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ad40cf8ecc71295d2b813a2b680cb95aa"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad40cf8ecc71295d2b813a2b680cb95aa" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream&amp;</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Construct a new modbus Master object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">modbusSlaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">stream</span></td>
+                  <td>A reference to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a54d95e2e8a63113041cfcc4218193b23"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a54d95e2e8a63113041cfcc4218193b23" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
                     class="m-param">modbusSlaveID</span>,
               <span class="m-dim">Stream*</span> <span
                     class="m-param">stream</span>,
               <span class="m-dim">int8_t</span> <span
-                    class="m-param">enablePin</span><span class="m-dim"> = -1</span>)</span></span>
+                    class="m-param">enablePin</span>)</span></span>
             </h3>
-            <p>This function sets up the communication with the Arduino stream connected to the modbus device.</p>
+            <p>Construct a new modbus Master object.</p>
             <table class="m-table m-fullwidth m-flat">
               <thead>
                 <tr><th colspan="2">Parameters</th></tr>
@@ -3187,32 +3325,25 @@
                 </tr>
                 <tr>
                   <td class="m-param" ><span class="m-param">enablePin</span></td>
-                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply. Optional with a default value of -1.</td>
+                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply.</td>
                 </tr>
               </tbody>
-              <tfoot>
-                <tr>
-                  <th>Returns</th>
-                  <td><span class="m-dim">bool</span> True if the starting communication was successful, false if not.</td>
-                </tr>
-              </tfoot>
             </table>
-            <p>It should be run during the arduino &quot;setup&quot; function. The &quot;stream&quot; device must be initialized prior to running this. Per modbus specifications, the stream must have:</p><ul><li>1 start bit</li><li>8 data bits, least significant bit sent first</li><li>1 stop bit if parity is used - 2 bits if no parity Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial will support either even or odd parity!</li></ul>
 
             <hr>
           </div>
         </section>
-                      <section class="m-doc-details" id="a3802863a060f76953c06763e9d2598a0"><div>
+                      <section class="m-doc-details" id="ad4502b384cdf017a50627c341ef00c8e"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
-                    href="#a3802863a060f76953c06763e9d2598a0" class="m-doc-self">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad4502b384cdf017a50627c341ef00c8e" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
                     class="m-param">modbusSlaveID</span>,
               <span class="m-dim">Stream&amp;</span> <span
                     class="m-param">stream</span>,
               <span class="m-dim">int8_t</span> <span
-                    class="m-param">enablePin</span><span class="m-dim"> = -1</span>)</span></span>
+                    class="m-param">enablePin</span>)</span></span>
             </h3>
-            <p>This function sets up the communication with the Arduino stream connected to the modbus device.</p>
+            <p>Construct a new modbus Master object.</p>
             <table class="m-table m-fullwidth m-flat">
               <thead>
                 <tr><th colspan="2">Parameters</th></tr>
@@ -3228,17 +3359,298 @@
                 </tr>
                 <tr>
                   <td class="m-param" ><span class="m-param">enablePin</span></td>
-                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply. Optional with a default value of -1.</td>
+                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a6b3303d324935325a6001d451fc34fce"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a6b3303d324935325a6001d451fc34fce" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream*</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Construct a new modbus Master object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">stream</span></td>
+                  <td>A pointer to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ad08627e2076bdb007f0fd0a83683a7e2"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad08627e2076bdb007f0fd0a83683a7e2" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream&amp;</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Construct a new modbus Master object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">stream</span></td>
+                  <td>A reference to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ad9371e91e5fdb42ec86c89a175652565"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad9371e91e5fdb42ec86c89a175652565" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream*</span> <span
+                    class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span
+                    class="m-param">enablePin</span>)</span></span>
+            </h3>
+            <p>Construct a new modbus Master object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">stream</span></td>
+                  <td>A pointer to the Arduino stream object to communicate with.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">enablePin</span></td>
+                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a91c60c34825d8cc1e5339bdcf41c48ed"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim"> modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a91c60c34825d8cc1e5339bdcf41c48ed" class="m-doc-self">modbusMaster</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream&amp;</span> <span
+                    class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span
+                    class="m-param">enablePin</span>)</span></span>
+            </h3>
+            <p>Construct a new modbus Master object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">stream</span></td>
+                  <td>A reference to the Arduino stream object to communicate with.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">enablePin</span></td>
+                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a6a4ace31299aab2f7cdbe6a194b3d86a"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a6a4ace31299aab2f7cdbe6a194b3d86a" class="m-doc-self">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream*</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">modbusSlaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">stream</span></td>
+                  <td>A pointer to the Arduino stream object to communicate with.</td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
                   <th>Returns</th>
-                  <td><span class="m-dim">bool</span> True if the starting communication was successful, false if not.</td>
+                  <td><span class="m-dim">bool</span> Always returns true</td>
                 </tr>
               </tfoot>
             </table>
-            <p>It should be run during the arduino &quot;setup&quot; function. The &quot;stream&quot; device must be initialized prior to running this. Per modbus specifications, the stream must have:</p><ul><li>1 start bit</li><li>8 data bits, least significant bit sent first</li><li>1 stop bit if parity is used - 2 bits if no parity Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial will support either even or odd parity!</li></ul>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a5e0529a815cba8a7c2a8fd3a78504ece"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a5e0529a815cba8a7c2a8fd3a78504ece" class="m-doc-self">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream&amp;</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">modbusSlaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">stream</span></td>
+                  <td>A reference to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">bool</span> Always returns true</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="af4f5cfc6488139dacb6607765c96e7a9"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#af4f5cfc6488139dacb6607765c96e7a9" class="m-doc-self">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream*</span> <span
+                    class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span
+                    class="m-param">enablePin</span>)</span></span>
+            </h3>
+            <p>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">modbusSlaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">stream</span></td>
+                  <td>A pointer to the Arduino stream object to communicate with.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">enablePin</span></td>
+                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">bool</span> Always returns true</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="afcda287264e31ca3caf01bdb409f795d"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#afcda287264e31ca3caf01bdb409f795d" class="m-doc-self">begin</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">modbusSlaveID</span>,
+              <span class="m-dim">Stream&amp;</span> <span
+                    class="m-param">stream</span>,
+              <span class="m-dim">int8_t</span> <span
+                    class="m-param">enablePin</span>)</span></span>
+            </h3>
+            <p>Equivalent to a constructor - used to assign members of the <a href="classmodbus_master.html" class="m-doc">modbusMaster</a> object.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">modbusSlaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">stream</span></td>
+                  <td>A reference to the Arduino stream object to communicate with.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">enablePin</span></td>
+                  <td>A pin on the Arduino processor to use to send an enable signal to an RS485 to TTL adapter. Use a negative number if this does not apply.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">bool</span> Always returns true</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="ab4f91d0dbe0fb5162f03f43a733f0115"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ab4f91d0dbe0fb5162f03f43a733f0115" class="m-doc-self">setSlaveID</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span
+                    class="m-param">slaveID</span>)</span></span>
+            </h3>
+            <p>Set the slave id.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">slaveID</span></td>
+                  <td>The byte identifier of the modbus slave device.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a0cc119a18fa90364d69a3b363d53e0ab"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">byte  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a0cc119a18fa90364d69a3b363d53e0ab" class="m-doc-self">getSlaveID</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Get the byte identifier of the modbus slave device.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td><span class="m-dim">byte</span> The byte identifier of the modbus slave device.</td>
+                </tr>
+              </tfoot>
+            </table>
 
             <hr>
           </div>
@@ -3405,6 +3817,70 @@
               </tfoot>
             </table>
             <p>By default, this is 10.</p>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="abb659a72fab088cc1500cd63711d68df"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#abb659a72fab088cc1500cd63711d68df" class="m-doc-self">setStream</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream*</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Set the stream for communication.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">stream</span></td>
+                  <td>A pointer to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>The &quot;stream&quot; device must be initialized prior to running this. Per modbus specifications, the stream must have:</p><ul><li>1 start bit</li><li>8 data bits, least significant bit sent first</li><li>1 stop bit if parity is used - 2 bits if no parity Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial will support either even or odd parity!</li></ul>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="acbdbf5f2362cd3cf530863aeea5164d2"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#acbdbf5f2362cd3cf530863aeea5164d2" class="m-doc-self">setStream</a>(</span><span class="m-doc-wrap"><span class="m-dim">Stream&amp;</span> <span
+                    class="m-param">stream</span>)</span></span>
+            </h3>
+            <p>Set the stream for communication.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">stream</span></td>
+                  <td>A reference to the Arduino stream object to communicate with.</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>Per modbus specifications, the stream must have:</p><ul><li>1 start bit</li><li>8 data bits, least significant bit sent first</li><li>1 stop bit if parity is used - 2 bits if no parity Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial will support either even or odd parity!</li></ul>
+
+            <hr>
+          </div>
+        </section>
+                      <section class="m-doc-details" id="a85feb7799b5032d2fba28f113af78df4"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">Stream*  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#a85feb7799b5032d2fba28f113af78df4" class="m-doc-self">getStream</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Get a pointer to the stream for communication.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td><span class="m-dim">Stream*</span> A pointer to the Arduino stream object used for communication.</td>
+                </tr>
+              </tfoot>
+            </table>
 
             <hr>
           </div>
