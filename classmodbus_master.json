@@ -61,7 +61,7 @@
               "base_url": "classmodbus_master.html",
               "id": "a3d34ed3d6d1e33ea994d84ec3738ccbe",
               "include": null,
-              "has_details": true,
+              "has_details": false,
               "type": "byte",
               "is_constexpr": false,
               "is_static": true,
@@ -69,7 +69,28 @@
               "is_private": false,
               "name": "responseBuffer",
               "brief": "The response buffer for incoming messages from the Modbus slave.",
-              "description": "<p>This needs to be bigger than the largest response. For 8 parameters with 8 registers each: 64 registers * 2 bytes per register + 5 frame bytes</p>",
+              "description": "",
+              "deprecated": null,
+              "since": null,
+              "has_template_details": false,
+              "templates": null
+            }
+          ],
+          [
+            "var",
+            {
+              "base_url": "classmodbus_master.html",
+              "id": "afbd5fc557e497e0b5eef5e4a7358c392",
+              "include": null,
+              "has_details": false,
+              "type": "byte",
+              "is_constexpr": false,
+              "is_static": true,
+              "is_protected": false,
+              "is_private": false,
+              "name": "commandBuffer",
+              "brief": "The command buffer for outgoing messages to the Modbus slave.",
+              "description": "",
               "deprecated": null,
               "since": null,
               "has_template_details": false,
@@ -86,7 +107,7 @@
               "type": "bool",
               "name": "getRegisters",
               "brief": "Get data from either holding or input registers and store it in the internal library buffer.",
-              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside>",
+              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside><aside class=\"m-note m-default\"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>",
               "return_value": "True if the modbus slave returned the expected number of register values; false if there was a failure.",
               "return_values": [],
               "exceptions": [],
@@ -150,7 +171,7 @@
               "type": "bool",
               "name": "getHoldingRegisters",
               "brief": "Get data from a range of holding registers.",
-              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside>",
+              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside><aside class=\"m-note m-default\"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>",
               "return_value": "True if the modbus slave returned the expected number of register values; false if there was a failure.",
               "return_values": [],
               "exceptions": [],
@@ -374,7 +395,7 @@
               "type": "bool",
               "name": "setRegisters",
               "brief": "Set the value of one or more holding registers using Modbus commands 0x06 or 0x10 (16).",
-              "description": "<p>Input registers cannot be written by a Modbus controller/master</p>",
+              "description": "<p>Input registers cannot be written by a Modbus controller/master</p><aside class=\"m-note m-default\"><h4>Remark</h4><p>No more than 123 registers can be set at once.</p></aside>",
               "return_value": "True if the modbus slave returned the expected number of input values; false if there was a failure.",
               "return_values": [],
               "exceptions": [],
@@ -4548,6 +4569,78 @@
                 }
               ]
             }
+          ],
+          [
+            "func",
+            {
+              "base_url": "classmodbus_master.html",
+              "id": "af7256527d4f410bef4b7430a0a200f03",
+              "include": null,
+              "has_details": true,
+              "type": "bool",
+              "name": "charToRegister",
+              "brief": "Set a series of holding registers to the characters in a character array.",
+              "description": "",
+              "return_value": "True if the registers were successfully set, false if not.",
+              "return_values": [],
+              "exceptions": [],
+              "deprecated": null,
+              "since": null,
+              "is_constexpr": false,
+              "is_consteval": false,
+              "is_explicit": false,
+              "is_virtual": false,
+              "prefix": "",
+              "is_defaulted": false,
+              "is_deleted": false,
+              "is_pure_virtual": false,
+              "is_final": false,
+              "is_override": false,
+              "is_noexcept": false,
+              "is_conditional_noexcept": false,
+              "suffix": "",
+              "is_protected": false,
+              "is_private": false,
+              "is_signal": false,
+              "is_slot": false,
+              "has_template_details": false,
+              "templates": null,
+              "has_param_details": true,
+              "params": [
+                {
+                  "name": "regNum",
+                  "type": "int",
+                  "type_name": "int regNum",
+                  "default": null,
+                  "description": "The first of the registers of interest",
+                  "direction": ""
+                },
+                {
+                  "name": "inChar",
+                  "type": "const char*",
+                  "type_name": "const char* inChar",
+                  "default": null,
+                  "description": "Pointer to a character array to set the registers to.",
+                  "direction": ""
+                },
+                {
+                  "name": "charLength",
+                  "type": "int",
+                  "type_name": "int charLength",
+                  "default": null,
+                  "description": "The number of characters to set from in the array.",
+                  "direction": ""
+                },
+                {
+                  "name": "forceMultiple",
+                  "type": "bool",
+                  "type_name": "bool forceMultiple",
+                  "default": "false",
+                  "description": "Set the forceMultiple boolean flag to &#x27;true&#x27; to force the use of the Modbus command for setting multiple resisters (0x10). This only applies if the character array is two characters or less. Optional with a default value of false.",
+                  "direction": ""
+                }
+              ]
+            }
           ]
         ]
       },
@@ -4566,7 +4659,7 @@
               "type": "bool",
               "name": "getRegisters",
               "brief": "Get data from either holding or input registers and copy the output to the supplied buffer.",
-              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside>",
+              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside><aside class=\"m-note m-default\"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>",
               "return_value": "True if the modbus slave returned the expected number of register values; false if there was a failure.",
               "return_values": [],
               "exceptions": [],
@@ -4638,7 +4731,7 @@
               "type": "bool",
               "name": "getHoldingRegisters",
               "brief": "Get data from holding registers and copy the output to the supplied buffer.",
-              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside>",
+              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside><aside class=\"m-note m-default\"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>",
               "return_value": "True if the modbus slave returned the expected number of register values; false if there was a failure.",
               "return_values": [],
               "exceptions": [],
@@ -4702,7 +4795,7 @@
               "type": "bool",
               "name": "getInputRegisters",
               "brief": "Get data from input registers and copy the output to the supplied buffer.",
-              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside>",
+              "description": "<aside class=\"m-note m-info\"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside><aside class=\"m-note m-default\"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>",
               "return_value": "True if the modbus slave returned the expected number of register values; false if there was a failure.",
               "return_values": [],
               "exceptions": [],
@@ -6585,6 +6678,78 @@
                 }
               ]
             }
+          ],
+          [
+            "func",
+            {
+              "base_url": "classmodbus_master.html",
+              "id": "ad8f83112546ecca942c4df165b3dc2d4",
+              "include": null,
+              "has_details": true,
+              "type": "void",
+              "name": "charToFrame",
+              "brief": "Insert a character array into the working byte frame.",
+              "description": "",
+              "return_value": null,
+              "return_values": [],
+              "exceptions": [],
+              "deprecated": null,
+              "since": null,
+              "is_constexpr": false,
+              "is_consteval": false,
+              "is_explicit": false,
+              "is_virtual": false,
+              "prefix": "",
+              "is_defaulted": false,
+              "is_deleted": false,
+              "is_pure_virtual": false,
+              "is_final": false,
+              "is_override": false,
+              "is_noexcept": false,
+              "is_conditional_noexcept": false,
+              "suffix": "",
+              "is_protected": false,
+              "is_private": false,
+              "is_signal": false,
+              "is_slot": false,
+              "has_template_details": false,
+              "templates": null,
+              "has_param_details": true,
+              "params": [
+                {
+                  "name": "inChar",
+                  "type": "const char*",
+                  "type_name": "const char* inChar",
+                  "default": null,
+                  "description": "A pointer to a character array to insert.",
+                  "direction": ""
+                },
+                {
+                  "name": "charLength",
+                  "type": "int",
+                  "type_name": "int charLength",
+                  "default": null,
+                  "description": "The number of characters to copy from in the array.",
+                  "direction": ""
+                },
+                {
+                  "name": "modbusFrame",
+                  "type": "byte[]",
+                  "type_name": "byte modbusFrame[]",
+                  "default": null,
+                  "description": "The working byte frame",
+                  "direction": ""
+                },
+                {
+                  "name": "start_index",
+                  "type": "int",
+                  "type_name": "int start_index",
+                  "default": "0",
+                  "description": "The starting position of the byte in the response frame. Optional with a default of 0.",
+                  "direction": ""
+                }
+              ]
+            }
           ]
         ]
       }
@@ -6592,7 +6757,7 @@
     "has_enum_details": false,
     "has_typedef_details": false,
     "has_func_details": true,
-    "has_var_details": true,
+    "has_var_details": false,
     "has_define_details": false,
     "breadcrumb": [
       [

@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="UTF-8" />
-  <title>modbusMaster class | SensorModbusMaster1.3.0</title>
+  <title>modbusMaster class | SensorModbusMaster1.4.0</title>
   <link rel="stylesheet" href="m-EnviroDIY+documentation.compiled.css" />
 
 <!-- clean talk scripts -->
@@ -1823,24 +1823,24 @@
     <header id="gp-main-header">
       <div class="gp-container">
         <div id="gp-logo">
-          <a href="index.html" title="SensorModbusMaster 1.3.0">
+          <a href="index.html" title="SensorModbusMaster 1.4.0">
             <img
               src="gp-desktop-logo.png"
-              alt="SensorModbusMaster 1.3.0"
+              alt="SensorModbusMaster 1.4.0"
               width="200"
               height="42"
               class="gp-desktop-logo"
             />
             <img
               src="gp-scrolling-logo.png"
-              alt="SensorModbusMaster 1.3.0"
+              alt="SensorModbusMaster 1.4.0"
               width="264"
               height="55"
               class="gp-scrolling-logo"
             />
             <img
               src="gp-mobile-logo.png"
-              alt="SensorModbusMaster 1.3.0"
+              alt="SensorModbusMaster 1.4.0"
               width="132"
               height="28"
               class="gp-mobile-logo"
@@ -2024,7 +2024,6 @@
               Detailed Descriptions
               <ul>
                 <li><a href="#function-details">Functions</a></li>
-                <li><a href="#variable-details">Variables</a></li>
               </ul>
             </li>
           </ul>
@@ -2034,10 +2033,14 @@
           <h2>Low level functions</h2>
             <p><a name="low_level_functions"></a></p>
           <dl class="m-doc">
-                          <dt>
-              static <span class="m-dim">byte</span> <a href="#a3d34ed3d6d1e33ea994d84ec3738ccbe" class="m-doc">responseBuffer</a>
+                          <dt id="a3d34ed3d6d1e33ea994d84ec3738ccbe">
+              static <span class="m-dim">byte</span> <a href="#a3d34ed3d6d1e33ea994d84ec3738ccbe" class="m-doc-self">responseBuffer</a>
             </dt>
             <dd>The response buffer for incoming messages from the Modbus slave.</dd>
+                          <dt id="afbd5fc557e497e0b5eef5e4a7358c392">
+              static <span class="m-dim">byte</span> <a href="#afbd5fc557e497e0b5eef5e4a7358c392" class="m-doc-self">commandBuffer</a>
+            </dt>
+            <dd>The command buffer for outgoing messages to the Modbus slave.</dd>
                           <dt>
               <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#abc8e373ca4ce4851e948157126fa4581" class="m-doc">getRegisters</a>(</span><span class="m-doc-wrap"><span class="m-dim">byte</span> <span class="m-param">readCommand</span>,
               <span class="m-dim">int16_t</span> <span class="m-param">startRegister</span>,
@@ -2468,6 +2471,13 @@
               <span class="m-dim">bool</span> <span class="m-param">forceMultiple</span><span class="m-dim"> = false</span>) -&gt; bool</span>
             </dt>
             <dd>Set a series of holding registers to the characters in a character array.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool </span><a href="#af7256527d4f410bef4b7430a0a200f03" class="m-doc">charToRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span class="m-param">regNum</span>,
+              <span class="m-dim">const char*</span> <span class="m-param">inChar</span>,
+              <span class="m-dim">int</span> <span class="m-param">charLength</span>,
+              <span class="m-dim">bool</span> <span class="m-param">forceMultiple</span><span class="m-dim"> = false</span>) -&gt; bool</span>
+            </dt>
+            <dd>Set a series of holding registers to the characters in a character array.</dd>
           </dl>
         </section>
         <hr>
@@ -2677,6 +2687,13 @@
               <span class="m-dim">int</span> <span class="m-param">start_index</span><span class="m-dim"> = 0</span>)</span>
             </dt>
             <dd>Insert a character array into the working byte frame.</dd>
+                          <dt>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void </span><a href="#ad8f83112546ecca942c4df165b3dc2d4" class="m-doc">charToFrame</a>(</span><span class="m-doc-wrap"><span class="m-dim">const char*</span> <span class="m-param">inChar</span>,
+              <span class="m-dim">int</span> <span class="m-param">charLength</span>,
+              <span class="m-dim">byte[]</span> <span class="m-param">modbusFrame</span>,
+              <span class="m-dim">int</span> <span class="m-param">start_index</span><span class="m-dim"> = 0</span>)</span>
+            </dt>
+            <dd>Insert a character array into the working byte frame.</dd>
           </dl>
         </section>
         <hr>
@@ -2719,7 +2736,7 @@
                 </tr>
               </tfoot>
             </table>
-            <aside class="m-note m-info"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside>
+            <aside class="m-note m-info"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside><aside class="m-note m-default"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>
 
             <hr>
           </div>
@@ -2754,7 +2771,7 @@
                 </tr>
               </tfoot>
             </table>
-            <aside class="m-note m-info"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside>
+            <aside class="m-note m-info"><h4>Note</h4><p>This command puts the content of the registers into the internal library buffer, it does <em>not</em> return the data directly.</p></aside><aside class="m-note m-default"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>
 
             <hr>
           </div>
@@ -2906,7 +2923,7 @@
                 </tr>
               </tfoot>
             </table>
-            <p>Input registers cannot be written by a Modbus controller/master</p>
+            <p>Input registers cannot be written by a Modbus controller/master</p><aside class="m-note m-default"><h4>Remark</h4><p>No more than 123 registers can be set at once.</p></aside>
 
             <hr>
           </div>
@@ -5322,6 +5339,52 @@
             <hr>
           </div>
         </section>
+                      <section class="m-doc-details" id="af7256527d4f410bef4b7430a0a200f03"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#af7256527d4f410bef4b7430a0a200f03" class="m-doc-self">charToRegister</a>(</span><span class="m-doc-wrap"><span class="m-dim">int</span> <span
+                    class="m-param">regNum</span>,
+              <span class="m-dim">const char*</span> <span
+                    class="m-param">inChar</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">charLength</span>,
+              <span class="m-dim">bool</span> <span
+                    class="m-param">forceMultiple</span><span class="m-dim"> = false</span>)</span></span>
+            </h3>
+            <p>Set a series of holding registers to the characters in a character array.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">regNum</span></td>
+                  <td>The first of the registers of interest</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">inChar</span></td>
+                  <td>Pointer to a character array to set the registers to.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">charLength</span></td>
+                  <td>The number of characters to set from in the array.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">forceMultiple</span></td>
+                  <td>Set the forceMultiple boolean flag to &#x27;true&#x27; to force the use of the Modbus command for setting multiple resisters (0x10). This only applies if the character array is two characters or less. Optional with a default value of false.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td><span class="m-dim">bool</span> True if the registers were successfully set, false if not.</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <hr>
+          </div>
+        </section>
                       <section class="m-doc-details" id="a336e089416d89777ad259246b6131100"><div>
             <h3>
               <span class="m-doc-wrap-bumper"><span class="m-dim">bool  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
@@ -5364,7 +5427,7 @@
                 </tr>
               </tfoot>
             </table>
-            <aside class="m-note m-info"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside>
+            <aside class="m-note m-info"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside><aside class="m-note m-default"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>
 
             <hr>
           </div>
@@ -5405,7 +5468,7 @@
                 </tr>
               </tfoot>
             </table>
-            <aside class="m-note m-info"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside>
+            <aside class="m-note m-info"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside><aside class="m-note m-default"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>
 
             <hr>
           </div>
@@ -5446,7 +5509,7 @@
                 </tr>
               </tfoot>
             </table>
-            <aside class="m-note m-info"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside>
+            <aside class="m-note m-info"><h4>Note</h4><p>This command puts only the <strong>content of the registers</strong> into the buffers. It does <strong>not</strong> add the full returned modbus frame. The data in the buffer will be stripped of the modbus protocol characters.</p></aside><aside class="m-note m-default"><h4>Remark</h4><p>No more than 125 registers can be read at once.</p></aside>
 
             <hr>
           </div>
@@ -6509,16 +6572,42 @@
             <hr>
           </div>
         </section>
-        </section>
-        <hr>
-        <section id="variable-details">
-          <h2>Variable documentation</h2>
-                      <section class="m-doc-details" id="a3d34ed3d6d1e33ea994d84ec3738ccbe"><div>
+                      <section class="m-doc-details" id="ad8f83112546ecca942c4df165b3dc2d4"><div>
             <h3>
-              static <span class="m-dim">byte</span> modbusMaster::<wbr /><a href="#a3d34ed3d6d1e33ea994d84ec3738ccbe" class="m-doc-self">responseBuffer</a>
+              <span class="m-doc-wrap-bumper"><span class="m-dim">void  modbusMaster::<wbr /></span></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a
+                    href="#ad8f83112546ecca942c4df165b3dc2d4" class="m-doc-self">charToFrame</a>(</span><span class="m-doc-wrap"><span class="m-dim">const char*</span> <span
+                    class="m-param">inChar</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">charLength</span>,
+              <span class="m-dim">byte[]</span> <span
+                    class="m-param">modbusFrame</span>,
+              <span class="m-dim">int</span> <span
+                    class="m-param">start_index</span><span class="m-dim"> = 0</span>)</span></span>
             </h3>
-            <p>The response buffer for incoming messages from the Modbus slave.</p>
-            <p>This needs to be bigger than the largest response. For 8 parameters with 8 registers each: 64 registers * 2 bytes per register + 5 frame bytes</p>
+            <p>Insert a character array into the working byte frame.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="m-param"  style="width: 1%"><span class="m-param">inChar</span></td>
+                  <td>A pointer to a character array to insert.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">charLength</span></td>
+                  <td>The number of characters to copy from in the array.</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">modbusFrame</span></td>
+                  <td>The working byte frame</td>
+                </tr>
+                <tr>
+                  <td class="m-param" ><span class="m-param">start_index</span></td>
+                  <td>The starting position of the byte in the response frame. Optional with a default of 0.</td>
+                </tr>
+              </tbody>
+            </table>
 
             <hr>
           </div>

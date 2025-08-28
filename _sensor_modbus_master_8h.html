@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="UTF-8" />
-  <title>src/SensorModbusMaster.h file | SensorModbusMaster1.3.0</title>
+  <title>src/SensorModbusMaster.h file | SensorModbusMaster1.4.0</title>
   <link rel="stylesheet" href="m-EnviroDIY+documentation.compiled.css" />
 
 <!-- clean talk scripts -->
@@ -1823,24 +1823,24 @@
     <header id="gp-main-header">
       <div class="gp-container">
         <div id="gp-logo">
-          <a href="index.html" title="SensorModbusMaster 1.3.0">
+          <a href="index.html" title="SensorModbusMaster 1.4.0">
             <img
               src="gp-desktop-logo.png"
-              alt="SensorModbusMaster 1.3.0"
+              alt="SensorModbusMaster 1.4.0"
               width="200"
               height="42"
               class="gp-desktop-logo"
             />
             <img
               src="gp-scrolling-logo.png"
-              alt="SensorModbusMaster 1.3.0"
+              alt="SensorModbusMaster 1.4.0"
               width="264"
               height="55"
               class="gp-scrolling-logo"
             />
             <img
               src="gp-mobile-logo.png"
-              alt="SensorModbusMaster 1.3.0"
+              alt="SensorModbusMaster 1.4.0"
               width="132"
               height="28"
               class="gp-mobile-logo"
@@ -2109,6 +2109,10 @@
               <span class="m-doc-wrap-bumper">#define <a href="#a3d9d93e9a53461ba2177521472b761c4" class="m-doc">RESPONSE_BUFFER_SIZE</a><span class="m-dim m-right-m m-text-right"> = 256</span></span>
             </dt>
             <dd>The size of the response buffer for the modbus devices.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">#define <a href="#acf5b4949b2bcaa055cc03fa33274f6d9" class="m-doc">COMMAND_BUFFER_SIZE</a><span class="m-dim m-right-m m-text-right"> = 256</span></span>
+            </dt>
+            <dd>The size of the command buffer for the modbus devices.</dd>
             <dt id="a66f7c59a25c8cca6d5b0991895c26b69">
               <span class="m-doc-wrap-bumper">#define <a href="#a66f7c59a25c8cca6d5b0991895c26b69" class="m-doc-self">MODBUS_TIMEOUT</a><span class="m-dim m-right-m m-text-right"> = 500</span></span>
             </dt>
@@ -2361,7 +2365,22 @@
             <p>The size of the response buffer for the modbus devices.</p>
 
 
-              <p>This needs to be bigger than the largest response. Per the Specification and Implementation Guide for MODBUS over serial line, this value is 256 bytes. (This translates into a maximum of 125 registers to be read via Modbus/RTU and 123 by Modbus/TCP.)</p><p>If you know you will never make any modbus calls longer than this, decrease this number to save memory space.</p>
+              <p>Per the Specification and Implementation Guide for MODBUS over serial line, the maximum response size is 256 bytes - which is the size we use.</p><p>If you know you will never make any modbus requests for a modbus response this long, decrease this number to save memory space.</p>
+
+            <hr>
+          </div>
+        </section>
+        <section class="m-doc-details" id="acf5b4949b2bcaa055cc03fa33274f6d9">
+          <div>
+
+            <h3>
+              <span class="m-doc-wrap-bumper">#define <a href="#acf5b4949b2bcaa055cc03fa33274f6d9" class="m-doc-self">COMMAND_BUFFER_SIZE</a><span class="m-dim m-right-m m-text-right"> = 256</span></span>
+            </h3>
+
+            <p>The size of the command buffer for the modbus devices.</p>
+
+
+              <p>Per the Specification and Implementation Guide for MODBUS over serial line, the maximum command size is 256 bytes - which is the size we use.</p><p>If you know in advance the size of the largest command you will send, you can decrease this number to save memory space.</p>
 
             <hr>
           </div>
