@@ -20,6 +20,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.5.0]
+
+### Changed
+
+- Change the timeout for the underlying stream object immediately after frame timeout is changed.
+
+### Added
+
+- Added functions to set and get pointers to the stream used for communication
+- Added functions to set and get the slave ID.
+- Added additional constructors
+
+***
+
 ## [1.4.0]
 
 ### Changed
@@ -248,7 +262,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.5.0
 [1.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.4.0
 [1.3.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.3.0
 [1.2.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.2.0

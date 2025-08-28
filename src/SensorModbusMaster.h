@@ -227,28 +227,28 @@ class modbusMaster {
     modbusMaster(Stream& stream, int8_t enablePin);
 
     /**
-     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
      * @copydetails modbusMaster(byte modbusSlaveID, Stream* stream)
      * @return Always returns true
      */
     bool begin(byte modbusSlaveID, Stream* stream);
 
     /**
-     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
      * @copydetails modbusMaster(byte modbusSlaveID, Stream& stream)
      * @return Always returns true
      */
     bool begin(byte modbusSlaveID, Stream& stream);
 
     /**
-     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
      * @copydetails modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin)
      * @return Always returns true
      */
     bool begin(byte modbusSlaveID, Stream* stream, int8_t enablePin);
 
     /**
-     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
      * @copydetails modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin)
      * @return Always returns true
      */
