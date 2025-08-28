@@ -26,7 +26,11 @@ byte modbusMaster::crcFrame[2] = {
 //                    CONSTRUCTORS, BEGINS, SETTERS, GETTERS
 //----------------------------------------------------------------------------
 
-modbusMaster::modbusMaster() {}
+modbusMaster::modbusMaster() {
+    setSlaveID(0);
+    setStream(nullptr);
+    setEnablePin(-1);
+}
 modbusMaster::modbusMaster(byte modbusSlaveID, Stream* stream) {
     setSlaveID(modbusSlaveID);
     setStream(stream);
@@ -44,6 +48,26 @@ modbusMaster::modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin)
 }
 modbusMaster::modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
     setSlaveID(modbusSlaveID);
+    setStream(&stream);
+    setEnablePin(enablePin);
+}
+modbusMaster::modbusMaster(Stream* stream) {
+    setSlaveID(0);
+    setStream(stream);
+    setEnablePin(-1);
+}
+modbusMaster::modbusMaster(Stream& stream) {
+    setSlaveID(0);
+    setStream(&stream);
+    setEnablePin(-1);
+}
+modbusMaster::modbusMaster(Stream* stream, int8_t enablePin) {
+    setSlaveID(0);
+    setStream(stream);
+    setEnablePin(enablePin);
+}
+modbusMaster::modbusMaster(Stream& stream, int8_t enablePin) {
+    setSlaveID(0);
     setStream(&stream);
     setEnablePin(enablePin);
 }

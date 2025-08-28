@@ -201,6 +201,30 @@ class modbusMaster {
      * to an RS485 to TTL adapter. Use a negative number if this does not apply.
      */
     modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin);
+    /**
+     * @brief Construct a new modbus Master object
+     *
+     * @param stream A pointer to the Arduino stream object to communicate with.
+     */
+    modbusMaster(Stream* stream);
+    /**
+     * @brief Construct a new modbus Master object
+     *
+     * @param stream A reference to the Arduino stream object to communicate with.
+     */
+    modbusMaster(Stream& stream);
+    /**
+     * @copydoc modbusMaster(Stream* stream)
+     * @param enablePin A pin on the Arduino processor to use to send an enable signal
+     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
+     */
+    modbusMaster(Stream* stream, int8_t enablePin);
+    /**
+     * @copydoc modbusMaster(Stream& stream)
+     * @param enablePin A pin on the Arduino processor to use to send an enable signal
+     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
+     */
+    modbusMaster(Stream& stream, int8_t enablePin);
 
     /**
      * @brief Equivalent to a constructor to assign members of the modbusMaster object
