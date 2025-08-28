@@ -163,7 +163,6 @@ class modbusMaster {
 
  public:
 
-
     /**
      * @anchor ctor_and_begin
      * @name Constructors and Begins
@@ -173,49 +172,84 @@ class modbusMaster {
      */
     /**@{*/
     /**
-     * @brief This function sets up the communication with the Arduino stream connected
-     * to the modbus device.
-     *
-     * It should be run during the arduino "setup" function.
-     * The "stream" device must be initialized prior to running this.
-     * Per modbus specifications, the stream must have:
-     *    - 1 start bit
-     *    - 8 data bits, least significant bit sent first
-     *    - 1 stop bit if parity is used - 2 bits if no parity
-     * Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
-     * will support either even or odd parity!
+     * @brief Default constructor
+     */
+    modbusMaster();
+    /**
+     * @brief Construct a new modbus Master object
      *
      * @param modbusSlaveID The byte identifier of the modbus slave device.
      * @param stream A pointer to the Arduino stream object to communicate with.
-     * @param enablePin A pin on the Arduino processor to use to send an enable signal
-     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
-     * Optional with a default value of -1.
-     * @return True if the starting communication was successful, false if not.
      */
-    bool begin(byte modbusSlaveID, Stream* stream, int8_t enablePin = -1);
-
+    modbusMaster(byte modbusSlaveID, Stream* stream);
     /**
-     * @brief This function sets up the communication with the Arduino stream connected
-     * to the modbus device.
-     *
-     * It should be run during the arduino "setup" function.
-     * The "stream" device must be initialized prior to running this.
-     * Per modbus specifications, the stream must have:
-     *    - 1 start bit
-     *    - 8 data bits, least significant bit sent first
-     *    - 1 stop bit if parity is used - 2 bits if no parity
-     * Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
-     * will support either even or odd parity!
+     * @brief Construct a new modbus Master object
      *
      * @param modbusSlaveID The byte identifier of the modbus slave device.
      * @param stream A reference to the Arduino stream object to communicate with.
+     */
+    modbusMaster(byte modbusSlaveID, Stream& stream);
+    /**
+     * @copydoc modbusMaster(byte modbusSlaveID, Stream* stream)
      * @param enablePin A pin on the Arduino processor to use to send an enable signal
      * to an RS485 to TTL adapter. Use a negative number if this does not apply.
-     * Optional with a default value of -1.
-     * @return True if the starting communication was successful, false if not.
      */
-    bool begin(byte modbusSlaveID, Stream& stream, int8_t enablePin = -1);
+    modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin);
+    /**
+     * @copydoc modbusMaster(byte modbusSlaveID, Stream& stream)
+     * @param enablePin A pin on the Arduino processor to use to send an enable signal
+     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
+     */
+    modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin);
 
+    /**
+     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @copydetails modbusMaster(byte modbusSlaveID, Stream* stream)
+     * @return Always returns true
+     */
+    bool begin(byte modbusSlaveID, Stream* stream);
+
+    /**
+     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @copydetails modbusMaster(byte modbusSlaveID, Stream& stream)
+     * @return Always returns true
+     */
+    bool begin(byte modbusSlaveID, Stream& stream);
+
+    /**
+     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @copydetails modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin)
+     * @return Always returns true
+     */
+    bool begin(byte modbusSlaveID, Stream* stream, int8_t enablePin);
+
+    /**
+     * @brief Equivalent to a constructor to assign members of the modbusMaster object
+     * @copydetails modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin)
+     * @return Always returns true
+     */
+    bool begin(byte modbusSlaveID, Stream& stream, int8_t enablePin);
+    /**@}*/
+
+    /**
+     * @anchor setters_and_getters
+     * @name Object setters and getters
+     *
+     * Functions to set and get properties of the modbusMaster object.
+     */
+    /**@{*/
+    /**
+     * @brief Set the slave id
+     *
+     * @param slaveID The byte identifier of the modbus slave device.
+     */
+    void setSlaveID(byte slaveID);
+    /**
+     * @brief Get the byte identifier of the modbus slave device.
+     *
+     * @return The byte identifier of the modbus slave device.
+     */
+    byte getSlaveID();
     /**
      * @brief Set the enable pin
      *
@@ -286,6 +320,39 @@ class modbusMaster {
      * @return The number of times to retry a command before giving up
      */
     uint8_t getCommandRetries();
+    /**
+     * @brief Set the stream for communication
+     *
+     * The "stream" device must be initialized prior to running this.
+     * Per modbus specifications, the stream must have:
+     *    - 1 start bit
+     *    - 8 data bits, least significant bit sent first
+     *    - 1 stop bit if parity is used - 2 bits if no parity
+     * Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
+     * will support either even or odd parity!
+     *
+     * @param stream A pointer to the Arduino stream object to communicate with.
+     */
+    void setStream(Stream* stream);
+    /**
+     * @brief Set the stream for communication
+     *
+     * Per modbus specifications, the stream must have:
+     *    - 1 start bit
+     *    - 8 data bits, least significant bit sent first
+     *    - 1 stop bit if parity is used - 2 bits if no parity
+     * Note that neither SoftwareSerial, AltSoftSerial, nor NeoSoftwareSerial
+     * will support either even or odd parity!
+     *
+     * @param stream A reference to the Arduino stream object to communicate with.
+     */
+    void setStream(Stream& stream);
+    /**
+     * @brief Get a pointer to the stream for communication
+     *
+     * @return A pointer to the Arduino stream object used for communication.
+     */
+    Stream* getStream();
     /**@}*/
 
 

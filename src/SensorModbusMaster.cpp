@@ -23,47 +23,80 @@ byte modbusMaster::crcFrame[2] = {
 
 
 //----------------------------------------------------------------------------
-//                           HIGHEST LEVEL FUNCTIONS
+//                    CONSTRUCTORS, BEGINS, SETTERS, GETTERS
 //----------------------------------------------------------------------------
+
+modbusMaster::modbusMaster() {}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream* stream) {
+    setSlaveID(modbusSlaveID);
+    setStream(stream);
+    setEnablePin(-1);
+}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream& stream) {
+    setSlaveID(modbusSlaveID);
+    setStream(&stream);
+    setEnablePin(-1);
+}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin) {
+    setSlaveID(modbusSlaveID);
+    setStream(stream);
+    setEnablePin(enablePin);
+}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
+    setSlaveID(modbusSlaveID);
+    setStream(&stream);
+    setEnablePin(enablePin);
+}
 
 // This function sets up the communication
 // It should be run during the arduino "setup" function.
 // The "stream" device must be initialized and begun prior to running this.
 bool modbusMaster::begin(byte modbusSlaveID, Stream* stream, int8_t enablePin) {
     // Give values to variables;
-    _slaveID   = modbusSlaveID;
-    _stream    = stream;
-    _enablePin = enablePin;
-
-    // Set pin mode for the enable pin
-    if (_enablePin >= 0) { pinMode(_enablePin, OUTPUT); }
-    receiverEnable();
-
-    _stream->setTimeout(modbusFrameTimeout);
-
+    setSlaveID(modbusSlaveID);
+    setStream(stream);
+    setEnablePin(enablePin);
     return true;
 }
 bool modbusMaster::begin(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
     return begin(modbusSlaveID, &stream, enablePin);
 }
+bool modbusMaster::begin(byte modbusSlaveID, Stream* stream) {
+    return begin(modbusSlaveID, stream, -1);
+}
+bool modbusMaster::begin(byte modbusSlaveID, Stream& stream) {
+    return begin(modbusSlaveID, &stream, -1);
+}
+
+
+void modbusMaster::setSlaveID(byte slaveID) {
+    _slaveID = slaveID;
+}
+byte modbusMaster::getSlaveID() {
+    return _slaveID;
+}
+
 void modbusMaster::setEnablePin(int8_t enablePin) {
     _enablePin = enablePin;
 }
 int8_t modbusMaster::getEnablePin() {
     return _enablePin;
 }
+
 void modbusMaster::setCommandTimeout(uint32_t timeout) {
     modbusTimeout = timeout;
 }
 uint32_t modbusMaster::getCommandTimeout() {
     return modbusTimeout;
 }
+
 void modbusMaster::setFrameTimeout(uint32_t timeout) {
     modbusFrameTimeout = timeout;
 }
 uint32_t modbusMaster::getFrameTimeout() {
     return modbusFrameTimeout;
 }
+
 void modbusMaster::setCommandRetries(uint8_t retries) {
     commandRetries = retries;
 }
@@ -71,7 +104,22 @@ uint8_t modbusMaster::getCommandRetries() {
     return commandRetries;
 }
 
+void modbusMaster::setStream(Stream* stream) {
+    _stream = stream;
+    _stream->setTimeout(modbusFrameTimeout);
+}
+void modbusMaster::setStream(Stream& stream) {
+    _stream = &stream;
+    _stream->setTimeout(modbusFrameTimeout);
+}
+Stream* modbusMaster::getStream() {
+    return _stream;
+}
 
+
+//----------------------------------------------------------------------------
+//                           HIGHEST LEVEL FUNCTIONS
+//----------------------------------------------------------------------------
 // These functions return a variety of data from a data register
 uint16_t modbusMaster::uint16FromRegister(byte regType, int regNum, endianness endian) {
     getRegisters(regType, regNum, UINT16_SIZE / 2);
@@ -1110,6 +1158,7 @@ void modbusMaster::printLastError(void) {
 // This flips the device/receive enable to DRIVER so the arduino can send text
 void modbusMaster::driverEnable(void) {
     if (_enablePin >= 0) {
+        pinMode(_enablePin, OUTPUT);
         digitalWrite(_enablePin, HIGH);
         debugPrint("RS485 Driver/Master Tx Enabled\n");
         delay(8);
@@ -1119,6 +1168,7 @@ void modbusMaster::driverEnable(void) {
 // This flips the device/receive enable to RECEIVER so the sensor can send text
 void modbusMaster::receiverEnable(void) {
     if (_enablePin >= 0) {
+        pinMode(_enablePin, OUTPUT);
         digitalWrite(_enablePin, LOW);
         debugPrint("RS485 Receiver/Slave Tx Enabled\n");
         // delay(8);
