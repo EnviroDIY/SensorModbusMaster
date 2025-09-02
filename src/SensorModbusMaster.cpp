@@ -114,47 +114,47 @@ Stream* modbusMaster::getStream() {
 // These functions return a variety of data from a data register
 uint16_t modbusMaster::uint16FromRegister(byte slaveId, byte regType, int regNum,
                                           endianness endian) {
-    getRegisters(slaveId, regType, regNum, UINT16_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, UINT16_SIZE / 2);
     return uint16FromFrame(endian);
 }
 int16_t modbusMaster::int16FromRegister(byte slaveId, byte regType, int regNum,
                                         endianness endian) {
-    getRegisters(slaveId, regType, regNum, INT16_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, INT16_SIZE / 2);
     return int16FromFrame(endian);
 }
 float modbusMaster::float32FromRegister(byte slaveId, byte regType, int regNum,
                                         endianness endian) {
-    getRegisters(slaveId, regType, regNum, FLOAT32_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, FLOAT32_SIZE / 2);
     return float32FromFrame(endian);
 }
 uint32_t modbusMaster::uint32FromRegister(byte slaveId, byte regType, int regNum,
                                           endianness endian) {
-    getRegisters(slaveId, regType, regNum, UINT32_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, UINT32_SIZE / 2);
     return uint32FromFrame(endian);
 }
 int32_t modbusMaster::int32FromRegister(byte slaveId, byte regType, int regNum,
                                         endianness endian) {
-    getRegisters(slaveId, regType, regNum, INT32_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, INT32_SIZE / 2);
     return int32FromFrame(endian);
 }
 uint32_t modbusMaster::TAI64FromRegister(byte slaveId, byte regType, int regNum) {
-    getRegisters(slaveId, regType, regNum, TAI64_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, TAI64_SIZE / 2);
     return TAI64FromFrame();
 }
 uint32_t modbusMaster::TAI64NFromRegister(byte slaveId, byte regType, int regNum,
                                           uint32_t& nanoseconds) {
-    getRegisters(slaveId, regType, regNum, TAI64N_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, TAI64N_SIZE / 2);
     return TAI64NFromFrame(nanoseconds);
 }
 uint32_t modbusMaster::TAI64NAFromRegister(byte slaveId, byte regType, int regNum,
                                            uint32_t& nanoseconds,
                                            uint32_t& attoseconds) {
-    getRegisters(slaveId, regType, regNum, TAI64NA_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, TAI64NA_SIZE / 2);
     return TAI64NAFromFrame(nanoseconds, attoseconds);
 }
 byte modbusMaster::byteFromRegister(byte slaveId, byte regType, int regNum,
                                     int byteNum) {
-    getRegisters(slaveId, regType, regNum, 1);
+    getModbusData(slaveId, regType, regNum, 1);
     if (byteNum == 1) {
         return byteFromFrame(3);
     } else {
@@ -163,22 +163,22 @@ byte modbusMaster::byteFromRegister(byte slaveId, byte regType, int regNum,
 }
 uint16_t modbusMaster::pointerFromRegister(byte slaveId, byte regType, int regNum,
                                            endianness endian) {
-    getRegisters(slaveId, regType, regNum, POINTER_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, POINTER_SIZE / 2);
     return pointerFromFrame(endian);
 }
 int8_t modbusMaster::pointerTypeFromRegister(byte slaveId, byte regType, int regNum,
                                              endianness endian) {
-    getRegisters(slaveId, regType, regNum, POINTER_SIZE / 2);
+    getModbusData(slaveId, regType, regNum, POINTER_SIZE / 2);
     return pointerTypeFromFrame(endian);
 }
 String modbusMaster::StringFromRegister(byte slaveId, byte regType, int regNum,
                                         int charLength) {
-    getRegisters(slaveId, regType, regNum, charLength / 2);
+    getModbusData(slaveId, regType, regNum, charLength / 2);
     return StringFromFrame(charLength);
 }
 void modbusMaster::charFromRegister(byte slaveId, byte regType, int regNum,
                                     char outChar[], int charLength) {
-    getRegisters(slaveId, regType, regNum, charLength / 2);
+    getModbusData(slaveId, regType, regNum, charLength / 2);
     charFromFrame(outChar, charLength);
 }
 
@@ -300,12 +300,12 @@ bool modbusMaster::charToRegister(byte slaveId, int regNum, const char* inChar,
 // For an input register, readCommand = 0x04
 
 bool modbusMaster::getCoil(byte slaveId, int16_t coilAddress) {
-    if (!getCoils(slaveId, coilAddress, 1)) { return false; }
+    if (!getModbusData(slaveId, 0x01,coilAddress, 1)) { return false; }
     return (bitRead(responseBuffer[3], 0) != 0);
 }
 
 bool modbusMaster::getDiscreteInput(byte slaveId, int16_t inputAddress) {
-    if (!getDiscreteInputs(slaveId, inputAddress, 1)) { return false; }
+    if (!getModbusData(slaveId, 0x02, inputAddress, 1)) { return false; }
     return (bitRead(responseBuffer[3], 0) != 0);
 }
 
