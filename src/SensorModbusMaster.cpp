@@ -189,84 +189,84 @@ void modbusMaster::charFromRegister(byte slaveId, byte regType, int regNum,
 // multiple registers command, set the boolean input for forceMultiple to true.
 bool modbusMaster::uint16ToRegister(byte slaveId, int regNum, uint16_t value,
                                     endianness endian, bool forceMultiple) {
-    byte inputData[UINT16_SIZE] = {
+    byte bytesToWrite[UINT16_SIZE] = {
         0x00,
     };
-    uint16ToFrame(value, endian, inputData);
-    return setRegisters(slaveId, regNum, UINT16_SIZE / 2, inputData, forceMultiple);
+    uint16ToFrame(value, endian, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, UINT16_SIZE / 2, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::int16ToRegister(byte slaveId, int regNum, int16_t value,
                                    endianness endian, bool forceMultiple) {
-    byte inputData[INT16_SIZE] = {
+    byte bytesToWrite[INT16_SIZE] = {
         0x00,
     };
-    int16ToFrame(value, endian, inputData);
-    return setRegisters(slaveId, regNum, INT16_SIZE / 2, inputData, forceMultiple);
+    int16ToFrame(value, endian, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, INT16_SIZE / 2, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::float32ToRegister(byte slaveId, int regNum, float value,
                                      endianness endian) {
-    byte inputData[FLOAT32_SIZE] = {
+    byte bytesToWrite[FLOAT32_SIZE] = {
         0x00,
     };
-    float32ToFrame(value, endian, inputData);
-    return setRegisters(slaveId, regNum, FLOAT32_SIZE / 2, inputData);
+    float32ToFrame(value, endian, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, FLOAT32_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::uint32ToRegister(byte slaveId, int regNum, uint32_t value,
                                     endianness endian) {
-    byte inputData[UINT32_SIZE] = {
+    byte bytesToWrite[UINT32_SIZE] = {
         0x00,
     };
-    uint32ToFrame(value, endian, inputData);
-    return setRegisters(slaveId, regNum, UINT32_SIZE / 2, inputData);
+    uint32ToFrame(value, endian, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, UINT32_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::int32ToRegister(byte slaveId, int regNum, int32_t value,
                                    endianness endian) {
-    byte inputData[INT32_SIZE] = {
+    byte bytesToWrite[INT32_SIZE] = {
         0x00,
     };
-    int32ToFrame(value, endian, inputData);
-    return setRegisters(slaveId, regNum, INT32_SIZE / 2, inputData);
+    int32ToFrame(value, endian, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, INT32_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::TAI64ToRegister(byte slaveId, int regNum, uint32_t seconds) {
-    byte inputData[TAI64_SIZE] = {
+    byte bytesToWrite[TAI64_SIZE] = {
         0x00,
     };
-    TAI64ToFrame(seconds, inputData);
-    return setRegisters(slaveId, regNum, TAI64_SIZE / 2, inputData);
+    TAI64ToFrame(seconds, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, TAI64_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::TAI64NToRegister(byte slaveId, int regNum, uint32_t seconds,
                                     uint32_t nanoseconds) {
-    byte inputData[TAI64N_SIZE] = {
+    byte bytesToWrite[TAI64N_SIZE] = {
         0x00,
     };
-    TAI64NToFrame(seconds, nanoseconds, inputData);
-    return setRegisters(slaveId, regNum, TAI64N_SIZE / 2, inputData);
+    TAI64NToFrame(seconds, nanoseconds, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, TAI64N_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::TAI64NAToRegister(byte slaveId, int regNum, uint32_t seconds,
                                      uint32_t nanoseconds, uint32_t attoseconds) {
-    byte inputData[TAI64NA_SIZE] = {
+    byte bytesToWrite[TAI64NA_SIZE] = {
         0x00,
     };
-    TAI64NAToFrame(seconds, nanoseconds, attoseconds, inputData);
-    return setRegisters(slaveId, regNum, TAI64NA_SIZE / 2, inputData);
+    TAI64NAToFrame(seconds, nanoseconds, attoseconds, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, TAI64NA_SIZE / 2, bytesToWrite);
 }
 
 bool modbusMaster::byteToRegister(byte slaveId, int regNum, int byteNum, byte value,
                                   bool forceMultiple) {
-    byte inputData[2] = {
+    byte bytesToWrite[2] = {
         0x00,
     };
-    byteToFrame(value, byteNum, inputData);
-    return setRegisters(slaveId, regNum, 1, inputData, forceMultiple);
+    byteToFrame(value, byteNum, bytesToWrite, 0);
+    return setRegisters(slaveId, regNum, 1, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::pointerToRegister(byte slaveID, int regNum, uint16_t value,
                                      pointerType point, endianness endian,
                                      bool forceMultiple) {
-    byte inputData[UINT16_SIZE] = {
+    byte bytesToWrite[UINT16_SIZE] = {
         0x00,
     };
-    pointerToFrame(value, point, endian, inputData);
-    return setRegisters(slaveID, regNum, UINT16_SIZE / 2, inputData, forceMultiple);
+    pointerToFrame(value, point, endian, bytesToWrite, 0);
+    return setRegisters(slaveID, regNum, UINT16_SIZE / 2, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::StringToRegister(byte slaveId, int regNum, String value,
                                     bool forceMultiple) {
@@ -1174,21 +1174,22 @@ void modbusMaster::sliceArray(byte inputArray[], byte outputArray[], int start_i
 
 // This converts data in a modbus RTU frame into a little-endian data frame
 // little-endian data frames are needed because all Arduino processors are little-endian
-leFrame modbusMaster::leFrameFromFrame(int varBytes, endianness endian,
-                                       int start_index) {
-    // Set up a temporary output frame
-    byte outFrame[4] = {0, 0, 0, 0};
+leFrame modbusMaster::leFrameFromFrame(int varBytes, endianness endian, int start_index,
+                                       byte* inFrame) {
+    // Set up a temporary 4-byte frame
+    byte tempFrame[4] = {0, 0, 0, 0};
     // Slice data from the full response frame into the temporary output frame
     if (endian == bigEndian) {
-        sliceArray(responseBuffer, outFrame, start_index, varBytes, true);
+        sliceArray(inFrame, tempFrame, start_index, varBytes, true);
     } else {
-        sliceArray(responseBuffer, outFrame, start_index, varBytes, false);
+        sliceArray(inFrame, tempFrame, start_index, varBytes, false);
     }
-    // Put it into a little-endian frame (the format of all arduino processors)
+    // Create a new little-endian frame for output (the format of all arduino processors)
     leFrame fram = {{
         0,
     }};
-    memcpy(fram.Byte, outFrame, varBytes);
+    // Copy from the temporary - not necessarily little endian - frame to the little-endian frame
+    memcpy(fram.Byte, tempFrame, varBytes);
     // Return the little-endian frame
     return fram;
 }
