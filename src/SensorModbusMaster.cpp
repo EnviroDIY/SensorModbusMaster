@@ -462,74 +462,74 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
 }
 
 // These insert values into a longer modbus data frame.
-void modbusMaster::uint16ToFrame(uint16_t value, endianness endian, byte modbusFrame[],
+void modbusMaster::uint16ToFrame(uint16_t value, endianness endian, byte* destFrame,
                                  int start_index) {
     leFrame fram;
     fram.uInt16[0] = value;
     int end_index  = (start_index + UINT16_SIZE) - 1;
     for (int i = 0; i < UINT16_SIZE; i++) {
         if (endian == bigEndian) {
-            modbusFrame[end_index - i] = fram.Byte[i];
+            destFrame[end_index - i] = fram.Byte[i];
         } else {
-            modbusFrame[start_index + i] = fram.Byte[i];
+            destFrame[start_index + i] = fram.Byte[i];
         }
     }
 }
-void modbusMaster::int16ToFrame(int16_t value, endianness endian, byte modbusFrame[],
+void modbusMaster::int16ToFrame(int16_t value, endianness endian, byte* destFrame,
                                 int start_index) {
     leFrame fram;
     fram.Int16[0] = value;
     int end_index = (start_index + INT16_SIZE) - 1;
     for (int i = 0; i < INT16_SIZE; i++) {
         if (endian == bigEndian) {
-            modbusFrame[end_index - i] = fram.Byte[i];
+            destFrame[end_index - i] = fram.Byte[i];
         } else {
-            modbusFrame[start_index + i] = fram.Byte[i];
+            destFrame[start_index + i] = fram.Byte[i];
         }
     }
 }
-void modbusMaster::float32ToFrame(float value, endianness endian, byte modbusFrame[],
+void modbusMaster::float32ToFrame(float value, endianness endian, byte* destFrame,
                                   int start_index) {
     leFrame fram;
     fram.Float32  = value;
     int end_index = (start_index + FLOAT32_SIZE) - 1;
     for (int i = 0; i < FLOAT32_SIZE; i++) {
         if (endian == bigEndian) {
-            modbusFrame[end_index - i] = fram.Byte[i];
+            destFrame[end_index - i] = fram.Byte[i];
         } else {
-            modbusFrame[start_index + i] = fram.Byte[i];
+            destFrame[start_index + i] = fram.Byte[i];
         }
     }
 }
-void modbusMaster::uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[],
+void modbusMaster::uint32ToFrame(uint32_t value, endianness endian, byte* destFrame,
                                  int start_index) {
     leFrame fram;
     fram.uInt32   = value;
     int end_index = (start_index + UINT32_SIZE) - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
         if (endian == bigEndian) {
-            modbusFrame[end_index - i] = fram.Byte[i];
+            destFrame[end_index - i] = fram.Byte[i];
         } else {
-            modbusFrame[start_index + i] = fram.Byte[i];
+            destFrame[start_index + i] = fram.Byte[i];
         }
     }
 }
-void modbusMaster::int32ToFrame(int32_t value, endianness endian, byte modbusFrame[],
+void modbusMaster::int32ToFrame(int32_t value, endianness endian, byte* destFrame,
                                 int start_index) {
     leFrame fram;
     fram.Int32    = value;
     int end_index = (start_index + INT32_SIZE) - 1;
     for (int i = 0; i < INT32_SIZE; i++) {
         if (endian == bigEndian) {
-            modbusFrame[end_index - i] = fram.Byte[i];
+            destFrame[end_index - i] = fram.Byte[i];
         } else {
-            modbusFrame[start_index + i] = fram.Byte[i];
+            destFrame[start_index + i] = fram.Byte[i];
         }
     }
 }
-void modbusMaster::TAI64ToFrame(uint32_t seconds, byte modbusFrame[], int start_index) {
+void modbusMaster::TAI64ToFrame(uint32_t seconds, byte* destFrame, int start_index) {
     // The first 4 bytes of the 64-bit value will be 0x400000 until the year 2106
-    modbusFrame[start_index] = 0x40;
+    destFrame[start_index] = 0x40;
 
     leFrame fram;
     fram.Int32 = seconds;
@@ -537,13 +537,13 @@ void modbusMaster::TAI64ToFrame(uint32_t seconds, byte modbusFrame[], int start_
     int byte_offset_sec = 4;
     int end_index_sec   = start_index + byte_offset_sec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
-        modbusFrame[end_index_sec - i] = fram.Byte[i];
+        destFrame[end_index_sec - i] = fram.Byte[i];
     }
 }
 void modbusMaster::TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds,
-                                 byte modbusFrame[], int start_index) {
+                                 byte* destFrame, int start_index) {
     // The first 4 bytes of the 64-bit value will be 0x400000 until the year 2106
-    modbusFrame[start_index] = 0x40;
+    destFrame[start_index] = 0x40;
 
     leFrame fram;
     fram.Int32 = seconds;
@@ -551,7 +551,7 @@ void modbusMaster::TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds,
     int byte_offset_sec = 4;
     int end_index_sec   = start_index + byte_offset_sec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
-        modbusFrame[end_index_sec - i] = fram.Byte[i];
+        destFrame[end_index_sec - i] = fram.Byte[i];
     }
 
     fram.Int32 = nanoseconds;
@@ -559,14 +559,14 @@ void modbusMaster::TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds,
     int byte_offset_nanosec = 8;
     int end_index_nanosec   = start_index + byte_offset_nanosec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
-        modbusFrame[end_index_nanosec - i] = fram.Byte[i];
+        destFrame[end_index_nanosec - i] = fram.Byte[i];
     }
 }
 void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds,
-                                  uint32_t attoseconds, byte modbusFrame[],
+                                  uint32_t attoseconds, byte* destFrame,
                                   int start_index) {
     // The first 4 bytes of the 64-bit value will be 0x400000 until the year 2106
-    modbusFrame[start_index] = 0x40;
+    destFrame[start_index] = 0x40;
 
     leFrame fram;
     fram.Int32 = seconds;
@@ -574,7 +574,7 @@ void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds,
     int byte_offset_sec = 4;
     int end_index_sec   = start_index + byte_offset_sec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
-        modbusFrame[end_index_sec - i] = fram.Byte[i];
+        destFrame[end_index_sec - i] = fram.Byte[i];
     }
 
     fram.Int32 = nanoseconds;
@@ -582,7 +582,7 @@ void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds,
     int byte_offset_nanosec = 8;
     int end_index_nanosec   = start_index + byte_offset_nanosec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
-        modbusFrame[end_index_nanosec - i] = fram.Byte[i];
+        destFrame[end_index_nanosec - i] = fram.Byte[i];
     }
 
     // The 32-bit attoseconds start 12 bytes after the 64-bit value starts
@@ -590,46 +590,42 @@ void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds,
     int byte_offset_attosec = 12;
     int end_index_attosec   = start_index + byte_offset_attosec + UINT32_SIZE - 1;
     for (int i = 0; i < UINT32_SIZE; i++) {
-        modbusFrame[end_index_attosec - i] = fram.Byte[i];
+        destFrame[end_index_attosec - i] = fram.Byte[i];
     }
 }
-void modbusMaster::byteToFrame(byte value, int byteNum, byte modbusFrame[],
+void modbusMaster::byteToFrame(byte value, int byteNum, byte* destFrame,
                                int start_index) {
     if (byteNum == 1) {
-        modbusFrame[start_index] = value;
+        destFrame[start_index] = value;
     } else {
-        modbusFrame[start_index + 1] = value;
+        destFrame[start_index + 1] = value;
     }
 }
 void modbusMaster::pointerToFrame(uint16_t value, pointerType point, endianness endian,
-                                  byte modbusFrame[], int start_index) {
+                                  byte* destFrame, int start_index) {
     leFrame fram;
     fram.uInt16[0] = value;
     if (endian == bigEndian) {
         // Shift the lower address bit UP two
-        modbusFrame[start_index + 1] = fram.Byte[0] << 2;
-        modbusFrame[start_index + 1] |= point;
-        modbusFrame[start_index] = fram.Byte[1];
+        destFrame[start_index + 1] = fram.Byte[0] << 2;
+        destFrame[start_index + 1] |= point;
+        destFrame[start_index] = fram.Byte[1];
     } else {
         // Shift the lower address bit UP two
-        modbusFrame[start_index] = fram.Byte[0] << 2;
-        modbusFrame[start_index] |= point;
-        modbusFrame[start_index + 1] = fram.Byte[1];
+        destFrame[start_index] = fram.Byte[0] << 2;
+        destFrame[start_index] |= point;
+        destFrame[start_index + 1] = fram.Byte[1];
     }
 }
-void modbusMaster::StringToFrame(String value, byte modbusFrame[], int start_index) {
-    memcpy(modbusFrame + start_index, value.c_str(), value.length());
+void modbusMaster::StringToFrame(String value, byte* destFrame, int start_index) {
+    memcpy(destFrame + start_index, value.c_str(), value.length());
 }
-void modbusMaster::charToFrame(char inChar[], int charLength, byte modbusFrame[],
+void modbusMaster::charToFrame(char* inChar, int charLength, byte* destFrame, int start_index) {
+    memcpy(destFrame + start_index, inChar, charLength);
+}
+void modbusMaster::charToFrame(const char* inChar, int charLength, byte* destFrame,
                                int start_index) {
-    memcpy(modbusFrame + start_index, inChar, charLength);
-}
-void charToFrame(char* inChar, int charLength, byte* modbusFrame, int start_index) {
-    memcpy(modbusFrame + start_index, inChar, charLength);
-}
-void modbusMaster::charToFrame(const char* inChar, int charLength, byte modbusFrame[],
-                               int start_index) {
-    memcpy(modbusFrame + start_index, inChar, charLength);
+    memcpy(destFrame + start_index, inChar, charLength);
 }
 
 
@@ -1188,11 +1184,13 @@ leFrame modbusMaster::leFrameFromFrame(int varBytes, endianness endian, int star
     } else {
         sliceArray(inFrame, tempFrame, start_index, varBytes, false);
     }
-    // Create a new little-endian frame for output (the format of all arduino processors)
+    // Create a new little-endian frame for output (the format of all arduino
+    // processors)
     leFrame fram = {{
         0,
     }};
-    // Copy from the temporary - not necessarily little endian - frame to the little-endian frame
+    // Copy from the temporary - not necessarily little endian - frame to the
+    // little-endian frame
     memcpy(fram.Byte, tempFrame, varBytes);
     // Return the little-endian frame
     return fram;
