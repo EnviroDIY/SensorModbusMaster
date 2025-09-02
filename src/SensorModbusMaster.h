@@ -131,9 +131,9 @@ typedef union leFrame {
 // There are generally 2 bytes in each register, so this is double the number of
 // registers
 #define BYTE_SIZE 1     ///< The size of a single byte in bytes
-#define UINT16_SIZE 2   ///< The size of an uint16_t in bytes
+#define UINT16_SIZE 2   ///< The size of a uint16_t in bytes
 #define INT16_SIZE 2    ///< The size of an int16_t in bytes
-#define UINT32_SIZE 4   ///< The size of an uint32_t in bytes
+#define UINT32_SIZE 4   ///< The size of a uint32_t in bytes
 #define INT32_SIZE 4    ///< The size of an int32_t in bytes
 #define FLOAT32_SIZE 4  ///< The size of a float32 in bytes
 #define TAI64_SIZE 8    ///< The size of a 64-bit timestamp in bytes
@@ -178,32 +178,6 @@ class modbusMaster {
     /**
      * @brief Construct a new modbus Master object
      *
-     * @param modbusSlaveID The byte identifier of the modbus slave device.
-     * @param stream A pointer to the Arduino stream object to communicate with.
-     */
-    modbusMaster(byte modbusSlaveID, Stream* stream);
-    /**
-     * @brief Construct a new modbus Master object
-     *
-     * @param modbusSlaveID The byte identifier of the modbus slave device.
-     * @param stream A reference to the Arduino stream object to communicate with.
-     */
-    modbusMaster(byte modbusSlaveID, Stream& stream);
-    /**
-     * @copydoc modbusMaster(byte modbusSlaveID, Stream* stream)
-     * @param enablePin A pin on the Arduino processor to use to send an enable signal
-     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
-     */
-    modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin);
-    /**
-     * @copydoc modbusMaster(byte modbusSlaveID, Stream& stream)
-     * @param enablePin A pin on the Arduino processor to use to send an enable signal
-     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
-     */
-    modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin);
-    /**
-     * @brief Construct a new modbus Master object
-     *
      * @param stream A pointer to the Arduino stream object to communicate with.
      */
     modbusMaster(Stream* stream);
@@ -214,45 +188,49 @@ class modbusMaster {
      */
     modbusMaster(Stream& stream);
     /**
-     * @copydoc modbusMaster(Stream* stream)
+     * @copydoc modbusMaster(Stream*)
      * @param enablePin A pin on the Arduino processor to use to send an enable signal
      * to an RS485 to TTL adapter. Use a negative number if this does not apply.
      */
     modbusMaster(Stream* stream, int8_t enablePin);
     /**
-     * @copydoc modbusMaster(Stream& stream)
+     * @copydoc modbusMaster(Stream&)
      * @param enablePin A pin on the Arduino processor to use to send an enable signal
      * to an RS485 to TTL adapter. Use a negative number if this does not apply.
      */
     modbusMaster(Stream& stream, int8_t enablePin);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
-     * @copydetails modbusMaster(byte modbusSlaveID, Stream* stream)
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
+     * object
+     * @copydetails modbusMaster(byte slaveId, Stream* stream)
      * @return Always returns true
      */
-    bool begin(byte modbusSlaveID, Stream* stream);
+    bool begin(Stream* stream);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
-     * @copydetails modbusMaster(byte modbusSlaveID, Stream& stream)
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
+     * object
+     * @copydetails modbusMaster(byte slaveId, Stream& stream)
      * @return Always returns true
      */
-    bool begin(byte modbusSlaveID, Stream& stream);
+    bool begin(Stream& stream);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
-     * @copydetails modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin)
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
+     * object
+     * @copydetails modbusMaster(byte slaveId, Stream* stream, int8_t enablePin)
      * @return Always returns true
      */
-    bool begin(byte modbusSlaveID, Stream* stream, int8_t enablePin);
+    bool begin(Stream* stream, int8_t enablePin);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster object
-     * @copydetails modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin)
+     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
+     * object
+     * @copydetails modbusMaster(byte slaveId, Stream& stream, int8_t enablePin)
      * @return Always returns true
      */
-    bool begin(byte modbusSlaveID, Stream& stream, int8_t enablePin);
+    bool begin(Stream& stream, int8_t enablePin);
     /**@}*/
 
     /**
@@ -262,18 +240,6 @@ class modbusMaster {
      * Functions to set and get properties of the modbusMaster object.
      */
     /**@{*/
-    /**
-     * @brief Set the slave id
-     *
-     * @param slaveID The byte identifier of the modbus slave device.
-     */
-    void setSlaveID(byte slaveID);
-    /**
-     * @brief Get the byte identifier of the modbus slave device.
-     *
-     * @return The byte identifier of the modbus slave device.
-     */
-    byte getSlaveID();
     /**
      * @brief Set the enable pin
      *
@@ -382,16 +348,26 @@ class modbusMaster {
 
     // ===================================================================== //
     /**
-     * @anchor high_level_getters
-     * @name High level register fetching functions
+     * @anchor functions_by_datatype
+     * @name Functions to get and set data for specific datatypes
      *
-     * These higher-level functions return a variety of data from a single or group of
-     * input or holding registers
+     * Common parameters for all register reading functions:
+     *
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     * @param regNum The number of the **first** register of interest.
      */
+    // ===================================================================== //
     /**@{*/
+
     // ===================================================================== //
     /**
-     * @brief Get the numbered input or holding register and return it as an uint16_t.
+     * @anchor uint16_t_functions
+     * @name Functions to get and set unsigned 16-bit integer (uint16_t) data
+     */
+    // ===================================================================== //
+    /**
+     * @brief Get the numbered input or holding register and return it as a uint16_t.
      *
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
@@ -400,8 +376,53 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @return The uint16_t held in the register.
      */
-    uint16_t uint16FromRegister(byte regType, int regNum,
+    uint16_t uint16FromRegister(byte slaveId, byte regType, int regNum,
                                 endianness endian = bigEndian);
+    /**
+     * @brief Set a holding register to a uint16_t.
+     *
+     * @param regNum The register number of interest.
+     * @param value The value to set the register to.
+     * @param endian The endianness used to write the uint16_t. Optional with a default
+     * of big endian, which is required by modbus specifications.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
+     * default value of false.
+     * @return True if the register was successfully set, false if not.
+     */
+    bool uint16ToRegister(byte slaveId, int regNum, uint16_t value,
+                          endianness endian = bigEndian, bool forceMultiple = false);
+
+    /**
+     * @brief Read a uint16_t out of the response buffer frame.
+     *
+     * @param endian The endianness of the uint16_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @param start_index The starting position of the uint16_t in the response frame.
+     * Optional with a default of 3.
+     * @return The uint16_t held in the buffer frame.
+     */
+    uint16_t uint16FromFrame(endianness endian = bigEndian, int start_index = 3);
+    /**
+     * @brief Insert a uint16_t into the working byte frame
+     *
+     * @param value The value to add to the frame.
+     * @param endian The endianness used to write the uint16_t. Optional with a default
+     * of big endian, which is required by modbus specifications.
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the uint16_t in the response frame.
+     * Optional with a default of 0.
+     */
+    void uint16ToFrame(uint16_t value, endianness endian, byte modbusFrame[],
+                       int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor int16_t_functions
+     * @name Functions to get and set signed 16-bit integer (int16_t) data
+     */
+    // ===================================================================== //
     /**
      * @brief Get the numbered input or holding register and return it as an int16_t.
      *
@@ -412,7 +433,53 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @return The int16_t held in the register.
      */
-    int16_t int16FromRegister(byte regType, int regNum, endianness endian = bigEndian);
+    int16_t int16FromRegister(byte slaveId, byte regType, int regNum,
+                              endianness endian = bigEndian);
+    /**
+     * @brief Set a holding register to an int16_t.
+     *
+     * @param regNum The register number of interest.
+     * @param value The value to set the register to.
+     * @param endian The endianness used to write the int16_t. Optional with a default
+     * of big endian, which is required by modbus specifications.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
+     * default value of false.
+     * @return True if the register was successfully set, false if not.
+     */
+    bool int16ToRegister(byte slaveId, int regNum, int16_t value,
+                         endianness endian = bigEndian, bool forceMultiple = false);
+
+    /**
+     * @brief Read an int16_t out of the response buffer frame.
+     *
+     * @param endian The endianness of the int16_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @param start_index The starting position of the int16_t in the response frame.
+     * Optional with a default of 3.
+     * @return The int16_t held in the buffer frame.
+     */
+    int16_t int16FromFrame(endianness endian = bigEndian, int start_index = 3);
+    /**
+     * @brief Insert an int16_t into the working byte frame
+     *
+     * @param value The value to add to the frame.
+     * @param endian The endianness used to write the int16_t. Optional with a default
+     * of big endian, which is required by modbus specifications.
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the int16_t in the response frame.
+     * Optional with a default of 0.
+     */
+    void int16ToFrame(int16_t value, endianness endian, byte modbusFrame[],
+                      int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor float_functions
+     * @name Functions to get and set 32-bit float data
+     */
+    // ===================================================================== //
     /**
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a 32-bit float.
@@ -425,10 +492,55 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The 32 bit float held in the register.
      */
-    float float32FromRegister(byte regType, int regNum, endianness endian = bigEndian);
+    float float32FromRegister(byte slaveId, byte regType, int regNum,
+                              endianness endian = bigEndian);
+    /**
+     * @brief Set two holding registers to a 32-bit float
+     *
+     * @param regNum The number of first of the two registers of interest.
+     * @param value The value to set the register to.
+     * @param endian The endianness of the 32-bit float in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return True if the registers were successfully set, false if not.
+     */
+    bool float32ToRegister(byte slaveId, int regNum, float value,
+                           endianness endian = bigEndian);
+
+    /**
+     * @brief Read a 32-bit float out of the response buffer frame.
+     *
+     * @param endian The endianness of the 32-bit float in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @param start_index The starting position of the 32-bit float in the response
+     * frame. Optional with a default of 3.
+     * @return The 32-bit float held in the buffer frame.
+     */
+    float float32FromFrame(endianness endian = bigEndian, int start_index = 3);
+    /**
+     * @brief Insert a 32-bit float into the working byte frame
+     *
+     * @param value The value to add to the frame.
+     * @param endian The endianness used to write the 32-bit float. Optional with a
+     * default of big endian, which is required by modbus specifications. Only big and
+     * little endian are supported. Mixed endianness is *NOT* supported.
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the 32-bit float in the response
+     * frame. Optional with a default of 0.
+     */
+    void float32ToFrame(float value, endianness endian, byte modbusFrame[],
+                        int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor uint32_t_functions
+     * @name Functions to get and set unsigned 32-bit integer (uint32_t) data
+     */
+    // ===================================================================== //
     /**
      * @brief Get two input or holding registers starting at the specified number and
-     * return them as an uint32_t
+     * return them as a uint32_t
      *
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
@@ -438,8 +550,51 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The uint32_t held in the register.
      */
-    uint32_t uint32FromRegister(byte regType, int regNum,
+    uint32_t uint32FromRegister(byte slaveId, byte regType, int regNum,
                                 endianness endian = bigEndian);
+    /**
+     * @brief Set two holding registers to a uint32_t
+     *
+     * @param regNum The number of first of the two registers of interest.
+     * @param value The value to set the register to.
+     * @param endian The endianness of the uint32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return True if the registers were successfully set, false if not.
+     */
+    bool uint32ToRegister(byte slaveId, int regNum, uint32_t value,
+                          endianness endian = bigEndian);
+    /**
+     * @brief Insert a uint32_t into the working byte frame
+     *
+     * @param value The value to add to the frame.
+     * @param endian The endianness used to write the uint32_t. Optional with a default
+     * of big endian, which is required by modbus specifications. Only big and little
+     * endian are supported. Mixed endianness is *NOT* supported.
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the uint32_t in the response frame.
+     * Optional with a default of 0.
+     */
+    void uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[],
+                       int start_index = 0);
+    /**
+     * @brief Read a uint32_t out of the response buffer frame.
+     *
+     * @param endian The endianness of the uint32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @param start_index The starting position of the uint32_t in the response frame.
+     * Optional with a default of 3.
+     * @return The uint32_t held in the buffer frame.
+     */
+    uint32_t uint32FromFrame(endianness endian = bigEndian, int start_index = 3);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor int32_t_functions
+     * @name Functions to get and set signed 32-bit integer (int32_t) data
+     */
+    // ===================================================================== //
     /**
      * @brief Get two input or holding registers starting at the specified number and
      * return them as an int32_t
@@ -452,7 +607,159 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The int32_t held in the register.
      */
-    int32_t int32FromRegister(byte regType, int regNum, endianness endian = bigEndian);
+    int32_t int32FromRegister(byte slaveId, byte regType, int regNum,
+                              endianness endian = bigEndian);
+    /**
+     * @brief Set two holding registers to an int32_t
+     *
+     * @param regNum The number of first of the two registers of interest.
+     * @param value The value to set the register to.
+     * @param endian The endianness of the int32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications. Only
+     * big and little endian are supported. Mixed endianness is *NOT* supported.
+     * @return True if the registers were successfully set, false if not.
+     */
+    bool int32ToRegister(byte slaveId, int regNum, int32_t value,
+                         endianness endian = bigEndian);
+
+    /**
+     * @brief Read an int32_t out of the response buffer frame.
+     *
+     * @param endian The endianness of the int32_t in the modbus register. Optional
+     * with a default of big endian, which is required by modbus specifications.
+     * @param start_index The starting position of the int32_t in the response frame.
+     * Optional with a default of 3.
+     * @return The int32_t held in the buffer frame.
+     */
+    int32_t int32FromFrame(endianness endian = bigEndian, int start_index = 3);
+    /**
+     * @brief Insert an int32_t into the working byte frame
+     *
+     * @param value The value to add to the frame.
+     * @param endian The endianness used to write the int32_t. Optional with a default
+     * of big endian, which is required by modbus specifications. Only big and little
+     * endian are supported. Mixed endianness is *NOT* supported.
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the int32_t in the response frame.
+     * Optional with a default of 0.
+     */
+    void int32ToFrame(int32_t value, endianness endian, byte modbusFrame[],
+                      int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor byte_functions
+     * @name Functions to get and set bytes (half registers)
+     */
+    // ===================================================================== //
+    /**
+     * @brief Get the numbered input or holding register and return one byte of it.
+     *
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     * @param regNum The register number of interest.
+     * @param byteNum The byte number to return (1 for upper or 2 for lower)
+     * @return The byte held in the register.
+     */
+    byte byteFromRegister(byte slaveId, byte regType, int regNum, int byteNum);
+    /**
+     * @brief Set one byte of a holding register.
+     *
+     * The byte will be inserted as a full 16-bit register with the unused byte set to
+     * 0.
+     *
+     * @param regNum The register number of interest.
+     * @param byteNum The byte number to set (1 for upper or 2 for lower)
+     * @param value The value to set the byte to.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
+     * default value of false.
+     * @return True if the register was successfully set, false if not.
+     */
+    bool byteToRegister(byte slaveId, int regNum, int byteNum, byte value,
+                        bool forceMultiple = false);
+
+    /**
+     * @brief Read a single byte out of the response buffer frame.
+     *
+     * @param start_index The starting position of the byte in the response frame.
+     * Optional with a default of 3.
+     * @return The byte held in the buffer frame.
+     */
+    byte byteFromFrame(int start_index = 3);
+    /**
+     * @brief Insert a single byte into the working byte frame.
+     *
+     * The byte will be inserted as a 16-bit value with the unused byte set to 0.
+     *
+     * @param value The byte to write
+     * @param byteNum The byte number to set (1 for upper or 2 for lower)
+     * @param modbusFrame The working byte frame
+     * @param start_index The starting position of the byte in the response frame.
+     * Optional with a default of 0.
+     */
+    void byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor tai64_format
+     * @name The TAI64 timestamp format
+     *
+     * Within this library, the support for TAI64, TAI64N and TAI64NA has these
+     * limitations:
+     *  - The time value must be in four (TAI64), six (TAI64N), or eight (TAI64NA)
+     * contiguous 16-bit registers
+     *  - The time value must always be fully big endian
+     *  - The full 64-bit timestamp is cropped to 32-bits and only the lower 32-bits are
+     * used as if it was a 32-bit unix timestamp.
+     *    - The upper 32-bits of the TAI64 timestamp will be 0x40000000 until the year
+     * 2106.
+     *
+     * > TAI stands for Temps Atomique International, the current international
+     * > real-time standard.
+     * >
+     * > TAI64 defines a 64-bit integer format where each value identifies a particular
+     * > SI second. The duration of SI seconds is defined through a count of state
+     * > transitions of the cesium atom and understood as constant. Time is structured
+     * > as a sequence of seconds anchored on the start of the year 1970 in the
+     * > Gregorian calendar, when atomic time (TAI) became the international standard
+     * > for real time. The standard defines 262 seconds before the year 1970, and
+     * > another 262 from this epoch onward, thus covering a span of roughly 300 billion
+     * > years, enough for most applications.
+     *
+     * > The extensions TAI64N and TAI64NA allow for finer time resolutions by
+     * > referring to particular nanoseconds and attoseconds (10-18 s), respectively,
+     * > within a particular second.
+     *
+     * The defining paper: [Toward a Unified Timestamp with explicit
+     * precision](https://www.demographic-research.org/volumes/vol12/6/12-6.pdf)
+     *
+     * [An excellent (and easier to read) explanation of the TAI64 formats on Stack
+     * Overflow](https://stackoverflow.com/questions/50907211/what-is-a-tai64-time-format)
+     */
+    // ===================================================================== //
+    /**
+     * @anchor tai64_functions
+     * @name Functions to get and set 64-bit timestamp (TAI64) data
+     *
+     * Common parameters for TAI64 reading functions:
+     *
+     * @param nanoseconds A reference to another uint32_t to populate with the
+     * nanoseconds - for TAI64N and TAI64NA
+     * @param attoseconds A reference to another uint32_t to populate with the
+     * attoseconds - for TAI64NA
+     * @return The lower 32 bits of the TAI64 timestamp.
+     *
+     * Common parameters for TAI64 writing functions:
+     *
+     * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
+     * be set to 0x40000000, which will be the correct value until the year 2106.
+     * @param nanoseconds The 32-bit nanosecond count.
+     * @param attoseconds The 32-bit attoseconds count.
+     */
+    // ===================================================================== //
     /**
      * @brief Get four input or holding registers starting at the specified number,
      * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
@@ -463,7 +770,7 @@ class modbusMaster {
      * @param regNum The number of the first of the four registers of interest.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64FromRegister(byte regType, int regNum);
+    uint32_t TAI64FromRegister(byte slaveId, byte regType, int regNum);
     /**
      * @brief Get six input or holding registers starting at the specified number,
      * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
@@ -476,7 +783,8 @@ class modbusMaster {
      * nanoseconds.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64NFromRegister(byte regType, int regNum, uint32_t& nanoseconds);
+    uint32_t TAI64NFromRegister(byte slaveId, byte regType, int regNum,
+                                uint32_t& nanoseconds);
     /**
      * @brief Get eight input or holding registers starting at the specified number,
      * convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count
@@ -492,441 +800,8 @@ class modbusMaster {
      * attoseconds.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64NAFromRegister(byte regType, int regNum, uint32_t& nanoseconds,
-                                 uint32_t& attoseconds);
-    /**
-     * @brief Get the numbered input or holding register and return one byte of it.
-     *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
-     * @param regNum The register number of interest.
-     * @param byteNum The byte number to return (1 for upper or 2 for lower)
-     * @return The byte held in the register.
-     */
-    byte byteFromRegister(byte regType, int regNum, int byteNum);
-    /**
-     * @brief Get the numbered input or holding register and return it as an 16-bit
-     * pointer.
-     *
-     * This should be a pointer to another registry address within the modbus registers.
-     *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the 16-bit pointer in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @return The 16-bit pointer held in the register.
-     */
-    uint16_t pointerFromRegister(byte regType, int regNum,
-                                 endianness endian = bigEndian);
-    /**
-     * @brief Get the numbered input or holding register and return it as a 8-bit
-     * pointer type.
-     *
-     * This should be the type of register pointed to by pointer contained within a
-     * different modbus register.
-     *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the pointer type in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @return The 8-bit pointer type held in the register. This will be an
-     * object of type #pointerType.
-     */
-    int8_t pointerTypeFromRegister(byte regType, int regNum,
-                                   endianness endian = bigEndian);
-    /**
-     * @brief Get a group of input or holding registers, convert them to characters,
-     * combine them, and return a single String.
-     *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
-     * @param regNum The number of the first of the registers of interest.
-     * @param charLength The number of characters to return. NOTE: There are *TWO*
-     * characters per register!
-     * @return The text from the registers.
-     */
-    String StringFromRegister(byte regType, int regNum, int charLength);
-    /**
-     * @brief Get a group of input or holding registers, convert them to characters and
-     * put them into the given character array.
-     *
-     * There is no return from this function.
-     *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
-     * @param regNum The number of the first of the registers of interest.
-     * @param outChar A character array to fill with the content of the registers.
-     * @param charLength The number of characters to return. NOTE: There are *TWO*
-     * characters per register!
-     */
-    void charFromRegister(byte regType, int regNum, char outChar[], int charLength);
-
-
-    /**
-     * @brief Get the numbered input register and return it as an uint16_t.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the uint16_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @return The uint16_t held in the register.
-     */
-    uint16_t uint16FromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get the numbered input register and return it as an int16_t.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the int16_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @return The int16_t held in the register.
-     */
-    int16_t int16FromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get two input registers starting at the specified number and return them
-     * as a 32-bit float.
-     *
-     * @param regNum The number of the first of the two registers of interest.
-     * @param endian The endianness of the 32-bit float in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return The 32 bit float held in the register.
-     */
-    float float32FromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get two input registers starting at the specified number and return them
-     * as an uint32_t
-     *
-     * @param regNum The number of the first of the two registers of interest.
-     * @param endian The endianness of the uint32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return The uint32_t held in the register.
-     */
-    uint32_t uint32FromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get two input registers starting at the specified number and return them
-     * as an int32_t
-     *
-     * @param regNum The number of the first of the two registers of interest.
-     * @param endian The endianness of the int32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return The int32_t held in the register.
-     */
-    int32_t int32FromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get four input registers starting at the specified number, convert them to
-     * a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.
-     *
-     * @param regNum The number of the first of the four registers of interest.
-     * @return The equivalent 32-bit unix timestamp.
-     */
-    uint32_t TAI64FromInputRegister(int regNum);
-    /**
-     * @brief Get six input registers starting at the specified number, convert them to
-     * a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return an
-     * equivalent 32-bits unix timestamp.
-     *
-     * @param regNum The number of the first of the six registers of interest.
-     * @param nanoseconds A reference to another uint32_t to populate with the
-     * nanoseconds.
-     * @return The equivalent 32-bit unix timestamp.
-     */
-    uint32_t TAI64NFromInputRegister(int regNum, uint32_t& nanoseconds);
-    /**
-     * @brief Get eight input registers starting at the specified number, convert them
-     * to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a
-     * 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.
-     *
-     * @param regNum The number of the first of the eight registers of interest.
-     * @param nanoseconds A reference to another uint32_t to populate with the
-     * nanoseconds.
-     * @param attoseconds A reference to another uint32_t to populate with the
-     * attoseconds.
-     * @return The equivalent 32-bit unix timestamp.
-     */
-    uint32_t TAI64NAFromInputRegister(int regNum, uint32_t& nanoseconds,
-                                      uint32_t& attoseconds);
-    /**
-     * @brief Get the numbered input register and return one byte of it.
-     *
-     * @param regNum The register number of interest.
-     * @param byteNum The byte number to return (1 for upper or 2 for lower)
-     * @return The byte held in the register.
-     */
-    byte byteFromInputRegister(int regNum, int byteNum);
-    /**
-     * @brief Get the numbered input register and return it as an 16-bit
-     * pointer.
-     *
-     * This should be a pointer to another registry address within the modbus registers.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the 16-bit pointer in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @return The 16-bit pointer held in the register.
-     */
-    uint16_t pointerFromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get the numbered input register and return it as a 8-bit
-     * pointer type.
-     *
-     * This should be the type of register pointed to by pointer contained within a
-     * different modbus register.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the pointer type in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @return The 8-bit pointer type held in the register. This will be an
-     * object of type #pointerType.
-     */
-    int8_t pointerTypeFromInputRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get a group of input registers, convert them to characters,
-     * combine them, and return a single String.
-     *
-     * @param regNum The number of the first of the registers of interest.
-     * @param charLength The number of characters to return. NOTE: There are *TWO*
-     * characters per register!
-     * @return The text from the registers.
-     */
-    String StringFromInputRegister(int regNum, int charLength);
-    /**
-     * @brief Get a group of input registers, convert them to characters and
-     * put them into the given character array.
-     *
-     * There is no return from this function.
-     *
-     * @param regNum The number of the first of the registers of interest.
-     * @param outChar A character array to fill with the content of the registers.
-     * @param charLength The number of characters to return. NOTE: There are *TWO*
-     * characters per register!
-     */
-    void charFromInputRegister(int regNum, char outChar[], int charLength);
-
-
-    /**
-     * @brief Get the numbered holding register and return it as an uint16_t.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the uint16_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @return The uint16_t held in the register.
-     */
-    uint16_t uint16FromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get the numbered holding register and return it as an int16_t.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the int16_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @return The int16_t held in the register.
-     */
-    int16_t int16FromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get two holding registers starting at the specified number and return them
-     * as a 32-bit float.
-     *
-     * @param regNum The number of the first of the two registers of interest.
-     * @param endian The endianness of the 32-bit float in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return The 32 bit float held in the register.
-     */
-    float float32FromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get two holding registers starting at the specified number and return them
-     * as an uint32_t
-     *
-     * @param regNum The number of the first of the two registers of interest.
-     * @param endian The endianness of the uint32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return The uint32_t held in the register.
-     */
-    uint32_t uint32FromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get two holding registers starting at the specified number and return them
-     * as an int32_t
-     *
-     * @param regNum The number of the first of the two registers of interest.
-     * @param endian The endianness of the int32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return The int32_t held in the register.
-     */
-    int32_t int32FromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get four holding registers starting at the specified number, convert them
-     * to a TAI64 (64-bit timestamp), and return the lower 32-bits as a unix timestamp.
-     *
-     * @param regNum The number of the first of the four registers of interest.
-     * @return The equivalent 32-bit unix timestamp.
-     */
-    uint32_t TAI64FromHoldingRegister(int regNum);
-    /**
-     * @brief Get six holding registers starting at the specified number, convert them
-     * to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count), and return
-     * an equivalent 32-bits unix timestamp.
-     *
-     * @param regNum The number of the first of the six registers of interest.
-     * @param nanoseconds A reference to another uint32_t to populate with the
-     * nanoseconds.
-     * @return The equivalent 32-bit unix timestamp.
-     */
-    uint32_t TAI64NFromHoldingRegister(int regNum, uint32_t& nanoseconds);
-    /**
-     * @brief Get eight holding registers starting at the specified number, convert them
-     * to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and then a
-     * 32-bit attosecond count), and return an equivalent 32-bits unix timestamp.
-     *
-     * @param regNum The number of the first of the eight registers of interest.
-     * @param nanoseconds A reference to another uint32_t to populate with the
-     * nanoseconds.
-     * @param attoseconds A reference to another uint32_t to populate with the
-     * attoseconds.
-     * @return The equivalent 32-bit unix timestamp.
-     */
-    uint32_t TAI64NAFromHoldingRegister(int regNum, uint32_t& nanoseconds,
-                                        uint32_t& attoseconds);
-    /**
-     * @brief Get the numbered holding register and return one byte of it.
-     *
-     * @param regNum The register number of interest.
-     * @param byteNum The byte number to return (1 for upper or 2 for lower)
-     * @return The byte held in the register.
-     */
-    byte byteFromHoldingRegister(int regNum, int byteNum);
-    /**
-     * @brief Get the numbered holding register and return it as an 16-bit
-     * pointer.
-     *
-     * This should be a pointer to another registry address within the modbus registers.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the 16-bit pointer in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @return The 16-bit pointer held in the register.
-     */
-    uint16_t pointerFromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get the numbered holding register and return it as a 8-bit
-     * pointer type.
-     *
-     * This should be the type of register pointed to by pointer contained within a
-     * different modbus register.
-     *
-     * @param regNum The register number of interest.
-     * @param endian The endianness of the pointer type in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @return The 8-bit pointer type held in the register. This will be an
-     * object of type #pointerType.
-     */
-    int8_t pointerTypeFromHoldingRegister(int regNum, endianness endian = bigEndian);
-    /**
-     * @brief Get a group of holding registers, convert them to characters,
-     * combine them, and return a single String.
-     *
-     * @param regNum The number of the first of the registers of interest.
-     * @param charLength The number of characters to return. NOTE: There are *TWO*
-     * characters per register!
-     * @return The text from the registers.
-     */
-    String StringFromHoldingRegister(int regNum, int charLength);
-    /**
-     * @brief Get a group of holding registers, convert them to characters and
-     * put them into the given character array.
-     *
-     * There is no return from this function.
-     *
-     * @param regNum The number of the first of the registers of interest.
-     * @param outChar A character array to fill with the content of the registers.
-     * @param charLength The number of characters to return. NOTE: There are *TWO*
-     * characters per register!
-     */
-    void charFromHoldingRegister(int regNum, char outChar[], int charLength);
-    /**@}*/
-
-
-    // ===================================================================== //
-    /**
-     * @anchor high_level_setters
-     * @name High level register setting functions
-     *
-     * These higher-level functions set data in input registers to a variety of data
-     * types
-     */
-    /**@{*/
-    // ===================================================================== //
-
-    /**
-     * @brief Set a holding register to a uint16_t.
-     *
-     * @param regNum The register number of interest.
-     * @param value The value to set the register to.
-     * @param endian The endianness used to write the uint16_t. Optional with a default
-     * of big endian, which is required by modbus specifications.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
-     * default value of false.
-     * @return True if the register was successfully set, false if not.
-     */
-    bool uint16ToRegister(int regNum, uint16_t value, endianness endian = bigEndian,
-                          bool forceMultiple = false);
-    /**
-     * @brief Set a holding register to an int16_t.
-     *
-     * @param regNum The register number of interest.
-     * @param value The value to set the register to.
-     * @param endian The endianness used to write the int16_t. Optional with a default
-     * of big endian, which is required by modbus specifications.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
-     * default value of false.
-     * @return True if the register was successfully set, false if not.
-     */
-    bool int16ToRegister(int regNum, int16_t value, endianness endian = bigEndian,
-                         bool forceMultiple = false);
-    /**
-     * @brief Set two holding registers to a 32-bit float
-     *
-     * @param regNum The number of first of the two registers of interest.
-     * @param value The value to set the register to.
-     * @param endian The endianness of the 32-bit float in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return True if the registers were successfully set, false if not.
-     */
-    bool float32ToRegister(int regNum, float value, endianness endian = bigEndian);
-    /**
-     * @brief Set two holding registers to an uint32_t
-     *
-     * @param regNum The number of first of the two registers of interest.
-     * @param value The value to set the register to.
-     * @param endian The endianness of the uint32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return True if the registers were successfully set, false if not.
-     */
-    bool uint32ToRegister(int regNum, uint32_t value, endianness endian = bigEndian);
-    /**
-     * @brief Set two holding registers to an int32_t
-     *
-     * @param regNum The number of first of the two registers of interest.
-     * @param value The value to set the register to.
-     * @param endian The endianness of the int32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications. Only
-     * big and little endian are supported. Mixed endianness is *NOT* supported.
-     * @return True if the registers were successfully set, false if not.
-     */
-    bool int32ToRegister(int regNum, int32_t value, endianness endian = bigEndian);
+    uint32_t TAI64NAFromRegister(byte slaveId, byte regType, int regNum,
+                                 uint32_t& nanoseconds, uint32_t& attoseconds);
     /**
      * @brief Set four holding registers to a TAI64 (64-bit timestamp)
      *
@@ -935,7 +810,7 @@ class modbusMaster {
      * be set to 0x40000000, which will be the correct value until the year 2106.
      * @return True if the registers were successfully set, false if not.
      */
-    bool TAI64ToRegister(int regNum, uint32_t seconds);
+    bool TAI64ToRegister(byte slaveId, int regNum, uint32_t seconds);
     /**
      * @brief Set six holding registers to a TAI64N (64-bit timestamp followed by a
      * 32-bit nanosecond count)
@@ -946,7 +821,8 @@ class modbusMaster {
      * @param nanoseconds The 32-bit nanosecond count.
      * @return True if the registers were successfully set, false if not.
      */
-    bool TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds);
+    bool TAI64NToRegister(byte slaveId, int regNum, uint32_t seconds,
+                          uint32_t nanoseconds);
     /**
      * @brief Set eight holding registers to a TAI64NA (64-bit timestamp followed by a
      * 32-bit nanosecond count and then a 32-bit attosecond count)
@@ -958,252 +834,9 @@ class modbusMaster {
      * @param attoseconds The 32-bit attoseconds count.
      * @return True if the registers were successfully set, false if not.
      */
-    bool TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds,
-                           uint32_t attoseconds);
-    /**
-     * @brief Set one byte of a holding register.
-     *
-     * The byte will be inserted as a full 16-bit register with the unused byte set to
-     * 0.
-     *
-     * @param regNum The register number of interest.
-     * @param byteNum The byte number to set (1 for upper or 2 for lower)
-     * @param value The value to set the byte to.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
-     * default value of false.
-     * @return True if the register was successfully set, false if not.
-     */
-    bool byteToRegister(int regNum, int byteNum, byte value,
-                        bool forceMultiple = false);
-    /**
-     * @brief Set a holding register to a 16-bit pointer.
-     *
-     * @param regNum The register number of interest.
-     * @param value The value to set the register to.
-     * @param point The type of the pointer, (#pointerType) ie, which section of the
-     * modbus memory is being pointed to.
-     * @param endian The endianness used to write the 16-bit pointer. Optional with a
-     * default of big endian, which is required by modbus specifications.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
-     * default value of false.
-     * @return True if the register was successfully set, false if not.
-     */
-    bool pointerToRegister(int regNum, uint16_t value, pointerType point,
-                           endianness endian = bigEndian, bool forceMultiple = false);
-    /**
-     * @brief Set a series of holding registers to the characters in a String.
-     *
-     * @param regNum The first of the registers of interest
-     * @param value The String to set the registers to.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). This only
-     * applies if the String is two characters or less. Optional with a default value of
-     * false.
-     * @return True if the registers were successfully set, false if not.
-     */
-    bool StringToRegister(int regNum, String value, bool forceMultiple = false);
-    /**
-     * @brief Set a series of holding registers to the characters in a character array.
-     *
-     * @param regNum The first of the registers of interest
-     * @param inChar The character array to set the registers to.
-     * @param charLength The number of characters to set from in the array.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). This only
-     * applies if the character array is two characters or less. Optional with a default
-     * value of false.
-     * @return True if the registers were successfully set, false if not.
-     */
-    bool charToRegister(int regNum, char inChar[], int charLength,
-                        bool forceMultiple = false);
-    /**
-     * @brief Set a series of holding registers to the characters in a character array.
-     *
-     * @param regNum The first of the registers of interest
-     * @param inChar Pointer to a character array to set the registers to.
-     * @param charLength The number of characters to set from in the array.
-     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
-     * use of the Modbus command for setting multiple resisters (0x10). This only
-     * applies if the character array is two characters or less. Optional with a default
-     * value of false.
-     * @return True if the registers were successfully set, false if not.
-     */
-    bool charToRegister(int regNum, const char* inChar, int charLength,
-                        bool forceMultiple = false);
-    /**@}*/
+    bool TAI64NAToRegister(byte slaveId, int regNum, uint32_t seconds,
+                           uint32_t nanoseconds, uint32_t attoseconds);
 
-
-    // ===================================================================== //
-    /**
-     * @anchor bulk_getters
-     * @name Functions to get registers in bulk and to get one or more coils or discrete
-     * inputs.
-     *
-     * These getter functions require a pointer to buffer to store the retrieved data.
-     */
-    /**@{*/
-    // ===================================================================== //
-
-    /**
-     * @brief Get data from either holding or input registers and copy the output to the
-     * supplied buffer.
-     *
-     * @note This command puts only the **content of the registers** into the buffers.
-     * It does **not** add the full returned modbus frame.  The data in the buffer will
-     * be stripped of the modbus protocol characters.
-     *
-     * @remark No more than 125 registers can be read at once.
-     *
-     * @param readCommand The command to use to read data. For a holding register
-     * readCommand = 0x03. For an input register readCommand = 0x04.
-     * @param startRegister The starting register number.
-     * @param numRegisters The number of registers to read.
-     * @param buff The buffer to copy the output data to.
-     * @return True if the modbus slave returned the expected number of register
-     * values; false if there was a failure.
-     */
-    bool getRegisters(byte readCommand, int16_t startRegister, int16_t numRegisters,
-                      char* buff[]);
-    /**
-     * @brief Get data from holding registers and copy the output to the supplied
-     * buffer.
-     *
-     * @note This command puts only the **content of the registers** into the buffers.
-     * It does **not** add the full returned modbus frame.  The data in the buffer will
-     * be stripped of the modbus protocol characters.
-     *
-     * @remark No more than 125 registers can be read at once.
-     *
-     * @param startRegister The starting register number.
-     * @param numRegisters The number of registers to read.
-     * @param buff The buffer to copy the output data to.
-     * @return True if the modbus slave returned the expected number of register
-     * values; false if there was a failure.
-     */
-    bool getHoldingRegisters(int16_t startRegister, int16_t numRegisters, char* buff[]);
-    /**
-     * @brief Get data from input registers and copy the output to the supplied buffer.
-     *
-     * @note This command puts only the **content of the registers** into the buffers.
-     * It does **not** add the full returned modbus frame.  The data in the buffer will
-     * be stripped of the modbus protocol characters.
-     *
-     * @remark No more than 125 registers can be read at once.
-     *
-     * @param startRegister The starting register number.
-     * @param numRegisters The number of registers to read.
-     * @param buff The buffer to copy the output data to.
-     * @return True if the modbus slave returned the expected number of register
-     * values; false if there was a failure.
-     */
-    bool getInputRegisters(int16_t startRegister, int16_t numRegisters, char* buff[]);
-    /**
-     * @brief Get the status of a single output coil
-     *
-     * The read command for output coils is 0x01.
-     *
-     * @param coilAddress The address of the coil to read.
-     * @return The status of the coil (true for ON, false for OFF).
-     */
-    bool getCoil(int16_t coilAddress);
-    /**
-     * @brief Get the data from a range of output coils. Each coil is a single bit.
-     *
-     * The read command for output coils is 0x01.
-     *
-     * @param startCoil The starting coil number.
-     * @param numCoils The number of coils to read.
-     * @param buff A pre-allocated buffer to store the retrieved coil values.
-     * @return True if the modbus slave returned the expected number of coil
-     * values; false if there was a failure.
-     */
-    bool getCoils(int16_t startCoil, int16_t numCoils, byte* buff[]);
-    /**
-     * @brief Get the status of a single discrete input
-     *
-     * @param inputAddress The address of the discrete input to read.
-     * @return The status of the discrete input (true for ON, false for OFF).
-     */
-    bool getDiscreteInput(int16_t inputAddress);
-    /**
-     * @brief Get a range of discrete inputs
-     *
-     * @param startInput The starting input number.
-     * @param numInputs The number of discrete inputs to read.
-     * @param buff A pre-allocated buffer to store the retrieved coil values.
-     * @return True if the modbus slave returned the expected number of input
-     * values; false if there was a failure.
-     */
-    bool getDiscreteInputs(int16_t startInput, int16_t numInputs, byte* buff[]);
-    /**@}*/
-
-
-    // ===================================================================== //
-    /**
-     * @anchor mid_level_getters
-     * @name Mid-level data frame result fetching functions
-     *
-     * These mid-level functions return a variety of data from an input modbus "frame."
-     * Currently, the only "frame" available is the response buffer.
-     * Using these functions will be helpful if you wish to decrease the serial traffic
-     * by sending one "getRegisters" request for many registers and then parse that
-     * result into many different results.
-     */
-    /**@{*/
-    // ===================================================================== //
-
-    /**
-     * @brief Read an uint16_t out of the response buffer frame.
-     *
-     * @param endian The endianness of the uint16_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @param start_index The starting position of the uint16_t in the response frame.
-     * Optional with a default of 3.
-     * @return The uint16_t held in the buffer frame.
-     */
-    uint16_t uint16FromFrame(endianness endian = bigEndian, int start_index = 3);
-    /**
-     * @brief Read an int16_t out of the response buffer frame.
-     *
-     * @param endian The endianness of the int16_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @param start_index The starting position of the int16_t in the response frame.
-     * Optional with a default of 3.
-     * @return The int16_t held in the buffer frame.
-     */
-    int16_t int16FromFrame(endianness endian = bigEndian, int start_index = 3);
-    /**
-     * @brief Read a 32-bit float out of the response buffer frame.
-     *
-     * @param endian The endianness of the 32-bit float in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @param start_index The starting position of the 32-bit float in the response
-     * frame. Optional with a default of 3.
-     * @return The 32-bit float held in the buffer frame.
-     */
-    float float32FromFrame(endianness endian = bigEndian, int start_index = 3);
-    /**
-     * @brief Read an uint32_t out of the response buffer frame.
-     *
-     * @param endian The endianness of the uint32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @param start_index The starting position of the uint32_t in the response frame.
-     * Optional with a default of 3.
-     * @return The uint32_t held in the buffer frame.
-     */
-    uint32_t uint32FromFrame(endianness endian = bigEndian, int start_index = 3);
-    /**
-     * @brief Read an int32_t out of the response buffer frame.
-     *
-     * @param endian The endianness of the int32_t in the modbus register. Optional
-     * with a default of big endian, which is required by modbus specifications.
-     * @param start_index The starting position of the int32_t in the response frame.
-     * Optional with a default of 3.
-     * @return The int32_t held in the buffer frame.
-     */
-    int32_t int32FromFrame(endianness endian = bigEndian, int start_index = 3);
     /**
      * @brief Read a TAI64 (64-bit timestamp) out of the response buffer frame and
      * return the lower 32-bits as a unix timestamp.
@@ -1239,141 +872,6 @@ class modbusMaster {
      */
     uint32_t TAI64NAFromFrame(uint32_t& nanoseconds, uint32_t& attoseconds,
                               int start_index = 3);
-    /**
-     * @brief Read a single byte out of the response buffer frame.
-     *
-     * @param start_index The starting position of the byte in the response frame.
-     * Optional with a default of 3.
-     * @return The byte held in the buffer frame.
-     */
-    byte byteFromFrame(int start_index = 3);
-    /**
-     * @brief Read a 16-bit pointer out of the response buffer frame.
-     *
-     * This should be a pointer to another registry address within the modbus registers.
-     *
-     * @param endian The endianness of the 16-bit pointer in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @param start_index The starting position of the 16-bit pointer in the response
-     * frame. Optional with a default of 3.
-     * @return The 16-bit pointer held in the buffer frame.
-     */
-    uint16_t pointerFromFrame(endianness endian = bigEndian, int start_index = 3);
-    /**
-     * @brief Read a 16-bit pointer out of the response buffer frame.
-     *
-     * This should be the type of register pointed to by pointer contained within a
-     * different modbus register.
-     *
-     * @param endian The endianness of the pointer type in the modbus register.
-     * Optional with a default of big endian, which is required by modbus
-     * specifications.
-     * @param start_index The starting position of the 16-bit pointer in the response
-     * frame. Optional with a default of 3.
-     * @return The 8-bit pointer type held in the buffer frame. This will be an
-     * object of type #pointerType.
-     */
-    int8_t pointerTypeFromFrame(endianness endian = bigEndian, int start_index = 3);
-    /**
-     * @brief Read a String out of the response buffer frame.
-     *
-     * @param charLength The number of characters to return.
-     * @param start_index The starting position of the characters in the response
-     * frame. Optional with a default of 3.
-     * @return The text from the registers.
-     */
-    String StringFromFrame(int charLength, int start_index = 3);
-    /**
-     * @brief Read characters out of the response buffer frame and put them into a
-     * character array.
-     *
-     * There is no return from this function.
-     *
-     * @param outChar A character array to fill with the content of the response buffer.
-     * @param charLength The number of characters to return.
-     * @param start_index The starting position of the characters in the response
-     * frame. Optional with a default of 3.
-     */
-    void charFromFrame(char outChar[], int charLength, int start_index = 3);
-    /**@}*/
-
-
-    // ===================================================================== //
-    /**
-     * @anchor mid_level_setters
-     * @name Data frame setting functions
-     *
-     * These insert values into a longer modbus data frame.
-     * These are useful in creating a single long frame which can be sent out in one
-     * "setRegisters" command.
-     */
-    /**@{*/
-    // ===================================================================== //
-
-    /**
-     * @brief Insert an uint16_t into the working byte frame
-     *
-     * @param value The value to add to the frame.
-     * @param endian The endianness used to write the uint16_t. Optional with a default
-     * of big endian, which is required by modbus specifications.
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the uint16_t in the response frame.
-     * Optional with a default of 0.
-     */
-    void uint16ToFrame(uint16_t value, endianness endian, byte modbusFrame[],
-                       int start_index = 0);
-    /**
-     * @brief Insert an int16_t into the working byte frame
-     *
-     * @param value The value to add to the frame.
-     * @param endian The endianness used to write the int16_t. Optional with a default
-     * of big endian, which is required by modbus specifications.
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the int16_t in the response frame.
-     * Optional with a default of 0.
-     */
-    void int16ToFrame(int16_t value, endianness endian, byte modbusFrame[],
-                      int start_index = 0);
-    /**
-     * @brief Insert a 32-bit float into the working byte frame
-     *
-     * @param value The value to add to the frame.
-     * @param endian The endianness used to write the 32-bit float. Optional with a
-     * default of big endian, which is required by modbus specifications. Only big and
-     * little endian are supported. Mixed endianness is *NOT* supported.
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the 32-bit float in the response
-     * frame. Optional with a default of 0.
-     */
-    void float32ToFrame(float value, endianness endian, byte modbusFrame[],
-                        int start_index = 0);
-    /**
-     * @brief Insert an uint32_t into the working byte frame
-     *
-     * @param value The value to add to the frame.
-     * @param endian The endianness used to write the uint32_t. Optional with a default
-     * of big endian, which is required by modbus specifications. Only big and little
-     * endian are supported. Mixed endianness is *NOT* supported.
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the uint32_t in the response frame.
-     * Optional with a default of 0.
-     */
-    void uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[],
-                       int start_index = 0);
-    /**
-     * @brief Insert an int32_t into the working byte frame
-     *
-     * @param value The value to add to the frame.
-     * @param endian The endianness used to write the int32_t. Optional with a default
-     * of big endian, which is required by modbus specifications. Only big and little
-     * endian are supported. Mixed endianness is *NOT* supported.
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the int32_t in the response frame.
-     * Optional with a default of 0.
-     */
-    void int32ToFrame(int32_t value, endianness endian, byte modbusFrame[],
-                      int start_index = 0);
     /**
      * @brief Insert a TAI64 (64-bit timestamp) into the working byte frame
      *
@@ -1411,18 +909,93 @@ class modbusMaster {
      */
     void TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds,
                         byte modbusFrame[], int start_index = 0);
+
+
+    // ===================================================================== //
     /**
-     * @brief Insert a single byte into the working byte frame.
-     *
-     * The byte will be inserted as a 16-bit value with the unused byte set to 0.
-     *
-     * @param value The byte to write
-     * @param byteNum The byte number to set (1 for upper or 2 for lower)
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the byte in the response frame.
-     * Optional with a default of 0.
+     * @anchor pointer_functions
+     * @name Functions to get and set pointers to other registers
      */
-    void byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index = 0);
+    // ===================================================================== //
+    /**
+     * @brief Get the numbered input or holding register and return it as an 16-bit
+     * pointer.
+     *
+     * This should be a pointer to another registry address within the modbus registers.
+     *
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the 16-bit pointer in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @return The 16-bit pointer held in the register.
+     */
+    uint16_t pointerFromRegister(byte slaveId, byte regType, int regNum,
+                                 endianness endian = bigEndian);
+    /**
+     * @brief Get the numbered input or holding register and return it as a 8-bit
+     * pointer type.
+     *
+     * This should be the type of register pointed to by pointer contained within a
+     * different modbus register.
+     *
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     * @param regNum The register number of interest.
+     * @param endian The endianness of the pointer type in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @return The 8-bit pointer type held in the register. This will be an
+     * object of type #pointerType.
+     */
+    int8_t pointerTypeFromRegister(byte slaveId, byte regType, int regNum,
+                                   endianness endian = bigEndian);
+    /**
+     * @brief Set a holding register to a 16-bit pointer.
+     *
+     * @param regNum The register number of interest.
+     * @param value The value to set the register to.
+     * @param point The type of the pointer, (#pointerType) ie, which section of the
+     * modbus memory is being pointed to.
+     * @param endian The endianness used to write the 16-bit pointer. Optional with a
+     * default of big endian, which is required by modbus specifications.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). Optional with a
+     * default value of false.
+     * @return True if the register was successfully set, false if not.
+     */
+    bool pointerToRegister(byte slaveId, int regNum, uint16_t value, pointerType point,
+                           endianness endian = bigEndian, bool forceMultiple = false);
+
+    /**
+     * @brief Read a 16-bit pointer out of the response buffer frame.
+     *
+     * This should be a pointer to another registry address within the modbus registers.
+     *
+     * @param endian The endianness of the 16-bit pointer in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @param start_index The starting position of the 16-bit pointer in the response
+     * frame. Optional with a default of 3.
+     * @return The 16-bit pointer held in the buffer frame.
+     */
+    uint16_t pointerFromFrame(endianness endian = bigEndian, int start_index = 3);
+    /**
+     * @brief Read a 16-bit pointer out of the response buffer frame.
+     *
+     * This should be the type of register pointed to by pointer contained within a
+     * different modbus register.
+     *
+     * @param endian The endianness of the pointer type in the modbus register.
+     * Optional with a default of big endian, which is required by modbus
+     * specifications.
+     * @param start_index The starting position of the 16-bit pointer in the response
+     * frame. Optional with a default of 3.
+     * @return The 8-bit pointer type held in the buffer frame. This will be an
+     * object of type #pointerType.
+     */
+    int8_t pointerTypeFromFrame(endianness endian = bigEndian, int start_index = 3);
     /**
      * @brief Insert a 16-bit pointer into the working byte frame.
      *
@@ -1437,6 +1010,51 @@ class modbusMaster {
      */
     void pointerToFrame(uint16_t value, pointerType point, endianness endian,
                         byte modbusFrame[], int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor String_functions
+     * @name Functions to get and set Strings
+     *
+     * @note These are for Arduino String objects, not simple character arrays.
+     */
+    // ===================================================================== //
+    /**
+     * @brief Get a group of input or holding registers, convert them to characters,
+     * combine them, and return a single String.
+     *
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     * @param regNum The number of the first of the registers of interest.
+     * @param charLength The number of characters to return. NOTE: There are *TWO*
+     * characters per register!
+     * @return The text from the registers.
+     */
+    String StringFromRegister(byte slaveId, byte regType, int regNum, int charLength);
+    /**
+     * @brief Set a series of holding registers to the characters in a String.
+     *
+     * @param regNum The first of the registers of interest
+     * @param value The String to set the registers to.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). This only
+     * applies if the String is two characters or less. Optional with a default value of
+     * false.
+     * @return True if the registers were successfully set, false if not.
+     */
+    bool StringToRegister(byte slaveId, int regNum, String value,
+                          bool forceMultiple = false);
+
+    /**
+     * @brief Read a String out of the response buffer frame.
+     *
+     * @param charLength The number of characters to return.
+     * @param start_index The starting position of the characters in the response
+     * frame. Optional with a default of 3.
+     * @return The text from the registers.
+     */
+    String StringFromFrame(int charLength, int start_index = 3);
     /**
      * @brief Insert a String into the working byte frame.
      *
@@ -1446,117 +1064,211 @@ class modbusMaster {
      * Optional with a default of 0.
      */
     void StringToFrame(String value, byte modbusFrame[], int start_index = 0);
+
+
+    // ===================================================================== //
+    /**
+     * @anchor character_array_functions
+     * @name Functions to get and set character arrays
+     *
+     * @note These are for simple character arrays, not Arduino String objects.
+     */
+    // ===================================================================== //
+    /**
+     * @brief Get a group of input or holding registers, convert them to characters and
+     * put them into the given character array.
+     *
+     * There is no return from this function.
+     *
+     * @param slaveId The modbus slave ID to use in the request
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     * @param regNum The number of the first of the registers of interest.
+     * @param outChar A character array to fill with the content of the registers.
+     * @param charLength The number of characters to return. NOTE: There are *TWO*
+     * characters per register!
+     */
+    void charFromRegister(byte slaveId, byte regType, int regNum, char outChar[],
+                          int charLength);
+    /// @copydoc charFromRegister(byte, byte, int, char[], int)
+    void charFromRegister(byte slaveId, byte regType, int regNum, char* outChar,
+                          int charLength);
+    /// @copydoc charFromRegister(byte, byte, int, char[], int)
+    void charFromRegister(byte slaveId, byte regType, int regNum, const char* outChar,
+                          int charLength);
+    /**
+     * @brief Set a series of holding registers to the characters in a character array.
+     *
+     * @param slaveId The modbus slave ID to use in the request
+     * @param regNum The first of the registers of interest
+     * @param inChar The character array to set the registers to (or a pointer or
+     * constant pointer to one).
+     * @param charLength The number of characters to set from in the array.
+     * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
+     * use of the Modbus command for setting multiple resisters (0x10). This only
+     * applies if the character array is two characters or less. Optional with a default
+     * value of false.
+     * @return True if the registers were successfully set, false if not.
+     */
+    bool charToRegister(byte slaveId, int regNum, char inChar[], int charLength,
+                        bool forceMultiple = false);
+    /// @copydoc charToRegister(byte, int, char[], int, bool)
+    bool charToRegister(byte slaveId, int regNum, char* inChar, int charLength,
+                        bool forceMultiple = false);
+    /// @copydoc charToRegister(byte, int, char[], int, bool)
+    bool charToRegister(byte slaveId, int regNum, const char* inChar, int charLength,
+                        bool forceMultiple = false);
+
+    /**
+     * @brief Read characters out of the response buffer frame and put them into a
+     * character array.
+     *
+     * There is no return from this function.
+     *
+     * @param outChar A character array to fill with the content of the response buffer
+     * (or a pointer or constant pointer to one).
+     * @param charLength The number of characters to return.
+     * @param start_index The starting position of the characters in the response
+     * frame. Optional with a default of 3.
+     */
+    void charFromFrame(char outChar[], int charLength, int start_index = 3);
+    /// @copydoc charFromFrame(char[], int, int)
+    void charFromFrame(char* outChar, int charLength, int start_index = 3);
+    /// @copydoc charFromFrame(char[], int, int)
+    void charFromFrame(const char* outChar, int charLength, int start_index = 3);
     /**
      * @brief Insert a character array into the working byte frame.
      *
-     * @param inChar The character array to insert.
+     * @param inChar The character array to insert (or a pointer or constant pointer to
+     * one).
      * @param charLength The number of characters to copy from in the array.
      * @param modbusFrame The working byte frame
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
-    void charToFrame(char inChar[], int charLength, byte modbusFrame[],
+    void charToFrame(char inChar[], int charLength, byte* modbusFrame = commandBuffer,
                      int start_index = 0);
-    /**
-     * @brief Insert a character array into the working byte frame.
-     *
-     * @param inChar A pointer to a character array to insert.
-     * @param charLength The number of characters to copy from in the array.
-     * @param modbusFrame The working byte frame
-     * @param start_index The starting position of the byte in the response frame.
-     * Optional with a default of 0.
-     */
-    void charToFrame(const char* inChar, int charLength, byte modbusFrame[],
+    /// @copydoc charToFrame(char[], int, byte*, int)
+    void charToFrame(char* inChar, int charLength, byte* modbusFrame = commandBuffer,
                      int start_index = 0);
+    /// @copydoc charToFrame(char[], int, byte*, int)
+    void charToFrame(const char* inChar, int charLength,
+                     byte* modbusFrame = commandBuffer, int start_index = 0);
     /**@}*/
 
 
     // ===================================================================== //
     /**
-     * @anchor low_level_functions
-     * @name Low level functions
+     * @anchor data_getters
+     * @name Data Getters
+     *
+     * @brief Functions to get data from one or more registers, coils, or discrete
+     * inputs.
+     *
+     * @remark If you do not supply an output buffer, these commands put data into the
+     * internal library buffer. With the exception of the commands to get a single coil
+     * or a single discrete output, these functions do *not* return the data directly.
+     *
+     * @note These commands put only the **content of the registers** (or coils or
+     * inputs) into the buffer. They do **not** add the full returned modbus frame.  The
+     * data in the buffer will be stripped of the modbus protocol bytes - including the
+     * address, command number, CRC, and any error codes. If there was no problem with
+     * the response, these functions return true.  If one of these functions return
+     * false and you need to check for an error code, call the getLastError() function
+     * immediately after the command.
      */
-    /**@{*/
     // ===================================================================== //
+    /**@{*/
 
     /**
-     * @brief Get data from either holding or input registers and store it in the
-     * internal library buffer
+     * @brief Get data from either holding or input registers and copy the output to the
+     * supplied buffer.
      *
-     * @note This command puts the content of the registers into the internal library
-     * buffer, it does *not* return the data directly.
+     * @note This command puts only the **content of the registers** into the buffers.
+     * It does **not** add the full returned modbus frame.  The data in the buffer will
+     * be stripped of the modbus protocol characters.
      *
      * @remark No more than 125 registers can be read at once.
      *
+     * @param slaveId The modbus slave ID to use in the request
      * @param readCommand The command to use to read data. For a holding register
      * readCommand = 0x03. For an input register readCommand = 0x04.
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to read.
-     * @return True if the modbus slave returned the expected number of register
-     * values; false if there was a failure.
+     * @param buff The buffer to copy the output data to.
+     * @return Zero if the response didn't return the expected number of bytes or if
+     * there was an error in the modbus response; otherwise, the number of bytes in the
+     * response.
      */
-    bool getRegisters(byte readCommand, int16_t startRegister, int16_t numRegisters);
+    int16_t getRegisters(byte slaveId, byte readCommand, int16_t startRegister,
+                         int16_t numRegisters, byte* buff = responseBuffer);
     /**
-     * @brief Get data from a range of holding registers
+     * @brief Get the status of a single output coil
      *
-     * @note This command puts the content of the registers into the internal library
-     * buffer, it does *not* return the data directly.
+     * The read command for output coils is 0x01.
      *
-     * @remark No more than 125 registers can be read at once.
-     *
-     * @param startRegister The starting register number.
-     * @param numRegisters The number of registers to read.
-     * @return True if the modbus slave returned the expected number of register
-     * values; false if there was a failure.
+     * @param slaveId The modbus slave ID to use in the request
+     * @param coilAddress The address of the coil to read.
+     * @return The status of the coil (true for ON, false for OFF).
      */
-    bool getHoldingRegisters(int16_t startRegister, int16_t numRegisters);
+    bool getCoil(byte slaveId, int16_t coilAddress);
     /**
-     * @brief Get data from a range of input registers
+     * @brief Get the data from a range of output coils. Each coil is a single bit.
      *
-     * @note This command puts the content of the registers into the internal library
-     * buffer, it does *not* return the data directly.
+     * The read command for output coils is 0x01.
      *
-     * @param startRegister The starting register number.
-     * @param numRegisters The number of registers to read.
-     * @return True if the modbus slave returned the expected number of register
-     * values; false if there was a failure.
-     */
-    bool getInputRegisters(int16_t startRegister, int16_t numRegisters);
-
-    // This gets data from either an output coil or an input contact
-    // For a output coil readCommand = 0x01
-    // For an input (discrete) contact readCommand = 0x02
-    /**
-     * @brief Get the data from a range of output coils and store it in the internal
-     * library buffer.
-     *
-     * Each coil is a single bit. The read command for output coils is 0x01.
-     *
-     * @note This command puts the content of the registers into the internal library
-     * buffer, it does *not* return the data directly.
-     *
+     * @param slaveId The modbus slave ID to use in the request
      * @param startCoil The starting coil number.
      * @param numCoils The number of coils to read.
-     * @return True if the modbus slave returned the expected number of coil
-     * values; false if there was a failure.
+     * @param buff A pre-allocated buffer to store the retrieved coil values.
+     * @return Zero if the response didn't return the expected number of bytes or if
+     * there was an error in the modbus response; otherwise, the number of bytes in the
+     * response.
      */
-    bool getCoils(int16_t startCoil, int16_t numCoils);
+    int16_t getCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
+                     byte* buff = responseBuffer);
     /**
-     * @brief Get a range of discrete inputs and store it in the internal library
-     * buffer.
+     * @brief Get the status of a single discrete input
      *
-     * @note This command puts the content of the registers into the internal library
-     * buffer, it does *not* return the data directly.
+     * @param slaveId The modbus slave ID to use in the request
+     * @param inputAddress The address of the discrete input to read.
+     * @return The status of the discrete input (true for ON, false for OFF).
+     */
+    bool getDiscreteInput(byte slaveId, int16_t inputAddress);
+    /**
+     * @brief Get a range of discrete inputs
      *
-     * Each coil is a single bit. The read command for output coils is 0x01.
-     *
+     * @param slaveId The modbus slave ID to use in the request
      * @param startInput The starting input number.
      * @param numInputs The number of discrete inputs to read.
-     * @return True if the modbus slave returned the expected number of input
-     * values; false if there was a failure.
+     * @param buff A pre-allocated buffer to store the retrieved coil values.
+     * @return Zero if the response didn't return the expected number of bytes or if
+     * there was an error in the modbus response; otherwise, the number of bytes in the
+     * response.
      */
-    bool getDiscreteInputs(int16_t startInput, int16_t numInputs);
+    int16_t getDiscreteInputs(byte slaveId, int16_t startInput, int16_t numInputs,
+                              byte* buff = responseBuffer);
+    /**@}*/
 
+
+    // ===================================================================== //
+    /**
+     * @anchor data_setters
+     * @name Data Setters
+     *
+     * @brief Functions to set data to one or more holding registers or coils.
+     *
+     * @remark If you do not supply an input buffer, these commands write data from the
+     * internal library buffer.
+     *
+     * @note The data in the input buffer should *not* contain any modbus
+     * protocol bytes - including the address, command number or CRC. If there was no
+     * problem with the response on setting values, these functions return true.  If one
+     * of these functions return false and you need to check for an error code, call the
+     * getLastError() function immediately after the command.
+     */
+    // ===================================================================== //
+    /**@{*/
     /**
      * @brief Set the value of one or more holding registers using Modbus commands 0x06
      * or 0x10 (16).
@@ -1565,6 +1277,7 @@ class modbusMaster {
      *
      * @remark No more than 123 registers can be set at once.
      *
+     * @param slaveId The modbus slave ID to use in the request
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to write.
      * @param value A byte array with the values to write
@@ -1575,8 +1288,8 @@ class modbusMaster {
      * @return True if the modbus slave returned the expected number of input
      * values; false if there was a failure.
      */
-    bool setRegisters(int16_t startRegister, int16_t numRegisters, byte value[],
-                      bool forceMultiple = false);
+    bool setRegisters(byte slaveId, int16_t startRegister, int16_t numRegisters,
+                      byte value[], bool forceMultiple = false);
 
     /**
      * @brief Set the value of a single output coil using Modbus command 0x05.
@@ -1584,12 +1297,13 @@ class modbusMaster {
      * Output coils are single-bit values that can be either ON (1) or OFF (0).
      * Input (discrete) contacts cannot be written by a Modbus controller/master.
      *
+     * @param slaveId The modbus slave ID to use in the request
      * @param coilAddress The address of the coil to set.
      * @param value The value to set the coil to (true for ON, false for OFF).
      * @return True if the proper modbus slave correctly responded to the command; false
-     * otherwise..
+     * otherwise.
      */
-    bool setCoil(int16_t coilAddress, bool value);
+    bool setCoil(byte slaveId, int16_t coilAddress, bool value);
 
     /**
      * @brief Set the value of one or more output coils using modbus command 0x0F
@@ -1598,14 +1312,24 @@ class modbusMaster {
      *
      * @note This function always uses Modbus command 0x0F
      *
+     * @param slaveId The modbus slave ID to use in the request
      * @param startCoil The address of the first coil to set.
      * @param numCoils The number of coils to set.
      * @param value A pointer to a byte array containing the values to set the coils to.
      * @return True if the proper modbus slave correctly responded to the command; false
      * otherwise.
      */
-    bool setCoils(int16_t startCoil, int16_t numCoils, byte value[]);
+    bool setCoils(byte slaveId, int16_t startCoil, int16_t numCoils, byte value[]);
+    /**@}*/
 
+
+    // ===================================================================== //
+    /**
+     * @anchor low_level_functions
+     * @name Low level functions
+     */
+    // ===================================================================== //
+    /**@{*/
     /**
      * @brief A generic get data function that can be used for any data type or size
      *
@@ -1631,16 +1355,18 @@ class modbusMaster {
      * - set the expectedReturnBytes to the expected size of the response (highly
      * variable)
      *
+     * @param slaveId The modbus slave ID to use in the request
      * @param readCommand The command to use to read data
      * @param startAddress The first address to read from
      * @param numChunks The number of chunks of data to read
      * @param expectedReturnBytes The expected return size in bytes- set to 0 to have
      * the size calculated based on the command and the number of chunks requested.
-     * @return True if the proper modbus slave correctly responded to the command; false
-     * otherwise..
+     * @return Zero if the response didn't return the expected number of bytes or if
+     * there was an error in the modbus response; otherwise, the number of bytes in the
+     * response.
      */
-    bool getModbusData(byte readCommand, int16_t startAddress, int16_t numChunks,
-                       uint8_t expectedReturnBytes = 0);
+    int16_t getModbusData(byte slaveId, byte readCommand, int16_t startAddress,
+                          int16_t numChunks, uint8_t expectedReturnBytes = 0);
 
 
     /**
@@ -1664,25 +1390,34 @@ class modbusMaster {
      * registers plus overhead).  If you get a return value of >256, it means there
      * was an error and you should parse the error code.
      *
+     * @param slaveId The modbus slave ID to use in the request
      * @param command The fully formed command to send to the Modbus slave.
      * @param commandLength The length of the outgoing command.
      * @return The number of bytes received from the Modbus slave.
      */
+    uint16_t sendCommand(byte slaveId, byte command[], int commandLength);
+    /// @copydoc modbusMaster::sendCommand(byte, byte[], int)
     uint16_t sendCommand(byte command[], int commandLength);
+    /**@}*/
 
-    // These are purely debugging functions to print out the raw hex data
-    // sent between the Arduino and the modbus slave.
+    // ===================================================================== //
+    /**
+     * @anchor debugging_functions
+     * @name Debugging functions
+     *
+     * These are purely debugging functions to print out the raw hex data sent between
+     * the Arduino and the modbus slave.
+     */
+    // ===================================================================== //
+    /**@{*/
     /**
      * @brief Set a stream for debugging information to go to.
-     *
      * @param stream An Arduino stream object
      */
     void setDebugStream(Stream* stream) {
         _debugStream = stream;
     }
-    /**
-     * @copydoc modbusMaster::setDebugStream(Stream* stream)
-     */
+    /// @copydoc modbusMaster::setDebugStream(Stream*)
     void setDebugStream(Stream& stream) {
         _debugStream = &stream;
     }
@@ -1693,10 +1428,19 @@ class modbusMaster {
     void stopDebugging(void) {
         _debugStream = nullptr;
     }
+    /**@}*/
 
+    // ===================================================================== //
+    /**
+     * @anchor error_functions
+     * @name Error functions
+     *
+     * Functions to monitor the error codes.
+     */
+    // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get last modbus error code
-     *
      * @return The last modbus error code
      */
     modbusErrorCode getLastError(void) {
@@ -1705,12 +1449,18 @@ class modbusMaster {
 
     /**
      * @brief Prints information about the last error to the debugging stream
-     *
      * @note If there is not a debugging stream set, this function will have no effect.
      */
     void printLastError(void);
+    /**@}*/
 
-
+    // ===================================================================== //
+    /**
+     * @anchor internal_buffers
+     * @name Internal Buffers
+     */
+    // ===================================================================== //
+    /**@{*/
     /**
      * @brief The response buffer for incoming messages from the Modbus slave.
      */
@@ -1754,7 +1504,7 @@ class modbusMaster {
      * @param modbusFrame The modbus frame to print
      * @param frameLength The length of the frame to print
      */
-    void printFrameHex(byte modbusFrame[], int frameLength);
+    void printFrameHex(byte* modbusFrame = commandBuffer, int frameLength);
 
     /**
      * @brief Calculates a Modbus RTC cyclical redundancy code (CRC)
@@ -1762,7 +1512,7 @@ class modbusMaster {
      * @param modbusFrame The modbus frame to calculate the CRC from
      * @param frameLength The length of the frame
      */
-    void calculateCRC(byte modbusFrame[], int frameLength);
+    void calculateCRC(byte* modbusFrame = commandBuffer, int frameLength);
 
     /**
      * @brief Adds the CRC to a modbus RTU frame
@@ -1770,7 +1520,7 @@ class modbusMaster {
      * @param modbusFrame The modbus frame to add the CRC to
      * @param frameLength The length of the frame
      */
-    void insertCRC(byte modbusFrame[], int frameLength);
+    void insertCRC(byte* modbusFrame = commandBuffer, int frameLength);
 
     /**
      * @brief This slices one array out of another
@@ -1815,7 +1565,6 @@ class modbusMaster {
         }
     }
 
-    byte _slaveID;  ///< The sensor slave id
     /**
      * @brief The stream instance (serial port) for communication with the Modbus slave
      * (usually over RS485)
