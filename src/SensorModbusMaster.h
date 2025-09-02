@@ -528,7 +528,7 @@ class modbusMaster {
      * @param start_index The starting position of the 32-bit float in the response
      * frame. Optional with a default of 0.
      */
-    void float32ToFrame(float value, endianness endian, byte modbusFrame[],
+    void float32ToFrame(float value, endianness endian, byte* destFrame,
                         int start_index = 0);
 
 
@@ -575,7 +575,7 @@ class modbusMaster {
      * @param start_index The starting position of the uint32_t in the response frame.
      * Optional with a default of 0.
      */
-    void uint32ToFrame(uint32_t value, endianness endian, byte modbusFrame[],
+    void uint32ToFrame(uint32_t value, endianness endian, byte* destFrame,
                        int start_index = 0);
     /**
      * @brief Read a uint32_t out of the response buffer frame.
@@ -643,7 +643,7 @@ class modbusMaster {
      * @param start_index The starting position of the int32_t in the response frame.
      * Optional with a default of 0.
      */
-    void int32ToFrame(int32_t value, endianness endian, byte modbusFrame[],
+    void int32ToFrame(int32_t value, endianness endian, byte* destFrame,
                       int start_index = 0);
 
 
@@ -699,7 +699,7 @@ class modbusMaster {
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
-    void byteToFrame(byte value, int byteNum, byte modbusFrame[], int start_index = 0);
+    void byteToFrame(byte value, int byteNum, byte* destFrame, int start_index = 0);
 
 
     // ===================================================================== //
@@ -881,7 +881,7 @@ class modbusMaster {
      * @param start_index The starting position of the TAI64 in the response frame.
      * Optional with a default of 0.
      */
-    void TAI64ToFrame(uint32_t seconds, byte modbusFrame[], int start_index = 0);
+    void TAI64ToFrame(uint32_t seconds, byte* destFrame, int start_index = 0);
     /**
      * @brief Insert a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count)
      * into the working byte frame
@@ -893,7 +893,7 @@ class modbusMaster {
      * @param start_index The starting position of the TAI64N in the response frame.
      * Optional with a default of 0.
      */
-    void TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds, byte modbusFrame[],
+    void TAI64NToFrame(uint32_t seconds, uint32_t nanoseconds, byte* destFrame,
                        int start_index = 0);
     /**
      * @brief Insert a TAI64NA (64-bit timestamp followed by a 2-bit nanosecond count
@@ -908,7 +908,7 @@ class modbusMaster {
      * Optional with a default of 0.
      */
     void TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds,
-                        byte modbusFrame[], int start_index = 0);
+                        byte* destFrame, int start_index = 0);
 
 
     // ===================================================================== //
@@ -1009,7 +1009,7 @@ class modbusMaster {
      * Optional with a default of 0.
      */
     void pointerToFrame(uint16_t value, pointerType point, endianness endian,
-                        byte modbusFrame[], int start_index = 0);
+                        byte* destFrame, int start_index = 0);
 
 
     // ===================================================================== //
@@ -1063,7 +1063,7 @@ class modbusMaster {
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
-    void StringToFrame(String value, byte modbusFrame[], int start_index = 0);
+    void StringToFrame(String value, byte* destFrame, int start_index = 0);
 
 
     // ===================================================================== //
@@ -1084,13 +1084,10 @@ class modbusMaster {
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
-     * @param outChar A character array to fill with the content of the registers.
+     * @param outChar A pointer or constant pointer to a character array to fill with the content of the registers.
      * @param charLength The number of characters to return. NOTE: There are *TWO*
      * characters per register!
      */
-    void charFromRegister(byte slaveId, byte regType, int regNum, char outChar[],
-                          int charLength);
-    /// @copydoc charFromRegister(byte, byte, int, char[], int)
     void charFromRegister(byte slaveId, byte regType, int regNum, char* outChar,
                           int charLength);
     /// @copydoc charFromRegister(byte, byte, int, char[], int)
@@ -1101,8 +1098,8 @@ class modbusMaster {
      *
      * @param slaveId The modbus slave ID to use in the request
      * @param regNum The first of the registers of interest
-     * @param inChar The character array to set the registers to (or a pointer or
-     * constant pointer to one).
+     * @param inChar A pointer or constant pointer to the character array to set the
+     * registers to.
      * @param charLength The number of characters to set from in the array.
      * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
      * use of the Modbus command for setting multiple resisters (0x10). This only
@@ -1110,9 +1107,6 @@ class modbusMaster {
      * value of false.
      * @return True if the registers were successfully set, false if not.
      */
-    bool charToRegister(byte slaveId, int regNum, char inChar[], int charLength,
-                        bool forceMultiple = false);
-    /// @copydoc charToRegister(byte, int, char[], int, bool)
     bool charToRegister(byte slaveId, int regNum, char* inChar, int charLength,
                         bool forceMultiple = false);
     /// @copydoc charToRegister(byte, int, char[], int, bool)
@@ -1139,21 +1133,18 @@ class modbusMaster {
     /**
      * @brief Insert a character array into the working byte frame.
      *
-     * @param inChar The character array to insert (or a pointer or constant pointer to
-     * one).
+     * @param inChar A pointer or constant pointer to the character array to set the
+     * registers to.
      * @param charLength The number of characters to copy from in the array.
      * @param modbusFrame The working byte frame
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
-    void charToFrame(char inChar[], int charLength, byte* modbusFrame = commandBuffer,
+    void charToFrame(char* inChar, int charLength, byte* destFrame,
                      int start_index = 0);
     /// @copydoc charToFrame(char[], int, byte*, int)
-    void charToFrame(char* inChar, int charLength, byte* modbusFrame = commandBuffer,
+    void charToFrame(const char* inChar, int charLength, byte* destFrame,
                      int start_index = 0);
-    /// @copydoc charToFrame(char[], int, byte*, int)
-    void charToFrame(const char* inChar, int charLength,
-                     byte* modbusFrame = commandBuffer, int start_index = 0);
     /**@}*/
 
 
@@ -1279,7 +1270,7 @@ class modbusMaster {
      * @param slaveId The modbus slave ID to use in the request
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to write.
-     * @param value A byte array with the values to write
+     * @param value A pointer to the byte array with the values to write.
      * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
      * use of the Modbus command for setting multiple resisters (0x10). This only
      * applies if a single register is being set. Optional with a default value of
@@ -1288,7 +1279,7 @@ class modbusMaster {
      * values; false if there was a failure.
      */
     bool setRegisters(byte slaveId, int16_t startRegister, int16_t numRegisters,
-                      byte value[], bool forceMultiple = false);
+                      byte* value, bool forceMultiple = false);
 
     /**
      * @brief Set the value of a single output coil using Modbus command 0x05.
@@ -1318,7 +1309,7 @@ class modbusMaster {
      * @return True if the proper modbus slave correctly responded to the command; false
      * otherwise.
      */
-    bool setCoils(byte slaveId, int16_t startCoil, int16_t numCoils, byte value[]);
+    bool setCoils(byte slaveId, int16_t startCoil, int16_t numCoils, byte* value);
     /**@}*/
 
 
@@ -1394,9 +1385,7 @@ class modbusMaster {
      * @param commandLength The length of the outgoing command.
      * @return The number of bytes received from the Modbus slave.
      */
-    uint16_t sendCommand(byte slaveId, byte command[], int commandLength);
-    /// @copydoc modbusMaster::sendCommand(byte, byte[], int)
-    uint16_t sendCommand(byte command[], int commandLength);
+    uint16_t sendCommand(byte slaveId, byte* command, int commandLength);
     /**@}*/
 
     // ===================================================================== //
