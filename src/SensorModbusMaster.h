@@ -394,15 +394,16 @@ class modbusMaster {
                           endianness endian = bigEndian, bool forceMultiple = false);
 
     /**
-     * @brief Read a uint16_t out of the response buffer frame.
+     * @brief Read a uint16_t out of a modbus response frame.
      *
      * @param endian The endianness of the uint16_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the uint16_t in the response frame.
      * Optional with a default of 3.
-     * @return The uint16_t held in the buffer frame.
+     * @return The uint16_t starting at the given byte index in the modbus frame.
      */
-    uint16_t uint16FromFrame(endianness endian = bigEndian, int start_index = 3);
+    uint16_t uint16FromFrame(endianness endian = bigEndian, int start_index = 3,
+                             byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a uint16_t into the working byte frame
      *
@@ -451,15 +452,16 @@ class modbusMaster {
                          endianness endian = bigEndian, bool forceMultiple = false);
 
     /**
-     * @brief Read an int16_t out of the response buffer frame.
+     * @brief Read an int16_t out of a modbus response frame.
      *
      * @param endian The endianness of the int16_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the int16_t in the response frame.
      * Optional with a default of 3.
-     * @return The int16_t held in the buffer frame.
+     * @return The int16_t starting at the given byte index in the modbus frame.
      */
-    int16_t int16FromFrame(endianness endian = bigEndian, int start_index = 3);
+    int16_t int16FromFrame(endianness endian = bigEndian, int start_index = 3,
+                           byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert an int16_t into the working byte frame
      *
@@ -508,15 +510,16 @@ class modbusMaster {
                            endianness endian = bigEndian);
 
     /**
-     * @brief Read a 32-bit float out of the response buffer frame.
+     * @brief Read a 32-bit float out of a modbus response frame.
      *
      * @param endian The endianness of the 32-bit float in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the 32-bit float in the response
      * frame. Optional with a default of 3.
-     * @return The 32-bit float held in the buffer frame.
+     * @return The 32-bit float starting at the given byte index in the modbus frame.
      */
-    float float32FromFrame(endianness endian = bigEndian, int start_index = 3);
+    float float32FromFrame(endianness endian = bigEndian, int start_index = 3,
+                           byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a 32-bit float into the working byte frame
      *
@@ -578,15 +581,16 @@ class modbusMaster {
     void uint32ToFrame(uint32_t value, endianness endian, byte* destFrame,
                        int start_index = 0);
     /**
-     * @brief Read a uint32_t out of the response buffer frame.
+     * @brief Read a uint32_t out of a modbus response frame.
      *
      * @param endian The endianness of the uint32_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the uint32_t in the response frame.
      * Optional with a default of 3.
-     * @return The uint32_t held in the buffer frame.
+     * @return The uint32_t starting at the given byte index in the modbus frame.
      */
-    uint32_t uint32FromFrame(endianness endian = bigEndian, int start_index = 3);
+    uint32_t uint32FromFrame(endianness endian = bigEndian, int start_index = 3,
+                             byte* sourceFrame = responseBuffer);
 
 
     // ===================================================================== //
@@ -623,15 +627,16 @@ class modbusMaster {
                          endianness endian = bigEndian);
 
     /**
-     * @brief Read an int32_t out of the response buffer frame.
+     * @brief Read an int32_t out of a modbus response frame.
      *
      * @param endian The endianness of the int32_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the int32_t in the response frame.
      * Optional with a default of 3.
-     * @return The int32_t held in the buffer frame.
+     * @return The int32_t starting at the given byte index in the modbus frame.
      */
-    int32_t int32FromFrame(endianness endian = bigEndian, int start_index = 3);
+    int32_t int32FromFrame(endianness endian = bigEndian, int start_index = 3,
+                           byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert an int32_t into the working byte frame
      *
@@ -681,13 +686,13 @@ class modbusMaster {
                         bool forceMultiple = false);
 
     /**
-     * @brief Read a single byte out of the response buffer frame.
+     * @brief Read a single byte out of a modbus response frame.
      *
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 3.
-     * @return The byte held in the buffer frame.
+     * @return The byte starting at the given byte index in the modbus frame.
      */
-    byte byteFromFrame(int start_index = 3);
+    byte byteFromFrame(int start_index = 3, byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a single byte into the working byte frame.
      *
@@ -838,17 +843,18 @@ class modbusMaster {
                            uint32_t nanoseconds, uint32_t attoseconds);
 
     /**
-     * @brief Read a TAI64 (64-bit timestamp) out of the response buffer frame and
-     * return the lower 32-bits as a unix timestamp.
+     * @brief Read a TAI64 (64-bit timestamp) out of a modbus response frame
+     * and return the lower 32-bits as a unix timestamp.
      *
      * @param start_index The starting position of the TAI64 in the response frame.
      * Optional with a default of 3.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64FromFrame(int start_index = 3);
+    uint32_t TAI64FromFrame(int start_index = 3, byte* sourceFrame = responseBuffer);
     /**
      * @brief Read a TAI64N (64-bit timestamp followed by a 32-bit nanosecond count) out
-     * of the response buffer frame and return an equivalent 32-bits unix timestamp.
+     * of a modbus response frame and return an equivalent 32-bits unix
+     * timestamp.
      *
      * @param nanoseconds A reference to another uint32_t to populate with the
      * nanoseconds.
@@ -856,11 +862,12 @@ class modbusMaster {
      * Optional with a default of 3.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64NFromFrame(uint32_t& nanoseconds, int start_index = 3);
+    uint32_t TAI64NFromFrame(uint32_t& nanoseconds, int start_index = 3,
+                             byte* sourceFrame = responseBuffer);
     /**
      * @brief Read a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count and
-     * then a 32-bit attosecond count) out of the response buffer frame and return an
-     * equivalent 32-bits unix timestamp.
+     * then a 32-bit attosecond count) out of a modbus response frame and
+     * return an equivalent 32-bits unix timestamp.
      *
      * @param nanoseconds A reference to another uint32_t to populate with the
      * nanoseconds.
@@ -871,7 +878,7 @@ class modbusMaster {
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64NAFromFrame(uint32_t& nanoseconds, uint32_t& attoseconds,
-                              int start_index = 3);
+                              int start_index = 3, byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a TAI64 (64-bit timestamp) into the working byte frame
      *
@@ -969,7 +976,7 @@ class modbusMaster {
                            endianness endian = bigEndian, bool forceMultiple = false);
 
     /**
-     * @brief Read a 16-bit pointer out of the response buffer frame.
+     * @brief Read a 16-bit pointer out of a modbus response frame.
      *
      * This should be a pointer to another registry address within the modbus registers.
      *
@@ -978,11 +985,13 @@ class modbusMaster {
      * specifications.
      * @param start_index The starting position of the 16-bit pointer in the response
      * frame. Optional with a default of 3.
-     * @return The 16-bit pointer held in the buffer frame.
+     * @return The 16-bit pointer starting at the given byte index in the register
+     * array.
      */
-    uint16_t pointerFromFrame(endianness endian = bigEndian, int start_index = 3);
+    uint16_t pointerFromFrame(endianness endian = bigEndian, int start_index = 3,
+                              byte* sourceFrame = responseBuffer);
     /**
-     * @brief Read a 16-bit pointer out of the response buffer frame.
+     * @brief Read a 8-bit pointer type out of a modbus response frame.
      *
      * This should be the type of register pointed to by pointer contained within a
      * different modbus register.
@@ -990,12 +999,13 @@ class modbusMaster {
      * @param endian The endianness of the pointer type in the modbus register.
      * Optional with a default of big endian, which is required by modbus
      * specifications.
-     * @param start_index The starting position of the 16-bit pointer in the response
+     * @param start_index The starting position of the 8-bit pointer type in the response
      * frame. Optional with a default of 3.
      * @return The 8-bit pointer type held in the buffer frame. This will be an
      * object of type #pointerType.
      */
-    int8_t pointerTypeFromFrame(endianness endian = bigEndian, int start_index = 3);
+    int8_t pointerTypeFromFrame(endianness endian = bigEndian, int start_index = 3,
+                                byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a 16-bit pointer into the working byte frame.
      *
@@ -1047,14 +1057,15 @@ class modbusMaster {
                           bool forceMultiple = false);
 
     /**
-     * @brief Read a String out of the response buffer frame.
+     * @brief Read a String out of a modbus response frame.
      *
      * @param charLength The number of characters to return.
      * @param start_index The starting position of the characters in the response
      * frame. Optional with a default of 3.
      * @return The text from the registers.
      */
-    String StringFromFrame(int charLength, int start_index = 3);
+    String StringFromFrame(int charLength, int start_index = 3,
+                           byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a String into the working byte frame.
      *
@@ -1114,22 +1125,22 @@ class modbusMaster {
                         bool forceMultiple = false);
 
     /**
-     * @brief Read characters out of the response buffer frame and put them into a
-     * character array.
+     * @brief Read characters out of a modbus response frame and put them
+     * into a character array.
      *
      * There is no return from this function.
      *
-     * @param outChar A character array to fill with the content of the response buffer
-     * (or a pointer or constant pointer to one).
+     * @param outChar A pointer to a character array to fill with the content of the
+     * response buffer.
      * @param charLength The number of characters to return.
      * @param start_index The starting position of the characters in the response
      * frame. Optional with a default of 3.
      */
-    void charFromFrame(char outChar[], int charLength, int start_index = 3);
+    void charFromFrame(char* outChar, int charLength, int start_index = 3,
+                       byte* sourceFrame = responseBuffer);
     /// @copydoc charFromFrame(char[], int, int)
-    void charFromFrame(char* outChar, int charLength, int start_index = 3);
-    /// @copydoc charFromFrame(char[], int, int)
-    void charFromFrame(const char* outChar, int charLength, int start_index = 3);
+    void charFromFrame(const char* outChar, int charLength, int start_index = 3,
+                       byte* sourceFrame = responseBuffer);
     /**
      * @brief Insert a character array into the working byte frame.
      *
@@ -1537,7 +1548,7 @@ class modbusMaster {
      * @return A frame object with the converted endianness.
      */
     leFrame leFrameFromFrame(int varLength, endianness endian = bigEndian,
-                             int start_index = 3);
+                             int start_index = 3, byte* sourceFrame = responseBuffer);
 
     // Utility templates for writing to the debugging stream
     template <typename T>

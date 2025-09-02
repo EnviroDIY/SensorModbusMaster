@@ -357,78 +357,87 @@ int16_t modbusMaster::getDiscreteInputs(byte slaveId, int16_t startInput,
 
 // These functions return a variety of data from an input modbus RTU frame.
 // Currently, the only "frame" available is the response buffer.
-uint16_t modbusMaster::uint16FromFrame(endianness endian, int start_index) {
-    return leFrameFromFrame(UINT16_SIZE, endian, start_index).uInt16[0];
+uint16_t modbusMaster::uint16FromFrame(endianness endian, int start_index,
+                                       byte* sourceFrame) {
+    return leFrameFromFrame(UINT16_SIZE, endian, start_index, sourceFrame).uInt16[0];
 }
 
-int16_t modbusMaster::int16FromFrame(endianness endian, int start_index) {
-    return leFrameFromFrame(INT16_SIZE, endian, start_index).Int16[0];
+int16_t modbusMaster::int16FromFrame(endianness endian, int start_index,
+                                     byte* sourceFrame) {
+    return leFrameFromFrame(INT16_SIZE, endian, start_index, sourceFrame).Int16[0];
 }
 
-float modbusMaster::float32FromFrame(endianness endian, int start_index) {
-    return leFrameFromFrame(FLOAT32_SIZE, endian, start_index).Float32;
+float modbusMaster::float32FromFrame(endianness endian, int start_index,
+                                     byte* sourceFrame) {
+    return leFrameFromFrame(FLOAT32_SIZE, endian, start_index, sourceFrame).Float32;
 }
 
-uint32_t modbusMaster::uint32FromFrame(endianness endian, int start_index) {
-    return leFrameFromFrame(UINT32_SIZE, endian, start_index).uInt32;
+uint32_t modbusMaster::uint32FromFrame(endianness endian, int start_index,
+                                       byte* sourceFrame) {
+    return leFrameFromFrame(UINT32_SIZE, endian, start_index, sourceFrame).uInt32;
 }
 
-int32_t modbusMaster::int32FromFrame(endianness endian, int start_index) {
-    return leFrameFromFrame(INT32_SIZE, endian, start_index).Int32;
+int32_t modbusMaster::int32FromFrame(endianness endian, int start_index,
+                                     byte* sourceFrame) {
+    return leFrameFromFrame(INT32_SIZE, endian, start_index, sourceFrame).Int32;
 }
 
-uint32_t modbusMaster::TAI64FromFrame(int start_index) {
-    return leFrameFromFrame(4, bigEndian, start_index + 4).uInt32;
+uint32_t modbusMaster::TAI64FromFrame(int start_index, byte* sourceFrame) {
+    return leFrameFromFrame(4, bigEndian, start_index + 4, sourceFrame).uInt32;
 }
-uint32_t modbusMaster::TAI64NFromFrame(uint32_t& nanoseconds, int start_index) {
-    nanoseconds = leFrameFromFrame(4, bigEndian, start_index + 8).uInt32;
-    return leFrameFromFrame(4, bigEndian, start_index + 4).uInt32;
+uint32_t modbusMaster::TAI64NFromFrame(uint32_t& nanoseconds, int start_index,
+                                       byte* sourceFrame) {
+    nanoseconds = leFrameFromFrame(4, bigEndian, start_index + 8, sourceFrame).uInt32;
+    return leFrameFromFrame(4, bigEndian, start_index + 4, sourceFrame).uInt32;
 }
 uint32_t modbusMaster::TAI64NAFromFrame(uint32_t& nanoseconds, uint32_t& attoseconds,
-                                        int start_index) {
-    attoseconds = leFrameFromFrame(4, bigEndian, start_index + 12).uInt32;
-    nanoseconds = leFrameFromFrame(4, bigEndian, start_index + 8).uInt32;
+                                        int start_index, byte* sourceFrame) {
+    attoseconds = leFrameFromFrame(4, bigEndian, start_index + 12, sourceFrame).uInt32;
+    nanoseconds = leFrameFromFrame(4, bigEndian, start_index + 8, sourceFrame).uInt32;
     return leFrameFromFrame(4, bigEndian, start_index + 4).uInt32;
 }
 
-byte modbusMaster::byteFromFrame(int start_index) {
-    return responseBuffer[start_index];
+byte modbusMaster::byteFromFrame(int start_index, byte* sourceFrame) {
+    return sourceFrame[start_index];
 }
 
-uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index) {
+uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index,
+                                        byte* sourceFrame) {
     leFrame fram;
     if (endian == bigEndian) {
         // Shift the lower address bit DOWN two
-        fram.Byte[0] = responseBuffer[start_index + 1] >> 2;
-        fram.Byte[1] = responseBuffer[start_index];
+        fram.Byte[0] = sourceFrame[start_index + 1] >> 2;
+        fram.Byte[1] = sourceFrame[start_index];
     } else {
         // Shift the lower address bit DOWN two
-        fram.Byte[0] = responseBuffer[start_index] >> 2;
-        fram.Byte[1] = responseBuffer[start_index + 1];
+        fram.Byte[0] = sourceFrame[start_index] >> 2;
+        fram.Byte[1] = sourceFrame[start_index + 1];
     }
     return fram.Int16[0];
 }
 
-int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index) {
+int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index,
+                                          byte* sourceFrame) {
     uint8_t pointerRegType;
     // Mask with 3 (0b00000011) to get the last two bits, which are the type
     if (endian == bigEndian) {
-        pointerRegType = responseBuffer[start_index + 1] & 3;
+        pointerRegType = sourceFrame[start_index + 1] & 3;
     } else {
-        pointerRegType = responseBuffer[start_index] & 3;
+        pointerRegType = sourceFrame[start_index] & 3;
     }
     return pointerRegType;
 }
 
-String modbusMaster::StringFromFrame(int charLength, int start_index) {
+String modbusMaster::StringFromFrame(int charLength, int start_index,
+                                     byte* sourceFrame) {
     char charString[RESPONSE_BUFFER_SIZE];
     memset(charString, '\0', RESPONSE_BUFFER_SIZE);
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++) {
         // check that it's a printable character
-        if (responseBuffer[i] >= 0x20 && responseBuffer[i] <= 0x7E) {
+        if (sourceFrame[i] >= 0x20 && sourceFrame[i] <= 0x7E) {
             // implicitly converts from "byte" type to "char" type
-            charString[j] = responseBuffer[i];
+            charString[j] = sourceFrame[i];
             j++;
         }
     }
@@ -436,13 +445,14 @@ String modbusMaster::StringFromFrame(int charLength, int start_index) {
     return string;
 }
 
-void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index) {
+void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index,
+                                 byte* sourceFrame) {
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++) {
         // check that it's a printable character
-        if (responseBuffer[i] >= 0x20 && responseBuffer[i] <= 0x7E) {
+        if (sourceFrame[i] >= 0x20 && sourceFrame[i] <= 0x7E) {
             // implicitly converts from "byte" type to "char" type
-            outChar[j] = responseBuffer[i];
+            outChar[j] = sourceFrame[i];
             j++;
         }
     }
