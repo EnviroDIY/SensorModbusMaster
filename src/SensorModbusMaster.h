@@ -203,7 +203,7 @@ class modbusMaster {
     /**
      * @brief Equivalent to a constructor - used to assign members of the modbusMaster
      * object
-     * @copydetails modbusMaster(byte slaveId, Stream* stream)
+     * @copydetails modbusMaster(Stream* stream)
      * @return Always returns true
      */
     bool begin(Stream* stream);
@@ -211,7 +211,7 @@ class modbusMaster {
     /**
      * @brief Equivalent to a constructor - used to assign members of the modbusMaster
      * object
-     * @copydetails modbusMaster(byte slaveId, Stream& stream)
+     * @copydetails modbusMaster(Stream& stream)
      * @return Always returns true
      */
     bool begin(Stream& stream);
@@ -219,7 +219,7 @@ class modbusMaster {
     /**
      * @brief Equivalent to a constructor - used to assign members of the modbusMaster
      * object
-     * @copydetails modbusMaster(byte slaveId, Stream* stream, int8_t enablePin)
+     * @copydetails modbusMaster(Stream* stream, int8_t enablePin)
      * @return Always returns true
      */
     bool begin(Stream* stream, int8_t enablePin);
@@ -227,7 +227,7 @@ class modbusMaster {
     /**
      * @brief Equivalent to a constructor - used to assign members of the modbusMaster
      * object
-     * @copydetails modbusMaster(byte slaveId, Stream& stream, int8_t enablePin)
+     * @copydetails modbusMaster(Stream& stream, int8_t enablePin)
      * @return Always returns true
      */
     bool begin(Stream& stream, int8_t enablePin);
