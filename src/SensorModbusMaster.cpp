@@ -681,7 +681,7 @@ int16_t modbusMaster::getModbusData(byte slaveId, byte readCommand,
         // the right slave and has the correct CRC
         // The structure of the responses should be:
         // {slaveID, fxnCode, # bytes, data, CRC (hi/lo)}
-        int16_t respSize = sendCommand(commandBuffer, 8);
+        int16_t respSize = sendCommand(slaveId, commandBuffer, 8);
         success          = (respSize == returnFrameSize &&
                    responseBuffer[2] == expectedReturnBytes);
         // if we got a valid modbusErrorCode, stop trying
@@ -780,7 +780,7 @@ bool modbusMaster::setRegisters(byte slaveId, int16_t startRegister,
     while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
-        respSize = sendCommand(commandBuffer, commandLength);
+        respSize = sendCommand(slaveId, commandBuffer, commandLength);
         // The structure of the response for 0x10 should be:
         // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
         if (numRegisters > 1 || forceMultiple) {
@@ -856,7 +856,7 @@ bool modbusMaster::setCoil(byte slaveId, int16_t coilAddress, bool value) {
     while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
-        respSize = sendCommand(commandBuffer, commandLength);
+        respSize = sendCommand(slaveId, commandBuffer, commandLength);
         // The structure of the response for 0x05 should be:
         // {slaveID, fxnCode, Address of coil (hi/lo), write data hi/lo, CRC (hi/lo)}
         // which is exactly the same as the command itself.
@@ -931,7 +931,7 @@ bool modbusMaster::setCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
     while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
-        respSize = sendCommand(commandBuffer, commandLength);
+        respSize = sendCommand(slaveId, commandBuffer, commandLength);
         // The structure of the response for 0x0F should be:
         // {slaveID, fxnCode, Address of 1st coil (hi/lo), # coils (hi/lo), CRC
         // (hi/lo)}
