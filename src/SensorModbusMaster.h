@@ -369,6 +369,7 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return it as a uint16_t.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -381,6 +382,7 @@ class modbusMaster {
     /**
      * @brief Set a holding register to a uint16_t.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param value The value to set the register to.
      * @param endian The endianness used to write the uint16_t. Optional with a default
@@ -400,6 +402,7 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the uint16_t in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The uint16_t starting at the given byte index in the modbus frame.
      */
     uint16_t uint16FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -410,7 +413,7 @@ class modbusMaster {
      * @param value The value to add to the frame.
      * @param endian The endianness used to write the uint16_t. Optional with a default
      * of big endian, which is required by modbus specifications.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the uint16_t in the response frame.
      * Optional with a default of 0.
      */
@@ -427,6 +430,7 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return it as an int16_t.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -439,6 +443,7 @@ class modbusMaster {
     /**
      * @brief Set a holding register to an int16_t.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param value The value to set the register to.
      * @param endian The endianness used to write the int16_t. Optional with a default
@@ -458,6 +463,7 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the int16_t in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The int16_t starting at the given byte index in the modbus frame.
      */
     int16_t int16FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -468,7 +474,7 @@ class modbusMaster {
      * @param value The value to add to the frame.
      * @param endian The endianness used to write the int16_t. Optional with a default
      * of big endian, which is required by modbus specifications.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the int16_t in the response frame.
      * Optional with a default of 0.
      */
@@ -486,6 +492,7 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a 32-bit float.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
@@ -499,6 +506,7 @@ class modbusMaster {
     /**
      * @brief Set two holding registers to a 32-bit float
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the two registers of interest.
      * @param value The value to set the register to.
      * @param endian The endianness of the 32-bit float in the modbus register. Optional
@@ -516,6 +524,7 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the 32-bit float in the response
      * frame. Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The 32-bit float starting at the given byte index in the modbus frame.
      */
     float float32FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -527,7 +536,7 @@ class modbusMaster {
      * @param endian The endianness used to write the 32-bit float. Optional with a
      * default of big endian, which is required by modbus specifications. Only big and
      * little endian are supported. Mixed endianness is *NOT* supported.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the 32-bit float in the response
      * frame. Optional with a default of 0.
      */
@@ -545,6 +554,7 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a uint32_t
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
@@ -558,6 +568,7 @@ class modbusMaster {
     /**
      * @brief Set two holding registers to a uint32_t
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the two registers of interest.
      * @param value The value to set the register to.
      * @param endian The endianness of the uint32_t in the modbus register. Optional
@@ -574,7 +585,7 @@ class modbusMaster {
      * @param endian The endianness used to write the uint32_t. Optional with a default
      * of big endian, which is required by modbus specifications. Only big and little
      * endian are supported. Mixed endianness is *NOT* supported.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the uint32_t in the response frame.
      * Optional with a default of 0.
      */
@@ -587,6 +598,7 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the uint32_t in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The uint32_t starting at the given byte index in the modbus frame.
      */
     uint32_t uint32FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -603,6 +615,7 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as an int32_t
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
@@ -616,6 +629,7 @@ class modbusMaster {
     /**
      * @brief Set two holding registers to an int32_t
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the two registers of interest.
      * @param value The value to set the register to.
      * @param endian The endianness of the int32_t in the modbus register. Optional
@@ -633,6 +647,7 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the int32_t in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The int32_t starting at the given byte index in the modbus frame.
      */
     int32_t int32FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -644,7 +659,7 @@ class modbusMaster {
      * @param endian The endianness used to write the int32_t. Optional with a default
      * of big endian, which is required by modbus specifications. Only big and little
      * endian are supported. Mixed endianness is *NOT* supported.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the int32_t in the response frame.
      * Optional with a default of 0.
      */
@@ -661,6 +676,7 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return one byte of it.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -674,6 +690,7 @@ class modbusMaster {
      * The byte will be inserted as a full 16-bit register with the unused byte set to
      * 0.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param byteNum The byte number to set (1 for upper or 2 for lower)
      * @param value The value to set the byte to.
@@ -690,6 +707,7 @@ class modbusMaster {
      *
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The byte starting at the given byte index in the modbus frame.
      */
     byte byteFromFrame(int start_index = 3, byte* sourceFrame = responseBuffer);
@@ -700,7 +718,7 @@ class modbusMaster {
      *
      * @param value The byte to write
      * @param byteNum The byte number to set (1 for upper or 2 for lower)
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
@@ -770,6 +788,7 @@ class modbusMaster {
      * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
      * unix timestamp.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the four registers of interest.
@@ -781,6 +800,7 @@ class modbusMaster {
      * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
      * count), and return an equivalent 32-bits unix timestamp.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the six registers of interest.
@@ -796,6 +816,7 @@ class modbusMaster {
      * and then a 32-bit attosecond count), and return an equivalent 32-bits unix
      * timestamp.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the eight registers of interest.
@@ -810,6 +831,7 @@ class modbusMaster {
     /**
      * @brief Set four holding registers to a TAI64 (64-bit timestamp)
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the four registers of interest.
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
@@ -820,6 +842,7 @@ class modbusMaster {
      * @brief Set six holding registers to a TAI64N (64-bit timestamp followed by a
      * 32-bit nanosecond count)
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the six registers of interest.
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
@@ -832,6 +855,7 @@ class modbusMaster {
      * @brief Set eight holding registers to a TAI64NA (64-bit timestamp followed by a
      * 32-bit nanosecond count and then a 32-bit attosecond count)
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the eight registers of interest.
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
@@ -848,6 +872,7 @@ class modbusMaster {
      *
      * @param start_index The starting position of the TAI64 in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64FromFrame(int start_index = 3, byte* sourceFrame = responseBuffer);
@@ -860,6 +885,7 @@ class modbusMaster {
      * nanoseconds.
      * @param start_index The starting position of the TAI64N in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64NFromFrame(uint32_t& nanoseconds, int start_index = 3,
@@ -875,6 +901,7 @@ class modbusMaster {
      * attoseconds.
      * @param start_index The starting position of the TAI64NA in the response frame.
      * Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64NAFromFrame(uint32_t& nanoseconds, uint32_t& attoseconds,
@@ -884,7 +911,7 @@ class modbusMaster {
      *
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the TAI64 in the response frame.
      * Optional with a default of 0.
      */
@@ -896,7 +923,7 @@ class modbusMaster {
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
      * @param nanoseconds The 32-bit nanosecond count.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the TAI64N in the response frame.
      * Optional with a default of 0.
      */
@@ -910,7 +937,7 @@ class modbusMaster {
      * be set to 0x40000000, which will be the correct value until the year 2106.
      * @param nanoseconds The 32-bit nanosecond count.
      * @param attoseconds The 32-bit attoseconds count.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the TAI64N in the response frame.
      * Optional with a default of 0.
      */
@@ -930,6 +957,7 @@ class modbusMaster {
      *
      * This should be a pointer to another registry address within the modbus registers.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -947,6 +975,7 @@ class modbusMaster {
      * This should be the type of register pointed to by pointer contained within a
      * different modbus register.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -961,6 +990,7 @@ class modbusMaster {
     /**
      * @brief Set a holding register to a 16-bit pointer.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param value The value to set the register to.
      * @param point The type of the pointer, (#pointerType) ie, which section of the
@@ -985,6 +1015,7 @@ class modbusMaster {
      * specifications.
      * @param start_index The starting position of the 16-bit pointer in the response
      * frame. Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The 16-bit pointer starting at the given byte index in the register
      * array.
      */
@@ -1001,6 +1032,7 @@ class modbusMaster {
      * specifications.
      * @param start_index The starting position of the 8-bit pointer type in the response
      * frame. Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The 8-bit pointer type held in the buffer frame. This will be an
      * object of type #pointerType.
      */
@@ -1014,7 +1046,7 @@ class modbusMaster {
      * modbus memory is being pointed to.
      * @param endian The endianness used to write the 16-bit pointer. Optional with a
      * default of big endian, which is required by modbus specifications.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
@@ -1034,6 +1066,7 @@ class modbusMaster {
      * @brief Get a group of input or holding registers, convert them to characters,
      * combine them, and return a single String.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
@@ -1045,6 +1078,7 @@ class modbusMaster {
     /**
      * @brief Set a series of holding registers to the characters in a String.
      *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The first of the registers of interest
      * @param value The String to set the registers to.
      * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
@@ -1062,6 +1096,7 @@ class modbusMaster {
      * @param charLength The number of characters to return.
      * @param start_index The starting position of the characters in the response
      * frame. Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return The text from the registers.
      */
     String StringFromFrame(int charLength, int start_index = 3,
@@ -1070,7 +1105,7 @@ class modbusMaster {
      * @brief Insert a String into the working byte frame.
      *
      * @param value The string to insert.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
@@ -1101,7 +1136,7 @@ class modbusMaster {
      */
     void charFromRegister(byte slaveId, byte regType, int regNum, char* outChar,
                           int charLength);
-    /// @copydoc charFromRegister(byte, byte, int, char[], int)
+    /// @copydoc charFromRegister(byte, byte, int, char*, int)
     void charFromRegister(byte slaveId, byte regType, int regNum, const char* outChar,
                           int charLength);
     /**
@@ -1120,7 +1155,7 @@ class modbusMaster {
      */
     bool charToRegister(byte slaveId, int regNum, char* inChar, int charLength,
                         bool forceMultiple = false);
-    /// @copydoc charToRegister(byte, int, char[], int, bool)
+    /// @copydoc charToRegister(byte, int, char*, int, bool)
     bool charToRegister(byte slaveId, int regNum, const char* inChar, int charLength,
                         bool forceMultiple = false);
 
@@ -1135,10 +1170,11 @@ class modbusMaster {
      * @param charLength The number of characters to return.
      * @param start_index The starting position of the characters in the response
      * frame. Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      */
     void charFromFrame(char* outChar, int charLength, int start_index = 3,
                        byte* sourceFrame = responseBuffer);
-    /// @copydoc charFromFrame(char[], int, int)
+    /// @copydoc charFromFrame(char*, int, int, byte*)
     void charFromFrame(const char* outChar, int charLength, int start_index = 3,
                        byte* sourceFrame = responseBuffer);
     /**
@@ -1147,13 +1183,13 @@ class modbusMaster {
      * @param inChar A pointer or constant pointer to the character array to set the
      * registers to.
      * @param charLength The number of characters to copy from in the array.
-     * @param modbusFrame The working byte frame
+     * @param destFrame The byte array to write to
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
     void charToFrame(char* inChar, int charLength, byte* destFrame,
                      int start_index = 0);
-    /// @copydoc charToFrame(char[], int, byte*, int)
+    /// @copydoc charToFrame(char*, int, byte*, int)
     void charToFrame(const char* inChar, int charLength, byte* destFrame,
                      int start_index = 0);
     /**@}*/
@@ -1545,6 +1581,7 @@ class modbusMaster {
      * bigEndian.
      * @param start_index The starting position of the variable in the frame. Optional
      * with a default value of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
      * @return A frame object with the converted endianness.
      */
     leFrame leFrameFromFrame(int varLength, endianness endian = bigEndian,
