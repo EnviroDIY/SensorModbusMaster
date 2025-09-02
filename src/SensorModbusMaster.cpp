@@ -309,15 +309,12 @@ int16_t modbusMaster::getRegisters(byte slaveId, byte readCommand,
                                    int16_t startRegister, int16_t numRegisters,
                                    byte* buff) {
     if (buff == nullptr) { return false; }
+    if (buff == responseBuffer) { return false; }
     int16_t rxBytes = getModbusData(slaveId, readCommand, startRegister, numRegisters);
     if (rxBytes == 0) { return false; }
     // copy from the raw responseBuffer, starting at character 3 (the first two are the
     // returned bytes)
-    // NOTE: We use memmove instead of memcopy because by default buff **is** the
-    // response buffer.  When buff is the response buffer, this *shifts* the contents of
-    // the response buffer to remove the modbus framing bytes.  The memcpy() function
-    // cannot be used if the source and destination buffers overlap.
-    memmove(buff, responseBuffer + 3, numRegisters * 2);
+    memcpy(buff, responseBuffer + 3, numRegisters * 2);
     // null terminate the buffer
     memset(buff, '\0', numRegisters * 2);
     return rxBytes;
@@ -327,9 +324,10 @@ int16_t modbusMaster::getRegisters(byte slaveId, byte readCommand,
 int16_t modbusMaster::getCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
                                byte* buff) {
     if (buff == nullptr) { return false; }
+    if (buff == responseBuffer) { return false; }
     int16_t rxBytes = getModbusData(slaveId, 0x01, startCoil, numCoils);
     if (rxBytes == 0) { return false; }
-    // copy from the responseBuffer, starting at character 3 (the first two are the
+    // copy from the raw responseBuffer, starting at character 3 (the first two are the
     // returned bytes)
     memcpy(buff, responseBuffer + 3, ceil(numCoils / 8));
     // null terminate the buffer
@@ -341,9 +339,10 @@ int16_t modbusMaster::getCoils(byte slaveId, int16_t startCoil, int16_t numCoils
 int16_t modbusMaster::getDiscreteInputs(byte slaveId, int16_t startInput,
                                         int16_t numInputs, byte* buff) {
     if (buff == nullptr) { return false; }
+    if (buff == responseBuffer) { return false; }
     int16_t rxBytes = getModbusData(slaveId, 0x02, startInput, numInputs);
     if (rxBytes == 0) { return false; }
-    // copy from the responseBuffer, starting at character 3 (the first two are the
+    // copy from the raw responseBuffer, starting at character 3 (the first two are the
     // returned bytes)
     memcpy(buff, responseBuffer + 3, ceil(numInputs / 8));
     // null terminate the buffer

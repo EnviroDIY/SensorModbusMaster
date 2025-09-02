@@ -1201,7 +1201,7 @@ class modbusMaster {
      * response.
      */
     int16_t getRegisters(byte slaveId, byte readCommand, int16_t startRegister,
-                         int16_t numRegisters, byte* buff = responseBuffer);
+                         int16_t numRegisters, byte* buff);
     /**
      * @brief Get the status of a single output coil
      *
@@ -1225,8 +1225,7 @@ class modbusMaster {
      * there was an error in the modbus response; otherwise, the number of bytes in the
      * response.
      */
-    int16_t getCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
-                     byte* buff = responseBuffer);
+    int16_t getCoils(byte slaveId, int16_t startCoil, int16_t numCoils, byte* buff);
     /**
      * @brief Get the status of a single discrete input
      *
@@ -1247,7 +1246,7 @@ class modbusMaster {
      * response.
      */
     int16_t getDiscreteInputs(byte slaveId, int16_t startInput, int16_t numInputs,
-                              byte* buff = responseBuffer);
+                              byte* buff);
     /**@}*/
 
 
