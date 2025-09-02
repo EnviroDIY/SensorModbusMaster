@@ -413,7 +413,7 @@ class modbusMaster {
      * @param start_index The starting position of the uint16_t in the response frame.
      * Optional with a default of 0.
      */
-    void uint16ToFrame(uint16_t value, endianness endian, byte modbusFrame[],
+    void uint16ToFrame(uint16_t value, endianness endian, byte* destFrame,
                        int start_index = 0);
 
 
@@ -470,7 +470,7 @@ class modbusMaster {
      * @param start_index The starting position of the int16_t in the response frame.
      * Optional with a default of 0.
      */
-    void int16ToFrame(int16_t value, endianness endian, byte modbusFrame[],
+    void int16ToFrame(int16_t value, endianness endian, byte* destFrame,
                       int start_index = 0);
 
 
@@ -1504,7 +1504,7 @@ class modbusMaster {
      * @param modbusFrame The modbus frame to print
      * @param frameLength The length of the frame to print
      */
-    void printFrameHex(byte* modbusFrame = commandBuffer, int frameLength);
+    void printFrameHex(byte* modbusFrame, int frameLength);
 
     /**
      * @brief Calculates a Modbus RTC cyclical redundancy code (CRC)
@@ -1512,7 +1512,7 @@ class modbusMaster {
      * @param modbusFrame The modbus frame to calculate the CRC from
      * @param frameLength The length of the frame
      */
-    void calculateCRC(byte* modbusFrame = commandBuffer, int frameLength);
+    void calculateCRC(byte* modbusFrame, int frameLength);
 
     /**
      * @brief Adds the CRC to a modbus RTU frame
@@ -1520,7 +1520,7 @@ class modbusMaster {
      * @param modbusFrame The modbus frame to add the CRC to
      * @param frameLength The length of the frame
      */
-    void insertCRC(byte* modbusFrame = commandBuffer, int frameLength);
+    void insertCRC(byte* modbusFrame, int frameLength);
 
     /**
      * @brief This slices one array out of another

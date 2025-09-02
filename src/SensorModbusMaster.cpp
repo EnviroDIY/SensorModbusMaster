@@ -273,11 +273,6 @@ bool modbusMaster::StringToRegister(byte slaveId, int regNum, String value,
     return setRegisters(slaveId, regNum, value.length() / 2, (uint8_t*)value.c_str(),
                         forceMultiple);
 }
-bool modbusMaster::charToRegister(byte slaveId, int regNum, char inChar[],
-                                  int charLength, bool forceMultiple) {
-    return setRegisters(slaveId, regNum, charLength / 2, (uint8_t*)inChar,
-                        forceMultiple);
-}
 bool modbusMaster::charToRegister(byte slaveId, int regNum, char* inChar,
                                   int charLength, bool forceMultiple) {
     return setRegisters(slaveId, regNum, charLength / 2, (uint8_t*)inChar,
@@ -962,7 +957,7 @@ bool modbusMaster::setCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
 //----------------------------------------------------------------------------
 
 // This sends a command to the sensor bus and listens for a response
-uint16_t modbusMaster::sendCommand(byte slaveId, byte command[], int commandLength) {
+uint16_t modbusMaster::sendCommand(byte slaveId, byte* command, int commandLength) {
     // Empty the response buffer
     for (int i = 0; i < RESPONSE_BUFFER_SIZE; i++) {
         modbusMaster::responseBuffer[i] = 0x00;
@@ -1099,7 +1094,7 @@ void modbusMaster::emptySerialBuffer(Stream* stream) {
 
 // Just a function to pretty-print the modbus hex frames
 // This is purely for debugging
-void modbusMaster::printFrameHex(byte modbusFrame[], int frameLength) {
+void modbusMaster::printFrameHex(byte* modbusFrame, int frameLength) {
     debugPrint("{");
     for (int i = 0; i < frameLength; i++) {
         debugPrint("0x");
@@ -1116,7 +1111,7 @@ void modbusMaster::printFrameHex(byte modbusFrame[], int frameLength) {
 // From: https://ctlsys.com/support/how_to_compute_the_modbus_rtu_message_crc/
 // and: https://stackoverflow.com/questions/19347685/calculating-modbus-rtu-crc-16
 //
-void modbusMaster::calculateCRC(byte modbusFrame[], int frameLength) {
+void modbusMaster::calculateCRC(byte* modbusFrame, int frameLength) {
     // Reset the CRC frame
     modbusMaster::crcFrame[0] = {0x00};
     modbusMaster::crcFrame[1] = {0x00};
@@ -1143,7 +1138,7 @@ void modbusMaster::calculateCRC(byte modbusFrame[], int frameLength) {
     crcFrame[0] = crcLow;
     crcFrame[1] = crcHigh;
 }
-void modbusMaster::insertCRC(byte modbusFrame[], int frameLength) {
+void modbusMaster::insertCRC(byte* modbusFrame, int frameLength) {
     // Calculate the CRC
     calculateCRC(modbusFrame, frameLength);
 
