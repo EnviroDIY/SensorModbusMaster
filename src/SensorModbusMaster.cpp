@@ -177,7 +177,12 @@ String modbusMaster::StringFromRegister(byte slaveId, byte regType, int regNum,
     return StringFromFrame(charLength);
 }
 void modbusMaster::charFromRegister(byte slaveId, byte regType, int regNum,
-                                    char outChar[], int charLength) {
+                                    char* outChar, int charLength) {
+    getModbusData(slaveId, regType, regNum, charLength / 2);
+    charFromFrame(outChar, charLength);
+}
+void modbusMaster::charFromRegister(byte slaveId, byte regType, int regNum,
+                                    const char* outChar, int charLength) {
     getModbusData(slaveId, regType, regNum, charLength / 2);
     charFromFrame(outChar, charLength);
 }
@@ -295,7 +300,7 @@ bool modbusMaster::charToRegister(byte slaveId, int regNum, const char* inChar,
 // For an input register, readCommand = 0x04
 
 bool modbusMaster::getCoil(byte slaveId, int16_t coilAddress) {
-    if (!getModbusData(slaveId, 0x01,coilAddress, 1)) { return false; }
+    if (!getModbusData(slaveId, 0x01, coilAddress, 1)) { return false; }
     return (bitRead(responseBuffer[3], 0) != 0);
 }
 
@@ -445,7 +450,7 @@ String modbusMaster::StringFromFrame(int charLength, int start_index,
     return string;
 }
 
-void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index,
+void modbusMaster::charFromFrame(char* outChar, int charLength, int start_index,
                                  byte* sourceFrame) {
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++) {
@@ -459,6 +464,11 @@ void modbusMaster::charFromFrame(char outChar[], int charLength, int start_index
     if (j < charLength) {
         for (int i = j; i < +charLength; i++) { outChar[j] = '\0'; }
     }
+}
+void modbusMaster::charFromFrame(const char* outChar, int charLength, int start_index,
+                                 byte* sourceFrame) {
+    return charFromFrame(const_cast<char*>(outChar), charLength, start_index,
+                         sourceFrame);
 }
 
 // These insert values into a longer modbus data frame.
