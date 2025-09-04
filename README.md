@@ -13,6 +13,7 @@ It's specifically written with lots of "higher-level" functions to help out user
   - [Using the library](#using-the-library)
   - [Modbus Maps](#modbus-maps)
   - [Supported Data Types](#supported-data-types)
+  - [The TAI64 Timestamp Format](#the-tai64-timestamp-format)
   - [Notes on TTL and RS485/RS322 electrical communications standards](#notes-on-ttl-and-rs485rs322-electrical-communications-standards)
   - [Hardware interface suggestions for EnviroDIY Mayfly](#hardware-interface-suggestions-for-envirodiy-mayfly)
   - [Library installation](#library-installation)
@@ -129,17 +130,14 @@ Set the forceMultiple boolean flag to 'true' to force the use of the Modbus comm
   - Value must be in four contiguous 16-bit registers
   - Value is always fully big endian
   - Supported as if it were a 32-bit unix timestamp because the first 32-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
-  - See <https://www.tai64.com/> for more details on this format type
 - **TAI64N** (64-bit timestamp followed by a 32-bit nanosecond count)
   - Value must be in six contiguous 16-bit registers
   - Value is always fully big endian
   - Note that the seconds and nanoseconds are broken into two different fields.
-  - See <https://www.tai64.com/> for more details on this format type
 - **TAI64NA** (64-bit timestamp followed by a 32-bit nanosecond count and then a 32-bit attosecond count)
   - Value must be in eight contiguous 16-bit registers
   - Value is always fully big endian
   - Note that the seconds, nanoseconds, and attoseconds are broken into three different fields.
-  - See <https://www.tai64.com/> for more details on this format type
 - `byte` (8-bit unsigned integer or raw byte of data)
   - Must specify either the first or second 8-bit component of a single 16-bit register)
   - By default, the Modbus command for pre-setting a single register will be used (0x06).
@@ -160,6 +158,40 @@ Set the forceMultiple boolean flag to 'true' to force the use of the Modbus comm
 
 There are also mid-level functions available to help to reduce serial traffic by calling many registers at once and low level functions to make raw Modbus calls.
 See SensorModbusMaster.h for all the available functions and their required and optional inputs
+_____
+
+## The TAI64 Timestamp Format
+
+Within this library, the support for TAI64, TAI64N and TAI64NA has these
+limitations:
+
+- The time value must be in four (TAI64), six (TAI64N), or eight (TAI64NA)
+contiguous 16-bit registers
+- The time value must always be fully big endian
+- The full 64-bit timestamp is cropped to 32-bits and only the lower 32-bits are
+used as if it was a 32-bit unix timestamp.
+  - The upper 32-bits of the TAI64 timestamp will be 0x40000000 until the year 2106.
+
+> TAI stands for Temps Atomique International, the current international
+> real-time standard.
+
+> TAI64 defines a 64-bit integer format where each value identifies a particular
+> SI second. The duration of SI seconds is defined through a count of state
+> transitions of the cesium atom and understood as constant. Time is structured
+> as a sequence of seconds anchored on the start of the year 1970 in the
+> Gregorian calendar, when atomic time (TAI) became the international standard
+> for real time. The standard defines 262 seconds before the year 1970, and
+> another 262 from this epoch onward, thus covering a span of roughly 300 billion
+> years, enough for most applications.
+
+> The extensions TAI64N and TAI64NA allow for finer time resolutions by
+> referring to particular nanoseconds and attoseconds (10-18 s), respectively,
+> within a particular second.
+
+The defining paper: [Toward a Unified Timestamp with explicit precision](https://www.demographic-research.org/volumes/vol12/6/12-6.pdf)
+
+[An excellent (and easier to read) explanation of the TAI64 formats on Stack Overflow](https://stackoverflow.com/questions/50907211/what-is-a-tai64-time-format)
+
 _____
 
 ## Notes on TTL and RS485/RS322 electrical communications standards
