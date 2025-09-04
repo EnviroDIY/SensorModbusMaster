@@ -407,17 +407,31 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get the numbered input or holding register and return it as a uint16_t.
+     * @brief Get the numbered input register and return it as a uint16_t.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the uint16_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @return The uint16_t held in the register.
      */
+    uint16_t uint16FromInputRegister(int regNum, endianness endian = bigEndian) {
+        return uint16FromRegister(0x04, regNum, endian);
+    }
+    /**
+     * @brief Get the numbered holding register and return it as a uint16_t.
+     * @copydetails modbusMaster::uint16FromInputRegister(int, endianness)
+     */
+    uint16_t uint16FromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return uint16FromRegister(0x03, regNum, endian);
+    }
+    /** @brief Get the numbered input or holding register and return it as a uint16_t.
+     * @copydetails modbusMaster::uint16FromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     uint16_t uint16FromRegister(byte regType, int regNum,
                                 endianness endian = bigEndian);
+
     /**
      * @brief Set a holding register to a uint16_t.
      *
@@ -432,6 +446,12 @@ class modbusMaster {
      */
     bool uint16ToRegister(int regNum, uint16_t value, endianness endian = bigEndian,
                           bool forceMultiple = false);
+    /// @copydoc modbusMaster::uint16ToRegister(int, uint16_t, endianness, bool)
+    bool uint16ToHoldingRegister(int regNum, uint16_t value,
+                                 endianness endian        = bigEndian,
+                                 bool       forceMultiple = false) {
+        return uint16ToRegister(regNum, value, endian, forceMultiple);
+    }
 
     /**
      * @brief Read a uint16_t out of a modbus response frame.
@@ -469,16 +489,30 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get the numbered input or holding register and return it as an int16_t.
+     * @brief Get the numbered input register and return it as an int16_t.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the int16_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications.
      * @return The int16_t held in the register.
      */
+    int16_t int16FromInputRegister(int regNum, endianness endian = bigEndian) {
+        return int16FromRegister(0x04, regNum, endian);
+    }
+    /**
+     * @brief Get the numbered holding register and return it as an int16_t.
+     * @copydetails modbusMaster::int16FromInputRegister(int, endianness)
+     */
+    int16_t int16FromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return int16FromRegister(0x03, regNum, endian);
+    }
+    /** @brief Get the numbered input or holding register and return it as an int16_t.
+     * @copydetails modbusMaster::int16FromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     int16_t int16FromRegister(byte regType, int regNum, endianness endian = bigEndian);
+
     /**
      * @brief Set a holding register to an int16_t.
      *
@@ -493,6 +527,12 @@ class modbusMaster {
      */
     bool int16ToRegister(int regNum, int16_t value, endianness endian = bigEndian,
                          bool forceMultiple = false);
+    /// @copydoc modbusMaster::int16ToRegister(int, int16_t, endianness, bool)
+    bool int16ToHoldingRegister(int regNum, int16_t value,
+                                endianness endian        = bigEndian,
+                                bool       forceMultiple = false) {
+        return int16ToRegister(regNum, value, endian, forceMultiple);
+    }
 
     /**
      * @brief Read an int16_t out of a modbus response frame.
@@ -530,18 +570,34 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get two input or holding registers starting at the specified number and
+     * @brief Get two input registers starting at the specified number and
      * return them as a 32-bit float.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
      * @param endian The endianness of the 32-bit float in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications. Only
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The 32 bit float held in the register.
      */
+    float float32FromInputRegister(int regNum, endianness endian = bigEndian) {
+        return float32FromRegister(0x04, regNum, endian);
+    }
+    /**
+     * @brief Get two holding registers starting at the specified number and
+     * return them as a 32-bit float.
+     * @copydetails modbusMaster::float32FromInputRegister(int, endianness)
+     */
+    float float32FromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return float32FromRegister(0x03, regNum, endian);
+    }
+    /** @brief Get two input or holding registers starting at the specified number and
+     * return them as a 32-bit float.
+     * @copydetails modbusMaster::float32FromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     float float32FromRegister(byte regType, int regNum, endianness endian = bigEndian);
+
     /**
      * @brief Set two holding registers to a 32-bit float
      *
@@ -553,6 +609,11 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool float32ToRegister(int regNum, float value, endianness endian = bigEndian);
+    /// @copydoc modbusMaster::float32ToRegister(int, float, endianness)
+    bool float32ToHoldingRegister(int regNum, float value,
+                                  endianness endian = bigEndian) {
+        return float32ToRegister(regNum, value, endian);
+    }
 
     /**
      * @brief Read a 32-bit float out of a modbus response frame.
@@ -591,19 +652,35 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get two input or holding registers starting at the specified number and
+     * @brief Get two input registers starting at the specified number and
      * return them as a uint32_t
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
      * @param endian The endianness of the uint32_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications. Only
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The uint32_t held in the register.
      */
+    uint32_t uint32FromInputRegister(int regNum, endianness endian = bigEndian) {
+        return uint32FromRegister(0x04, regNum, endian);
+    }
+    /**
+     * @brief Get two holding registers starting at the specified number and
+     * return them as a uint32_t
+     * @copydetails modbusMaster::uint32FromInputRegister(int, endianness)
+     */
+    uint32_t uint32FromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return uint32FromRegister(0x03, regNum, endian);
+    }
+    /** @brief Get two input or holding registers starting at the specified number and
+     * return them as a uint32_t
+     * @copydetails modbusMaster::uint32FromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     uint32_t uint32FromRegister(byte regType, int regNum,
                                 endianness endian = bigEndian);
+
     /**
      * @brief Set two holding registers to a uint32_t
      *
@@ -615,6 +692,11 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool uint32ToRegister(int regNum, uint32_t value, endianness endian = bigEndian);
+    /// @copydoc modbusMaster::uint32ToRegister(int, uint32_t, endianness)
+    bool uint32ToHoldingRegister(int regNum, uint32_t value,
+                                 endianness endian = bigEndian) {
+        return uint32ToRegister(regNum, value, endian);
+    }
 
     /**
      * @brief Insert a uint32_t into the working byte frame
@@ -653,18 +735,34 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get two input or holding registers starting at the specified number and
+     * @brief Get two input registers starting at the specified number and
      * return them as an int32_t
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
      * @param endian The endianness of the int32_t in the modbus register. Optional
      * with a default of big endian, which is required by modbus specifications. Only
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The int32_t held in the register.
      */
+    int32_t int32FromInputRegister(int regNum, endianness endian = bigEndian) {
+        return int32FromRegister(0x04, regNum, endian);
+    }
+    /**
+     * @brief Get two holding registers starting at the specified number and
+     * return them as an int32_t
+     * @copydetails modbusMaster::int32FromInputRegister(int, endianness)
+     */
+    int32_t int32FromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return int32FromRegister(0x03, regNum, endian);
+    }
+    /** @brief Get two input or holding registers starting at the specified number and
+     * return them as an int32_t
+     * @copydetails modbusMaster::int32FromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     int32_t int32FromRegister(byte regType, int regNum, endianness endian = bigEndian);
+
     /**
      * @brief Set two holding registers to an int32_t
      *
@@ -676,6 +774,11 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool int32ToRegister(int regNum, int32_t value, endianness endian = bigEndian);
+    /// @copydoc modbusMaster::int32ToRegister(int, int32_t, endianness)
+    bool int32ToHoldingRegister(int regNum, int32_t value,
+                                endianness endian = bigEndian) {
+        return int32ToRegister(regNum, value, endian);
+    }
 
     /**
      * @brief Read an int32_t out of a modbus response frame.
@@ -714,15 +817,29 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get the numbered input or holding register and return one byte of it.
+     * @brief Get the numbered input register and return one byte of it.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param byteNum The byte number to return (1 for upper or 2 for lower)
      * @return The byte held in the register.
      */
+    byte byteFromInputRegister(int regNum, int byteNum) {
+        return byteFromRegister(0x04, regNum, byteNum);
+    }
+    /**
+     * @brief Get the numbered holding register and return one byte of it.
+     * @copydetails modbusMaster::byteFromInputRegister(int regNum, int byteNum);
+     */
+    byte byteFromHoldingRegister(int regNum, int byteNum) {
+        return byteFromRegister(0x03, regNum, byteNum);
+    }
+    /** @brief Get the numbered input or holding register and return one byte of it.
+     * @copydetails modbusMaster::byteFromInputRegister(int, int)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     byte byteFromRegister(byte regType, int regNum, int byteNum);
+
     /**
      * @brief Set one byte of a holding register.
      *
@@ -739,6 +856,11 @@ class modbusMaster {
      */
     bool byteToRegister(int regNum, int byteNum, byte value,
                         bool forceMultiple = false);
+    /// @copydoc modbusMaster::byteToRegister(int, int, byte, bool)
+    bool byteToHoldingRegister(int regNum, int byteNum, byte value,
+                               bool forceMultiple = false) {
+        return byteToRegister(regNum, byteNum, value, forceMultiple);
+    }
 
     /**
      * @brief Read a single byte out of a modbus response frame.
@@ -825,37 +947,67 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get four input or holding registers starting at the specified number,
+     * @brief Get four input registers starting at the specified number,
      * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
      * unix timestamp.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the four registers of interest.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64FromRegister(byte regType, int regNum);
+    uint32_t TAI64FromInputRegister(int regNum);
     /**
-     * @brief Get six input or holding registers starting at the specified number,
+     * @brief Get four holding registers starting at the specified number,
+     * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
+     * unix timestamp.
+     * @copydetails modbusMaster::TAI64FromInputRegister(int)
+     */
+    uint32_t TAI64FromHoldingRegister(int regNum);
+    /** @brief Get four input or holding registers starting at the specified number,
+     * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
+     * unix timestamp.
+     * @copydetails modbusMaster::TAI64FromInputRegister(int)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
+    uint32_t TAI64FromRegister(byte regType, int regNum);
+
+    /**
+     * @brief Get six input registers starting at the specified number,
      * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
      * count), and return an equivalent 32-bits unix timestamp.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the six registers of interest.
      * @param nanoseconds A reference to another uint32_t to populate with the
      * nanoseconds.
      * @return The equivalent 32-bit unix timestamp.
      */
-    uint32_t TAI64NFromRegister(byte regType, int regNum, uint32_t& nanoseconds);
+    uint32_t TAI64NFromInputRegister(int regNum, uint32_t& nanoseconds) {
+        return TAI64NFromRegister(0x04, regNum, nanoseconds);
+    }
     /**
-     * @brief Get eight input or holding registers starting at the specified number,
+     * @brief Get six holding registers starting at the specified number,
+     * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
+     * count), and return an equivalent 32-bits unix timestamp.
+     * @copydetails modbusMaster::TAI64NFromInputRegister(int, uint32_t&)
+     */
+    uint32_t TAI64NFromHoldingRegister(int regNum, uint32_t& nanoseconds) {
+        return TAI64NFromRegister(0x03, regNum, nanoseconds);
+    }
+    /** @brief Get six input or holding registers starting at the specified number,
+     * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
+     * count), and return an equivalent 32-bits unix timestamp.
+     * @copydetails modbusMaster::TAI64NFromInputRegister(int, uint32_t&)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
+    uint32_t TAI64NFromRegister(byte regType, int regNum, uint32_t& nanoseconds);
+
+    /**
+     * @brief Get eight input registers starting at the specified number,
      * convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count
      * and then a 32-bit attosecond count), and return an equivalent 32-bits unix
      * timestamp.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the eight registers of interest.
      * @param nanoseconds A reference to another uint32_t to populate with the
      * nanoseconds.
@@ -863,8 +1015,32 @@ class modbusMaster {
      * attoseconds.
      * @return The equivalent 32-bit unix timestamp.
      */
+    uint32_t TAI64NAFromInputRegister(int regNum, uint32_t& nanoseconds,
+                                      uint32_t& attoseconds) {
+        return TAI64NAFromRegister(0x04, regNum, nanoseconds, attoseconds);
+    }
+    /**
+     * @brief Get eight holding registers starting at the specified number,
+     * convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count
+     * and then a 32-bit attosecond count), and return an equivalent 32-bits unix
+     * timestamp.
+     * @copydetails modbusMaster::TAI64NAFromInputRegister(int, uint32_t&, uint32_t&)
+     */
+    uint32_t TAI64NAFromHoldingRegister(int regNum, uint32_t& nanoseconds,
+                                        uint32_t& attoseconds) {
+        return TAI64NAFromRegister(0x03, regNum, nanoseconds, attoseconds);
+    }
+    /** @brief Get eight input or holding registers starting at the specified number,
+     * convert them to a TAI64NA (64-bit timestamp followed by a 32-bit nanosecond count
+     * and then a 32-bit attosecond count), and return an equivalent 32-bits unix
+     * timestamp.
+     * @copydetails modbusMaster::TAI64NAFromInputRegister(int, uint32_t&, uint32_t&)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     uint32_t TAI64NAFromRegister(byte regType, int regNum, uint32_t& nanoseconds,
                                  uint32_t& attoseconds);
+
     /**
      * @brief Set four holding registers to a TAI64 (64-bit timestamp)
      *
@@ -874,6 +1050,10 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool TAI64ToRegister(int regNum, uint32_t seconds);
+    /// @copydoc modbusMaster::TAI64ToRegister(int regNum, uint32_t)
+    bool TAI64ToHoldingRegister(int regNum, uint32_t seconds) {
+        return TAI64ToRegister(regNum, seconds);
+    }
     /**
      * @brief Set six holding registers to a TAI64N (64-bit timestamp followed by a
      * 32-bit nanosecond count)
@@ -885,6 +1065,10 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds);
+    /// @copydoc modbusMaster::TAI64NToRegister(int, uint32_t, uint32_t)
+    bool TAI64NToHoldingRegister(int regNum, uint32_t seconds, uint32_t nanoseconds) {
+        return TAI64NToRegister(regNum, seconds, nanoseconds);
+    }
     /**
      * @brief Set eight holding registers to a TAI64NA (64-bit timestamp followed by a
      * 32-bit nanosecond count and then a 32-bit attosecond count)
@@ -898,6 +1082,11 @@ class modbusMaster {
      */
     bool TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds,
                            uint32_t attoseconds);
+    /// @copydoc modbusMaster::TAI64NAToRegister(int, uint32_t, uint32_t, uint32_t)
+    bool TAI64NAToHoldingRegister(int regNum, uint32_t seconds, uint32_t nanoseconds,
+                                  uint32_t attoseconds) {
+        return TAI64NAToRegister(regNum, seconds, nanoseconds, attoseconds);
+    }
 
     /**
      * @brief Read a TAI64 (64-bit timestamp) out of a modbus response frame
@@ -990,30 +1179,44 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get the numbered input or holding register and return it as an 16-bit
+     * @brief Get the numbered input register and return it as an 16-bit
      * pointer.
      *
      * This should be a pointer to another registry address within the modbus registers.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the 16-bit pointer in the modbus register.
      * Optional with a default of big endian, which is required by modbus
      * specifications.
      * @return The 16-bit pointer held in the register.
      */
+    uint16_t pointerFromInputRegister(int regNum, endianness endian = bigEndian) {
+        return pointerFromRegister(0x04, regNum, endian);
+    }
+    /**
+     * @brief Get the numbered holding register and return it as an 16-bit
+     * pointer.
+     * @copydetails modbusMaster::pointerFromInputRegister(int, endianness)
+     */
+    uint16_t pointerFromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return pointerFromRegister(0x03, regNum, endian);
+    }
+    /** @brief Get the numbered input or holding register and return it as an 16-bit
+     * pointer.
+     * @copydetails modbusMaster::pointerFromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     uint16_t pointerFromRegister(byte regType, int regNum,
                                  endianness endian = bigEndian);
+
     /**
-     * @brief Get the numbered input or holding register and return it as a 8-bit
+     * @brief Get the numbered input register and return it as a 8-bit
      * pointer type.
      *
      * This should be the type of register pointed to by pointer contained within a
      * different modbus register.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param endian The endianness of the pointer type in the modbus register.
      * Optional with a default of big endian, which is required by modbus
@@ -1021,8 +1224,28 @@ class modbusMaster {
      * @return The 8-bit pointer type held in the register. This will be an
      * object of type #pointerType.
      */
+    int8_t pointerTypeFromInputRegister(int regNum, endianness endian = bigEndian) {
+        return pointerTypeFromRegister(0x04, regNum, endian);
+    }
+
+    /**
+     * @brief Get the numbered holding register and return it as a 8-bit
+     * pointer type.
+     * @copydetails modbusMaster::pointerTypeFromInputRegister(int, endianness)
+     */
+    int8_t pointerTypeFromHoldingRegister(int regNum, endianness endian = bigEndian) {
+        return pointerTypeFromRegister(0x03, regNum, endian);
+    }
+
+    /** @brief Get the numbered input or holding register and return it as a 8-bit
+     * pointer type.
+     * @copydetails modbusMaster::pointerTypeFromInputRegister(int, endianness)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     int8_t pointerTypeFromRegister(byte regType, int regNum,
                                    endianness endian = bigEndian);
+
     /**
      * @brief Set a holding register to a 16-bit pointer.
      *
@@ -1039,6 +1262,13 @@ class modbusMaster {
      */
     bool pointerToRegister(int regNum, uint16_t value, pointerType point,
                            endianness endian = bigEndian, bool forceMultiple = false);
+    /// @copydoc modbusMaster::pointerToRegister(int, uint16_t, pointerType, endianness,
+    /// bool)
+    bool pointerToHoldingRegister(int regNum, uint16_t value, pointerType point,
+                                  endianness endian        = bigEndian,
+                                  bool       forceMultiple = false) {
+        return pointerToRegister(regNum, value, point, endian, forceMultiple);
+    }
 
     /**
      * @brief Read a 16-bit pointer out of a modbus response frame.
@@ -1102,17 +1332,33 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get a group of input or holding registers, convert them to characters,
+     * @brief Get a group of input registers, convert them to characters,
      * combine them, and return a single String.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
      * @param charLength The number of characters to return. NOTE: There are *TWO*
      * characters per register!
      * @return The text from the registers.
      */
+    String StringFromInputRegister(int regNum, int charLength) {
+        return StringFromRegister(0x04, regNum, charLength);
+    }
+    /**
+     * @brief Get a group of holding registers, convert them to characters,
+     * combine them, and return a single String.
+     * @copydetails modbusMaster::StringFromInputRegister(int, int)
+     */
+    String StringFromHoldingRegister(int regNum, int charLength) {
+        return StringFromRegister(0x03, regNum, charLength);
+    }
+    /** @brief Get a group of input or holding registers, convert them to characters,
+     * combine them, and return a single String.
+     * @copydetails modbusMaster::StringFromInputRegister(int, int)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
     String StringFromRegister(byte regType, int regNum, int charLength);
+
     /**
      * @brief Set a series of holding registers to the characters in a String.
      *
@@ -1125,6 +1371,10 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool StringToRegister(int regNum, String value, bool forceMultiple = false);
+    /// @copydoc modbusMaster::StringToRegister(int, String, bool)
+    bool StringToHoldingRegister(int regNum, String value, bool forceMultiple = false) {
+        return StringToRegister(regNum, value, forceMultiple);
+    }
 
     /**
      * @brief Read a String out of a modbus response frame.
@@ -1160,30 +1410,47 @@ class modbusMaster {
     // ===================================================================== //
     /**@{*/
     /**
-     * @brief Get a group of input or holding registers, convert them to characters and
+     * @brief Get a group of input registers, convert them to characters and
      * put them into the given character array.
      *
      * There is no return from this function.
      *
-     * @param regType The register type; use 0x03 for a holding register (read/write) or
-     * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
      * @param outChar A pointer or constant pointer to a character array to fill with
      * the content of the registers.
      * @param charLength The number of characters to return. NOTE: There are *TWO*
      * characters per register!
      */
-    void charFromRegister(byte regType, int regNum, char* outChar, int charLength) {
-        charFromRegister(_slaveID, regType, regNum, outChar, charLength);
+    void charFromInputRegister(int regNum, char* outChar, int charLength) {
+        charFromRegister(0x04, regNum, outChar, charLength);
     }
+    /**
+     * @brief Get a group of holding registers, convert them to characters and
+     * put them into the given character array.
+     * @copydetails modbusMaster::charFromInputRegister(int, char*, int)
+     */
+    void charFromHoldingRegister(int regNum, char* outChar, int charLength) {
+        charFromRegister(0x03, regNum, outChar, charLength);
+    }
+    /** @brief Get a group of input or holding registers, convert them to characters and
+     * put them into the given character array.
+     * @copydetails modbusMaster::charFromInputRegister(int, char*, int)
+     * @param regType The register type; use 0x03 for a holding register (read/write) or
+     * 0x04 for an input register (read only)
+     */
+    void charFromRegister(byte regType, int regNum, char* outChar, int charLength);
+
     /// @copydoc charFromRegister(byte, int, char*, int)
     void charFromRegister(byte regType, int regNum, const char* outChar,
-                          int charLength) {
-        charFromRegister(_slaveID, regType, regNum, outChar, charLength);
-    }
-    /// @copydoc charFromRegister(byte, byte, int, char*, int)
-    void charFromRegister(byte slaveId, byte regType, int regNum, const char* outChar,
                           int charLength);
+    /// @copydoc charFromInputRegister(int, char*, int)
+    void charFromInputRegister(int regNum, const char* outChar, int charLength) {
+        charFromInputRegister(regNum, outChar, charLength);
+    }
+    /// @copydoc charFromHoldingRegister(int, char*, int)
+    void charFromHoldingRegister(int regNum, const char* outChar, int charLength) {
+        charFromHoldingRegister(regNum, outChar, charLength);
+    }
     /**
      * @brief Set a series of holding registers to the characters in a character array.
      *
@@ -1198,17 +1465,20 @@ class modbusMaster {
      * @return True if the registers were successfully set, false if not.
      */
     bool charToRegister(int regNum, char* inChar, int charLength,
-                        bool forceMultiple = false) {
-        return charToRegister(_slaveID, regNum, inChar, charLength, forceMultiple);
+                        bool forceMultiple = false);
+    /// @copydoc modbusMaster::charToRegister(int, char*, int, bool)
+    bool charToHoldingRegister(int regNum, char* inChar, int charLength,
+                               bool forceMultiple = false) {
+        return charToRegister(regNum, inChar, charLength, forceMultiple);
     }
     /// @copydoc charToRegister(int, char*, int, bool)
     bool charToRegister(int regNum, const char* inChar, int charLength,
-                        bool forceMultiple = false) {
-        return charToRegister(_slaveID, regNum, inChar, charLength, forceMultiple);
-    }
-    /// @copydoc charToRegister(byte, int, char*, int, bool)
-    bool charToRegister(byte slaveId, int regNum, const char* inChar, int charLength,
                         bool forceMultiple = false);
+    /// @copydoc charToRegister(int, char*, int, bool)
+    bool charToHoldingRegister(int regNum, const char* inChar, int charLength,
+                               bool forceMultiple = false) {
+        return charToRegister(regNum, inChar, charLength, forceMultiple);
+    }
 
     /**
      * @brief Read characters out of a modbus response frame and put them
