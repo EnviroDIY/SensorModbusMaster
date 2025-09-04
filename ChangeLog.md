@@ -20,6 +20,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.6.0]
+
+### Changed
+
+- Reorganized functions in h file
+- Renamed some internal variables in the cpp file.
+
+### Added
+
+- Added overload functions `{type}FromHoldingRegister(..)`. These are identical to the `{type}FromRegister(..)` functions.
+- Added support for broadcasts to address 0.
+
+***
+
 ## [1.5.0]
 
 ### Changed
@@ -262,7 +276,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.0
 [1.5.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.5.0
 [1.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.4.0
 [1.3.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.3.0
