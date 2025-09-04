@@ -314,9 +314,9 @@ int16_t modbusMaster::getRegisters(byte slaveId, byte readCommand,
                                    int16_t startRegister, int16_t numRegisters,
                                    byte* buff) {
     if (buff == nullptr) { return false; }
-    if (buff == responseBuffer) { return false; }
     int16_t rxBytes = getModbusData(slaveId, readCommand, startRegister, numRegisters);
     if (rxBytes == 0) { return false; }
+    if (buff == responseBuffer) { return rxBytes; }
     // copy from the raw responseBuffer, starting at character 3 (the first two are the
     // returned bytes)
     memcpy(buff, responseBuffer + 3, numRegisters * 2);
@@ -329,9 +329,9 @@ int16_t modbusMaster::getRegisters(byte slaveId, byte readCommand,
 int16_t modbusMaster::getCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
                                byte* buff) {
     if (buff == nullptr) { return false; }
-    if (buff == responseBuffer) { return false; }
     int16_t rxBytes = getModbusData(slaveId, 0x01, startCoil, numCoils);
     if (rxBytes == 0) { return false; }
+    if (buff == responseBuffer) { return rxBytes; }
     // copy from the raw responseBuffer, starting at character 3 (the first two are the
     // returned bytes)
     memcpy(buff, responseBuffer + 3, ceil(numCoils / 8));
@@ -344,9 +344,9 @@ int16_t modbusMaster::getCoils(byte slaveId, int16_t startCoil, int16_t numCoils
 int16_t modbusMaster::getDiscreteInputs(byte slaveId, int16_t startInput,
                                         int16_t numInputs, byte* buff) {
     if (buff == nullptr) { return false; }
-    if (buff == responseBuffer) { return false; }
     int16_t rxBytes = getModbusData(slaveId, 0x02, startInput, numInputs);
     if (rxBytes == 0) { return false; }
+    if (buff == responseBuffer) { return rxBytes; }
     // copy from the raw responseBuffer, starting at character 3 (the first two are the
     // returned bytes)
     memcpy(buff, responseBuffer + 3, ceil(numInputs / 8));
@@ -719,7 +719,7 @@ int16_t modbusMaster::getModbusData(byte slaveId, byte readCommand,
 // The boolean switch to "forceMultiple" will force the command 0x10 (16,
 // preset multiple registers) instead of using 0x06 for a single register
 bool modbusMaster::setRegisters(byte slaveId, int16_t startRegister,
-                                int16_t numRegisters, byte value[],
+                                int16_t numRegisters, byte* value,
                                 bool forceMultiple) {
     // figure out how long the command will be
     int commandLength;
@@ -896,7 +896,7 @@ bool modbusMaster::setCoil(byte slaveId, int16_t coilAddress, bool value) {
 }
 
 bool modbusMaster::setCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
-                            byte value[]) {
+                            byte* value) {
     // figure out how long the command will be
     // The full command for writing multiple coils has:
     // - slave address (1 byte)

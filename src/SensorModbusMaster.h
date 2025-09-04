@@ -178,14 +178,10 @@ class modbusMaster {
     /**
      * @brief Construct a new modbus Master object
      *
-     * @param stream A pointer to the Arduino stream object to communicate with.
+     * @param stream A pointer or reference to the Arduino stream object to communicate with.
      */
     modbusMaster(Stream* stream);
-    /**
-     * @brief Construct a new modbus Master object
-     *
-     * @param stream A reference to the Arduino stream object to communicate with.
-     */
+    /// @copydoc modbusMaster(Stream*)
     modbusMaster(Stream& stream);
     /**
      * @copydoc modbusMaster(Stream*)
@@ -203,32 +199,29 @@ class modbusMaster {
     /**
      * @brief Equivalent to a constructor - used to assign members of the modbusMaster
      * object
+     * @remark If you set the members using a constructor or the setter functions, you
+     * do not need to run this function.
      * @copydetails modbusMaster(Stream* stream)
      * @return Always returns true
+     * @attention This does **not** initialize the stream or set the baud rate - that
+     * must be done separately before attempting to communicate.
      */
     bool begin(Stream* stream);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
-     * object
-     * @copydetails modbusMaster(Stream& stream)
-     * @return Always returns true
+     * @copydoc modbusMaster::begin(Stream*)
      */
     bool begin(Stream& stream);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
-     * object
-     * @copydetails modbusMaster(Stream* stream, int8_t enablePin)
-     * @return Always returns true
+     * @copydoc modbusMaster::begin(Stream*)
+     * @param enablePin A pin on the Arduino processor to use to send an enable signal
+     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
      */
     bool begin(Stream* stream, int8_t enablePin);
 
     /**
-     * @brief Equivalent to a constructor - used to assign members of the modbusMaster
-     * object
-     * @copydetails modbusMaster(Stream& stream, int8_t enablePin)
-     * @return Always returns true
+     * @copydoc modbusMaster::begin(Stream*, int8_t)
      */
     bool begin(Stream& stream, int8_t enablePin);
     /**@}*/
@@ -358,7 +351,6 @@ class modbusMaster {
      * @param regNum The number of the **first** register of interest.
      */
     // ===================================================================== //
-    /**@{*/
 
     // ===================================================================== //
     /**
@@ -366,6 +358,7 @@ class modbusMaster {
      * @name Functions to get and set unsigned 16-bit integer (uint16_t) data
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get the numbered input or holding register and return it as a uint16_t.
      *
@@ -402,7 +395,8 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the uint16_t in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The uint16_t starting at the given byte index in the modbus frame.
      */
     uint16_t uint16FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -419,6 +413,7 @@ class modbusMaster {
      */
     void uint16ToFrame(uint16_t value, endianness endian, byte* destFrame,
                        int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -427,6 +422,7 @@ class modbusMaster {
      * @name Functions to get and set signed 16-bit integer (int16_t) data
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get the numbered input or holding register and return it as an int16_t.
      *
@@ -463,7 +459,8 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the int16_t in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The int16_t starting at the given byte index in the modbus frame.
      */
     int16_t int16FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -480,6 +477,7 @@ class modbusMaster {
      */
     void int16ToFrame(int16_t value, endianness endian, byte* destFrame,
                       int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -488,6 +486,7 @@ class modbusMaster {
      * @name Functions to get and set 32-bit float data
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a 32-bit float.
@@ -524,7 +523,8 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the 32-bit float in the response
      * frame. Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The 32-bit float starting at the given byte index in the modbus frame.
      */
     float float32FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -542,6 +542,7 @@ class modbusMaster {
      */
     void float32ToFrame(float value, endianness endian, byte* destFrame,
                         int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -550,6 +551,7 @@ class modbusMaster {
      * @name Functions to get and set unsigned 32-bit integer (uint32_t) data
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a uint32_t
@@ -598,11 +600,13 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the uint32_t in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The uint32_t starting at the given byte index in the modbus frame.
      */
     uint32_t uint32FromFrame(endianness endian = bigEndian, int start_index = 3,
                              byte* sourceFrame = responseBuffer);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -611,6 +615,7 @@ class modbusMaster {
      * @name Functions to get and set signed 32-bit integer (int32_t) data
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get two input or holding registers starting at the specified number and
      * return them as an int32_t
@@ -647,7 +652,8 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @param start_index The starting position of the int32_t in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The int32_t starting at the given byte index in the modbus frame.
      */
     int32_t int32FromFrame(endianness endian = bigEndian, int start_index = 3,
@@ -665,6 +671,7 @@ class modbusMaster {
      */
     void int32ToFrame(int32_t value, endianness endian, byte* destFrame,
                       int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -673,6 +680,7 @@ class modbusMaster {
      * @name Functions to get and set bytes (half registers)
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get the numbered input or holding register and return one byte of it.
      *
@@ -707,7 +715,8 @@ class modbusMaster {
      *
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The byte starting at the given byte index in the modbus frame.
      */
     byte byteFromFrame(int start_index = 3, byte* sourceFrame = responseBuffer);
@@ -723,6 +732,7 @@ class modbusMaster {
      * Optional with a default of 0.
      */
     void byteToFrame(byte value, int byteNum, byte* destFrame, int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -769,20 +779,21 @@ class modbusMaster {
      *
      * Common parameters for TAI64 reading functions:
      *
-     * @param nanoseconds A reference to another uint32_t to populate with the
+     * - `nanoseconds` - A reference to another uint32_t to populate with the
      * nanoseconds - for TAI64N and TAI64NA
-     * @param attoseconds A reference to another uint32_t to populate with the
+     * - `attoseconds` - A reference to another uint32_t to populate with the
      * attoseconds - for TAI64NA
-     * @return The lower 32 bits of the TAI64 timestamp.
+     * - `return` - The lower 32 bits of the TAI64 timestamp.
      *
      * Common parameters for TAI64 writing functions:
      *
-     * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
+     * - `seconds` - The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
-     * @param nanoseconds The 32-bit nanosecond count.
-     * @param attoseconds The 32-bit attoseconds count.
+     * - `nanoseconds` - The 32-bit nanosecond count.
+     * - `attoseconds` - The 32-bit attoseconds count.
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get four input or holding registers starting at the specified number,
      * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
@@ -872,7 +883,8 @@ class modbusMaster {
      *
      * @param start_index The starting position of the TAI64 in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64FromFrame(int start_index = 3, byte* sourceFrame = responseBuffer);
@@ -885,7 +897,8 @@ class modbusMaster {
      * nanoseconds.
      * @param start_index The starting position of the TAI64N in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64NFromFrame(uint32_t& nanoseconds, int start_index = 3,
@@ -901,7 +914,8 @@ class modbusMaster {
      * attoseconds.
      * @param start_index The starting position of the TAI64NA in the response frame.
      * Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The equivalent 32-bit unix timestamp.
      */
     uint32_t TAI64NAFromFrame(uint32_t& nanoseconds, uint32_t& attoseconds,
@@ -943,6 +957,7 @@ class modbusMaster {
      */
     void TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds, uint32_t attoseconds,
                         byte* destFrame, int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -951,6 +966,7 @@ class modbusMaster {
      * @name Functions to get and set pointers to other registers
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get the numbered input or holding register and return it as an 16-bit
      * pointer.
@@ -1015,7 +1031,8 @@ class modbusMaster {
      * specifications.
      * @param start_index The starting position of the 16-bit pointer in the response
      * frame. Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The 16-bit pointer starting at the given byte index in the register
      * array.
      */
@@ -1030,9 +1047,10 @@ class modbusMaster {
      * @param endian The endianness of the pointer type in the modbus register.
      * Optional with a default of big endian, which is required by modbus
      * specifications.
-     * @param start_index The starting position of the 8-bit pointer type in the response
-     * frame. Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param start_index The starting position of the 8-bit pointer type in the
+     * response frame. Optional with a default of 3.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The 8-bit pointer type held in the buffer frame. This will be an
      * object of type #pointerType.
      */
@@ -1052,6 +1070,7 @@ class modbusMaster {
      */
     void pointerToFrame(uint16_t value, pointerType point, endianness endian,
                         byte* destFrame, int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -1062,6 +1081,7 @@ class modbusMaster {
      * @note These are for Arduino String objects, not simple character arrays.
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get a group of input or holding registers, convert them to characters,
      * combine them, and return a single String.
@@ -1096,7 +1116,8 @@ class modbusMaster {
      * @param charLength The number of characters to return.
      * @param start_index The starting position of the characters in the response
      * frame. Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return The text from the registers.
      */
     String StringFromFrame(int charLength, int start_index = 3,
@@ -1110,6 +1131,7 @@ class modbusMaster {
      * Optional with a default of 0.
      */
     void StringToFrame(String value, byte* destFrame, int start_index = 0);
+    /**@}*/
 
 
     // ===================================================================== //
@@ -1120,6 +1142,7 @@ class modbusMaster {
      * @note These are for simple character arrays, not Arduino String objects.
      */
     // ===================================================================== //
+    /**@{*/
     /**
      * @brief Get a group of input or holding registers, convert them to characters and
      * put them into the given character array.
@@ -1130,7 +1153,8 @@ class modbusMaster {
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
-     * @param outChar A pointer or constant pointer to a character array to fill with the content of the registers.
+     * @param outChar A pointer or constant pointer to a character array to fill with
+     * the content of the registers.
      * @param charLength The number of characters to return. NOTE: There are *TWO*
      * characters per register!
      */
@@ -1170,11 +1194,12 @@ class modbusMaster {
      * @param charLength The number of characters to return.
      * @param start_index The starting position of the characters in the response
      * frame. Optional with a default of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      */
     void charFromFrame(char* outChar, int charLength, int start_index = 3,
                        byte* sourceFrame = responseBuffer);
-    /// @copydoc charFromFrame(char*, int, int, byte*)
+    /// @copydoc modbusMaster::charFromFrame(char*, int, int, byte*)
     void charFromFrame(const char* outChar, int charLength, int start_index = 3,
                        byte* sourceFrame = responseBuffer);
     /**
@@ -1189,7 +1214,7 @@ class modbusMaster {
      */
     void charToFrame(char* inChar, int charLength, byte* destFrame,
                      int start_index = 0);
-    /// @copydoc charToFrame(char*, int, byte*, int)
+    /// @copydoc modbusMaster::charToFrame(char*, int, byte*, int)
     void charToFrame(const char* inChar, int charLength, byte* destFrame,
                      int start_index = 0);
     /**@}*/
@@ -1222,9 +1247,12 @@ class modbusMaster {
      * @brief Get data from either holding or input registers and copy the output to the
      * supplied buffer.
      *
-     * @note This command puts only the **content of the registers** into the buffers.
-     * It does **not** add the full returned modbus frame.  The data in the buffer will
-     * be stripped of the modbus protocol characters.
+     * - _If you provide a buffer,_ this command puts only the **content of the
+     * registers** into the buffers. It does **not** add the full returned modbus frame.
+     * The data in the provided buffer will be stripped of the modbus protocol
+     * characters.
+     * - _If no buffer is provided,_ the full modbus response is put into the internal
+     * library buffer and is **_not_ stripped of the modbus protocol characters**.
      *
      * @remark No more than 125 registers can be read at once.
      *
@@ -1239,7 +1267,7 @@ class modbusMaster {
      * response.
      */
     int16_t getRegisters(byte slaveId, byte readCommand, int16_t startRegister,
-                         int16_t numRegisters, byte* buff);
+                         int16_t numRegisters, byte* buff = responseBuffer);
     /**
      * @brief Get the status of a single output coil
      *
@@ -1255,7 +1283,14 @@ class modbusMaster {
      *
      * The read command for output coils is 0x01.
      *
-     * @param slaveId The modbus slave ID to use in the request
+     * - _If you provide a buffer,_ this command puts only the **content of the
+     * coils** into the buffers. It does **not** add the full returned modbus frame.
+     * The data in the provided buffer will be stripped of the modbus protocol
+     * characters.
+     * - _If no buffer is provided,_ the full modbus response is left in the internal
+     * library buffer and is **_not_ stripped of the modbus protocol characters**.
+     *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param startCoil The starting coil number.
      * @param numCoils The number of coils to read.
      * @param buff A pre-allocated buffer to store the retrieved coil values.
@@ -1263,7 +1298,8 @@ class modbusMaster {
      * there was an error in the modbus response; otherwise, the number of bytes in the
      * response.
      */
-    int16_t getCoils(byte slaveId, int16_t startCoil, int16_t numCoils, byte* buff);
+    int16_t getCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
+                     byte* buff = responseBuffer);
     /**
      * @brief Get the status of a single discrete input
      *
@@ -1275,7 +1311,14 @@ class modbusMaster {
     /**
      * @brief Get a range of discrete inputs
      *
-     * @param slaveId The modbus slave ID to use in the request
+     * - _If you provide a buffer,_ this command puts only the **content of the
+     * discrete inputs** into the buffers. It does **not** add the full returned modbus
+     * frame. The data in the provided buffer will be stripped of the modbus protocol
+     * characters.
+     * - _If no buffer is provided,_ the full modbus response is put into the internal
+     * library buffer and is **_not_ stripped of the modbus protocol characters**.
+     *
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param startInput The starting input number.
      * @param numInputs The number of discrete inputs to read.
      * @param buff A pre-allocated buffer to store the retrieved coil values.
@@ -1284,7 +1327,7 @@ class modbusMaster {
      * response.
      */
     int16_t getDiscreteInputs(byte slaveId, int16_t startInput, int16_t numInputs,
-                              byte* buff);
+                              byte* buff = responseBuffer);
     /**@}*/
 
 
@@ -1392,7 +1435,7 @@ class modbusMaster {
      * - set the expectedReturnBytes to the expected size of the response (highly
      * variable)
      *
-     * @param slaveId The modbus slave ID to use in the request
+     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param readCommand The command to use to read data
      * @param startAddress The first address to read from
      * @param numChunks The number of chunks of data to read
@@ -1404,7 +1447,6 @@ class modbusMaster {
      */
     int16_t getModbusData(byte slaveId, byte readCommand, int16_t startAddress,
                           int16_t numChunks, uint8_t expectedReturnBytes = 0);
-
 
     /**
      * @brief Send a command to the modbus slave.
@@ -1581,7 +1623,8 @@ class modbusMaster {
      * bigEndian.
      * @param start_index The starting position of the variable in the frame. Optional
      * with a default value of 3.
-     * @param sourceFrame The byte array to read from.  Optional with a default of the built in response buffer.
+     * @param sourceFrame The byte array to read from.  Optional with a default of the
+     * built in response buffer.
      * @return A frame object with the converted endianness.
      */
     leFrame leFrameFromFrame(int varLength, endianness endian = bigEndian,
