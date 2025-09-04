@@ -177,8 +177,25 @@ class modbusMaster {
     modbusMaster();
     /**
      * @brief Construct a new modbus Master object
-     *
-     * @param stream A pointer or reference to the Arduino stream object to communicate with.
+     * @param modbusSlaveID The byte identifier of the modbus slave device.
+     * @param stream A pointer or reference to the Arduino stream object to communicate
+     * with.
+     */
+    modbusMaster(byte modbusSlaveID, Stream* stream);
+    /// @copydoc modbusMaster(byte, Stream*)
+    modbusMaster(byte modbusSlaveID, Stream& stream);
+    /**
+     * @copydoc modbusMaster(byte, Stream*)
+     * @param enablePin A pin on the Arduino processor to use to send an enable signal
+     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
+     */
+    modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin);
+    /// @copydoc modbusMaster(byte, Stream*, int8_t)
+    modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin);
+    /**
+     * @brief Construct a new modbus Master object
+     * @param stream A pointer or reference to the Arduino stream object to communicate
+     * with.
      */
     modbusMaster(Stream* stream);
     /// @copydoc modbusMaster(Stream*)
@@ -189,11 +206,7 @@ class modbusMaster {
      * to an RS485 to TTL adapter. Use a negative number if this does not apply.
      */
     modbusMaster(Stream* stream, int8_t enablePin);
-    /**
-     * @copydoc modbusMaster(Stream&)
-     * @param enablePin A pin on the Arduino processor to use to send an enable signal
-     * to an RS485 to TTL adapter. Use a negative number if this does not apply.
-     */
+    /// @copydoc modbusMaster(Stream*, int8_t)
     modbusMaster(Stream& stream, int8_t enablePin);
 
     /**
@@ -224,6 +237,28 @@ class modbusMaster {
      * @copydoc modbusMaster::begin(Stream*, int8_t)
      */
     bool begin(Stream& stream, int8_t enablePin);
+
+    /**
+     * @copydoc modbusMaster::begin(Stream*)
+     * @param modbusSlaveID The byte identifier of the modbus slave device.
+     */
+    bool begin(byte modbusSlaveID, Stream* stream);
+
+    /**
+     * @copydoc modbusMaster::begin(byte, Stream*)
+     */
+    bool begin(byte modbusSlaveID, Stream& stream);
+
+    /**
+     * @copydoc modbusMaster::begin(Stream*, int8_t)
+     * @param modbusSlaveID The byte identifier of the modbus slave device.
+     */
+    bool begin(byte modbusSlaveID, Stream* stream, int8_t enablePin);
+
+    /**
+     * @copydoc modbusMaster::begin(byte, Stream*, int8_t)
+     */
+    bool begin(byte modbusSlaveID, Stream& stream, int8_t enablePin);
     /**@}*/
 
     /**
@@ -233,6 +268,18 @@ class modbusMaster {
      * Functions to set and get properties of the modbusMaster object.
      */
     /**@{*/
+    /**
+     * @brief Set the slave id
+     *
+     * @param slaveID The byte identifier of the modbus slave device.
+     */
+    void setSlaveID(byte slaveID);
+    /**
+     * @brief Get the byte identifier of the modbus slave device.
+     *
+     * @return The byte identifier of the modbus slave device.
+     */
+    byte getSlaveID();
     /**
      * @brief Set the enable pin
      *
@@ -362,7 +409,6 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return it as a uint16_t.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -370,12 +416,17 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @return The uint16_t held in the register.
      */
+    uint16_t uint16FromRegister(byte regType, int regNum,
+                                endianness endian = bigEndian) {
+        return uint16FromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc uint16FromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint16_t uint16FromRegister(byte slaveId, byte regType, int regNum,
                                 endianness endian = bigEndian);
     /**
      * @brief Set a holding register to a uint16_t.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param value The value to set the register to.
      * @param endian The endianness used to write the uint16_t. Optional with a default
@@ -385,6 +436,12 @@ class modbusMaster {
      * default value of false.
      * @return True if the register was successfully set, false if not.
      */
+    bool uint16ToRegister(int regNum, uint16_t value, endianness endian = bigEndian,
+                          bool forceMultiple = false) {
+        return uint16ToRegister(_slaveID, regNum, value, endian, forceMultiple);
+    }
+    /// @copydoc uint16ToRegister(int, uint16_t, endianness, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool uint16ToRegister(byte slaveId, int regNum, uint16_t value,
                           endianness endian = bigEndian, bool forceMultiple = false);
 
@@ -426,7 +483,6 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return it as an int16_t.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -434,12 +490,16 @@ class modbusMaster {
      * with a default of big endian, which is required by modbus specifications.
      * @return The int16_t held in the register.
      */
+    int16_t int16FromRegister(byte regType, int regNum, endianness endian = bigEndian) {
+        return int16FromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc int16FromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     int16_t int16FromRegister(byte slaveId, byte regType, int regNum,
                               endianness endian = bigEndian);
     /**
      * @brief Set a holding register to an int16_t.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param value The value to set the register to.
      * @param endian The endianness used to write the int16_t. Optional with a default
@@ -449,6 +509,12 @@ class modbusMaster {
      * default value of false.
      * @return True if the register was successfully set, false if not.
      */
+    bool int16ToRegister(int regNum, int16_t value, endianness endian = bigEndian,
+                         bool forceMultiple = false) {
+        return int16ToRegister(_slaveID, regNum, value, endian, forceMultiple);
+    }
+    /// @copydoc int16ToRegister(int, int16_t, endianness, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool int16ToRegister(byte slaveId, int regNum, int16_t value,
                          endianness endian = bigEndian, bool forceMultiple = false);
 
@@ -491,7 +557,6 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a 32-bit float.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
@@ -500,12 +565,16 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The 32 bit float held in the register.
      */
+    float float32FromRegister(byte regType, int regNum, endianness endian = bigEndian) {
+        return float32FromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc float32FromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     float float32FromRegister(byte slaveId, byte regType, int regNum,
                               endianness endian = bigEndian);
     /**
      * @brief Set two holding registers to a 32-bit float
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the two registers of interest.
      * @param value The value to set the register to.
      * @param endian The endianness of the 32-bit float in the modbus register. Optional
@@ -513,6 +582,11 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return True if the registers were successfully set, false if not.
      */
+    bool float32ToRegister(int regNum, float value, endianness endian = bigEndian) {
+        return float32ToRegister(_slaveID, regNum, value, endian);
+    }
+    /// @copydoc float32ToRegister(int, float, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool float32ToRegister(byte slaveId, int regNum, float value,
                            endianness endian = bigEndian);
 
@@ -556,7 +630,6 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as a uint32_t
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
@@ -565,12 +638,17 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The uint32_t held in the register.
      */
+    uint32_t uint32FromRegister(byte regType, int regNum,
+                                endianness endian = bigEndian) {
+        return uint32FromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc uint32FromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint32_t uint32FromRegister(byte slaveId, byte regType, int regNum,
                                 endianness endian = bigEndian);
     /**
      * @brief Set two holding registers to a uint32_t
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the two registers of interest.
      * @param value The value to set the register to.
      * @param endian The endianness of the uint32_t in the modbus register. Optional
@@ -578,8 +656,14 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return True if the registers were successfully set, false if not.
      */
+    bool uint32ToRegister(int regNum, uint32_t value, endianness endian = bigEndian) {
+        return uint32ToRegister(_slaveID, regNum, value, endian);
+    }
+    /// @copydoc uint32ToRegister(int, uint32_t, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool uint32ToRegister(byte slaveId, int regNum, uint32_t value,
                           endianness endian = bigEndian);
+
     /**
      * @brief Insert a uint32_t into the working byte frame
      *
@@ -620,7 +704,6 @@ class modbusMaster {
      * @brief Get two input or holding registers starting at the specified number and
      * return them as an int32_t
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the two registers of interest.
@@ -629,12 +712,16 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return The int32_t held in the register.
      */
+    int32_t int32FromRegister(byte regType, int regNum, endianness endian = bigEndian) {
+        return int32FromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc int32FromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     int32_t int32FromRegister(byte slaveId, byte regType, int regNum,
                               endianness endian = bigEndian);
     /**
      * @brief Set two holding registers to an int32_t
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the two registers of interest.
      * @param value The value to set the register to.
      * @param endian The endianness of the int32_t in the modbus register. Optional
@@ -642,6 +729,11 @@ class modbusMaster {
      * big and little endian are supported. Mixed endianness is *NOT* supported.
      * @return True if the registers were successfully set, false if not.
      */
+    bool int32ToRegister(int regNum, int32_t value, endianness endian = bigEndian) {
+        return int32ToRegister(_slaveID, regNum, value, endian);
+    }
+    /// @copydoc int32ToRegister(int, int32_t, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool int32ToRegister(byte slaveId, int regNum, int32_t value,
                          endianness endian = bigEndian);
 
@@ -684,13 +776,17 @@ class modbusMaster {
     /**
      * @brief Get the numbered input or holding register and return one byte of it.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
      * @param byteNum The byte number to return (1 for upper or 2 for lower)
      * @return The byte held in the register.
      */
+    byte byteFromRegister(byte regType, int regNum, int byteNum) {
+        return byteFromRegister(_slaveID, regType, regNum, byteNum);
+    }
+    /// @copydoc byteFromRegister(byte, int, int)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     byte byteFromRegister(byte slaveId, byte regType, int regNum, int byteNum);
     /**
      * @brief Set one byte of a holding register.
@@ -698,7 +794,6 @@ class modbusMaster {
      * The byte will be inserted as a full 16-bit register with the unused byte set to
      * 0.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param byteNum The byte number to set (1 for upper or 2 for lower)
      * @param value The value to set the byte to.
@@ -707,6 +802,12 @@ class modbusMaster {
      * default value of false.
      * @return True if the register was successfully set, false if not.
      */
+    bool byteToRegister(int regNum, int byteNum, byte value,
+                        bool forceMultiple = false) {
+        return byteToRegister(_slaveID, regNum, byteNum, value, forceMultiple);
+    }
+    /// @copydoc byteToRegister(int, int, byte, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool byteToRegister(byte slaveId, int regNum, int byteNum, byte value,
                         bool forceMultiple = false);
 
@@ -799,19 +900,22 @@ class modbusMaster {
      * convert them to a TAI64 (64-bit timestamp), and return the lower 32-bits as a
      * unix timestamp.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the four registers of interest.
      * @return The equivalent 32-bit unix timestamp.
      */
+    uint32_t TAI64FromRegister(byte regType, int regNum) {
+        return TAI64FromRegister(_slaveID, regType, regNum);
+    }
+    /// @copydoc TAI64FromRegister(byte, int)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint32_t TAI64FromRegister(byte slaveId, byte regType, int regNum);
     /**
      * @brief Get six input or holding registers starting at the specified number,
      * convert them to a TAI64N (64-bit timestamp followed by a 32-bit nanosecond
      * count), and return an equivalent 32-bits unix timestamp.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the six registers of interest.
@@ -819,6 +923,11 @@ class modbusMaster {
      * nanoseconds.
      * @return The equivalent 32-bit unix timestamp.
      */
+    uint32_t TAI64NFromRegister(byte regType, int regNum, uint32_t& nanoseconds) {
+        return TAI64NFromRegister(_slaveID, regType, regNum, nanoseconds);
+    }
+    /// @copydoc TAI64NFromRegister(byte, int, uint32_t&)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint32_t TAI64NFromRegister(byte slaveId, byte regType, int regNum,
                                 uint32_t& nanoseconds);
     /**
@@ -827,7 +936,6 @@ class modbusMaster {
      * and then a 32-bit attosecond count), and return an equivalent 32-bits unix
      * timestamp.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the eight registers of interest.
@@ -837,36 +945,49 @@ class modbusMaster {
      * attoseconds.
      * @return The equivalent 32-bit unix timestamp.
      */
+    uint32_t TAI64NAFromRegister(byte regType, int regNum, uint32_t& nanoseconds,
+                                 uint32_t& attoseconds) {
+        return TAI64NAFromRegister(_slaveID, regType, regNum, nanoseconds, attoseconds);
+    }
+    /// @copydoc TAI64NAFromRegister(byte, int, uint32_t&, uint32_t&)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint32_t TAI64NAFromRegister(byte slaveId, byte regType, int regNum,
                                  uint32_t& nanoseconds, uint32_t& attoseconds);
     /**
      * @brief Set four holding registers to a TAI64 (64-bit timestamp)
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the four registers of interest.
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
      * @return True if the registers were successfully set, false if not.
      */
+    bool TAI64ToRegister(int regNum, uint32_t seconds) {
+        return TAI64ToRegister(_slaveID, regNum, seconds);
+    }
+    /// @copydoc TAI64ToRegister(int, uint32_t)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool TAI64ToRegister(byte slaveId, int regNum, uint32_t seconds);
     /**
      * @brief Set six holding registers to a TAI64N (64-bit timestamp followed by a
      * 32-bit nanosecond count)
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the six registers of interest.
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
      * @param nanoseconds The 32-bit nanosecond count.
      * @return True if the registers were successfully set, false if not.
      */
+    bool TAI64NToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds) {
+        return TAI64NToRegister(_slaveID, regNum, seconds, nanoseconds);
+    }
+    /// @copydoc TAI64NToRegister(int, uint32_t, uint32_t)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool TAI64NToRegister(byte slaveId, int regNum, uint32_t seconds,
                           uint32_t nanoseconds);
     /**
      * @brief Set eight holding registers to a TAI64NA (64-bit timestamp followed by a
      * 32-bit nanosecond count and then a 32-bit attosecond count)
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The number of first of the eight registers of interest.
      * @param seconds The lower 32-bits of the timestamp. The upper 32-bits will always
      * be set to 0x40000000, which will be the correct value until the year 2106.
@@ -874,6 +995,12 @@ class modbusMaster {
      * @param attoseconds The 32-bit attoseconds count.
      * @return True if the registers were successfully set, false if not.
      */
+    bool TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds,
+                           uint32_t attoseconds) {
+        return TAI64NAToRegister(_slaveID, regNum, seconds, nanoseconds, attoseconds);
+    }
+    /// @copydoc TAI64NAToRegister(int, uint32_t, uint32_t, uint32_t)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool TAI64NAToRegister(byte slaveId, int regNum, uint32_t seconds,
                            uint32_t nanoseconds, uint32_t attoseconds);
 
@@ -973,7 +1100,6 @@ class modbusMaster {
      *
      * This should be a pointer to another registry address within the modbus registers.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -982,6 +1108,12 @@ class modbusMaster {
      * specifications.
      * @return The 16-bit pointer held in the register.
      */
+    uint16_t pointerFromRegister(byte regType, int regNum,
+                                 endianness endian = bigEndian) {
+        return pointerFromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc pointerFromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint16_t pointerFromRegister(byte slaveId, byte regType, int regNum,
                                  endianness endian = bigEndian);
     /**
@@ -991,7 +1123,6 @@ class modbusMaster {
      * This should be the type of register pointed to by pointer contained within a
      * different modbus register.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The register number of interest.
@@ -1001,12 +1132,17 @@ class modbusMaster {
      * @return The 8-bit pointer type held in the register. This will be an
      * object of type #pointerType.
      */
+    int8_t pointerTypeFromRegister(byte regType, int regNum,
+                                   endianness endian = bigEndian) {
+        return pointerTypeFromRegister(_slaveID, regType, regNum, endian);
+    }
+    /// @copydoc pointerTypeFromRegister(byte, int, endianness)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     int8_t pointerTypeFromRegister(byte slaveId, byte regType, int regNum,
                                    endianness endian = bigEndian);
     /**
      * @brief Set a holding register to a 16-bit pointer.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The register number of interest.
      * @param value The value to set the register to.
      * @param point The type of the pointer, (#pointerType) ie, which section of the
@@ -1018,6 +1154,12 @@ class modbusMaster {
      * default value of false.
      * @return True if the register was successfully set, false if not.
      */
+    bool pointerToRegister(int regNum, uint16_t value, pointerType point,
+                           endianness endian = bigEndian, bool forceMultiple = false) {
+        return pointerToRegister(_slaveID, regNum, value, point, endian, forceMultiple);
+    }
+    /// @copydoc pointerToRegister(int, uint16_t, pointerType, endianness, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool pointerToRegister(byte slaveId, int regNum, uint16_t value, pointerType point,
                            endianness endian = bigEndian, bool forceMultiple = false);
 
@@ -1086,7 +1228,6 @@ class modbusMaster {
      * @brief Get a group of input or holding registers, convert them to characters,
      * combine them, and return a single String.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
@@ -1094,11 +1235,15 @@ class modbusMaster {
      * characters per register!
      * @return The text from the registers.
      */
+    String StringFromRegister(byte regType, int regNum, int charLength) {
+        return StringFromRegister(_slaveID, regType, regNum, charLength);
+    }
+    /// @copydoc StringFromRegister(byte, int, int)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     String StringFromRegister(byte slaveId, byte regType, int regNum, int charLength);
     /**
      * @brief Set a series of holding registers to the characters in a String.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param regNum The first of the registers of interest
      * @param value The String to set the registers to.
      * @param forceMultiple Set the forceMultiple boolean flag to 'true' to force the
@@ -1107,6 +1252,11 @@ class modbusMaster {
      * false.
      * @return True if the registers were successfully set, false if not.
      */
+    bool StringToRegister(int regNum, String value, bool forceMultiple = false) {
+        return StringToRegister(_slaveID, regNum, value, forceMultiple);
+    }
+    /// @copydoc StringToRegister(int, String, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool StringToRegister(byte slaveId, int regNum, String value,
                           bool forceMultiple = false);
 
@@ -1149,7 +1299,6 @@ class modbusMaster {
      *
      * There is no return from this function.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param regType The register type; use 0x03 for a holding register (read/write) or
      * 0x04 for an input register (read only)
      * @param regNum The number of the first of the registers of interest.
@@ -1158,6 +1307,16 @@ class modbusMaster {
      * @param charLength The number of characters to return. NOTE: There are *TWO*
      * characters per register!
      */
+    void charFromRegister(byte regType, int regNum, char* outChar, int charLength) {
+        charFromRegister(_slaveID, regType, regNum, outChar, charLength);
+    }
+    /// @copydoc charFromRegister(byte, int, char*, int)
+    void charFromRegister(byte regType, int regNum, const char* outChar,
+                          int charLength) {
+        charFromRegister(_slaveID, regType, regNum, outChar, charLength);
+    }
+    /// @copydoc charFromRegister(byte, int, char*, int)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     void charFromRegister(byte slaveId, byte regType, int regNum, char* outChar,
                           int charLength);
     /// @copydoc charFromRegister(byte, byte, int, char*, int)
@@ -1166,7 +1325,6 @@ class modbusMaster {
     /**
      * @brief Set a series of holding registers to the characters in a character array.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param regNum The first of the registers of interest
      * @param inChar A pointer or constant pointer to the character array to set the
      * registers to.
@@ -1177,6 +1335,17 @@ class modbusMaster {
      * value of false.
      * @return True if the registers were successfully set, false if not.
      */
+    bool charToRegister(int regNum, char* inChar, int charLength,
+                        bool forceMultiple = false) {
+        return charToRegister(_slaveID, regNum, inChar, charLength, forceMultiple);
+    }
+    /// @copydoc charToRegister(int, char*, int, bool)
+    bool charToRegister(int regNum, const char* inChar, int charLength,
+                        bool forceMultiple = false) {
+        return charToRegister(_slaveID, regNum, inChar, charLength, forceMultiple);
+    }
+    /// @copydoc charToRegister(int, char*, int, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool charToRegister(byte slaveId, int regNum, char* inChar, int charLength,
                         bool forceMultiple = false);
     /// @copydoc charToRegister(byte, int, char*, int, bool)
@@ -1256,7 +1425,6 @@ class modbusMaster {
      *
      * @remark No more than 125 registers can be read at once.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param readCommand The command to use to read data. For a holding register
      * readCommand = 0x03. For an input register readCommand = 0x04.
      * @param startRegister The starting register number.
@@ -1266,6 +1434,12 @@ class modbusMaster {
      * there was an error in the modbus response; otherwise, the number of bytes in the
      * response.
      */
+    int16_t getRegisters(byte readCommand, int16_t startRegister, int16_t numRegisters,
+                         byte* buff = responseBuffer) {
+        return getRegisters(_slaveID, readCommand, startRegister, numRegisters, buff);
+    }
+    /// @copydoc getRegisters(byte, int16_t, int16_t, byte*)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     int16_t getRegisters(byte slaveId, byte readCommand, int16_t startRegister,
                          int16_t numRegisters, byte* buff = responseBuffer);
     /**
@@ -1273,10 +1447,14 @@ class modbusMaster {
      *
      * The read command for output coils is 0x01.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param coilAddress The address of the coil to read.
      * @return The status of the coil (true for ON, false for OFF).
      */
+    bool getCoil(int16_t coilAddress) {
+        return getCoil(_slaveID, coilAddress);
+    }
+    /// @copydoc getCoil(int16_t)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool getCoil(byte slaveId, int16_t coilAddress);
     /**
      * @brief Get the data from a range of output coils. Each coil is a single bit.
@@ -1290,7 +1468,6 @@ class modbusMaster {
      * - _If no buffer is provided,_ the full modbus response is left in the internal
      * library buffer and is **_not_ stripped of the modbus protocol characters**.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param startCoil The starting coil number.
      * @param numCoils The number of coils to read.
      * @param buff A pre-allocated buffer to store the retrieved coil values.
@@ -1298,15 +1475,24 @@ class modbusMaster {
      * there was an error in the modbus response; otherwise, the number of bytes in the
      * response.
      */
+    int16_t getCoils(int16_t startCoil, int16_t numCoils, byte* buff = responseBuffer) {
+        return getCoils(_slaveID, startCoil, numCoils, buff);
+    }
+    /// @copydoc getCoils(int16_t, int16_t, byte*)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     int16_t getCoils(byte slaveId, int16_t startCoil, int16_t numCoils,
                      byte* buff = responseBuffer);
     /**
      * @brief Get the status of a single discrete input
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param inputAddress The address of the discrete input to read.
      * @return The status of the discrete input (true for ON, false for OFF).
      */
+    bool getDiscreteInput(int16_t inputAddress) {
+        return getDiscreteInput(_slaveID, inputAddress);
+    }
+    /// @copydoc getDiscreteInput(int16_t)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool getDiscreteInput(byte slaveId, int16_t inputAddress);
     /**
      * @brief Get a range of discrete inputs
@@ -1318,7 +1504,6 @@ class modbusMaster {
      * - _If no buffer is provided,_ the full modbus response is put into the internal
      * library buffer and is **_not_ stripped of the modbus protocol characters**.
      *
-     * @param slaveId The modbus slave ID of the device to communicate with.
      * @param startInput The starting input number.
      * @param numInputs The number of discrete inputs to read.
      * @param buff A pre-allocated buffer to store the retrieved coil values.
@@ -1326,6 +1511,12 @@ class modbusMaster {
      * there was an error in the modbus response; otherwise, the number of bytes in the
      * response.
      */
+    int16_t getDiscreteInputs(int16_t startInput, int16_t numInputs,
+                              byte* buff = responseBuffer) {
+        return getDiscreteInputs(_slaveID, startInput, numInputs, buff);
+    }
+    /// @copydoc getDiscreteInputs(int16_t, int16_t, byte*)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     int16_t getDiscreteInputs(byte slaveId, int16_t startInput, int16_t numInputs,
                               byte* buff = responseBuffer);
     /**@}*/
@@ -1357,7 +1548,6 @@ class modbusMaster {
      *
      * @remark No more than 123 registers can be set at once.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param startRegister The starting register number.
      * @param numRegisters The number of registers to write.
      * @param value A pointer to the byte array with the values to write.
@@ -1368,6 +1558,13 @@ class modbusMaster {
      * @return True if the modbus slave returned the expected number of input
      * values; false if there was a failure.
      */
+    bool setRegisters(int16_t startRegister, int16_t numRegisters, byte* value,
+                      bool forceMultiple = false) {
+        return setRegisters(_slaveID, startRegister, numRegisters, value,
+                            forceMultiple);
+    }
+    /// @copydoc setRegisters(int16_t, int16_t, byte*, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool setRegisters(byte slaveId, int16_t startRegister, int16_t numRegisters,
                       byte* value, bool forceMultiple = false);
 
@@ -1377,12 +1574,16 @@ class modbusMaster {
      * Output coils are single-bit values that can be either ON (1) or OFF (0).
      * Input (discrete) contacts cannot be written by a Modbus controller/master.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param coilAddress The address of the coil to set.
      * @param value The value to set the coil to (true for ON, false for OFF).
      * @return True if the proper modbus slave correctly responded to the command; false
      * otherwise.
      */
+    bool setCoil(int16_t coilAddress, bool value) {
+        return setCoil(_slaveID, coilAddress, value);
+    }
+    /// @copydoc setCoil(int16_t, bool)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool setCoil(byte slaveId, int16_t coilAddress, bool value);
 
     /**
@@ -1392,13 +1593,17 @@ class modbusMaster {
      *
      * @note This function always uses Modbus command 0x0F
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param startCoil The address of the first coil to set.
      * @param numCoils The number of coils to set.
      * @param value A pointer to a byte array containing the values to set the coils to.
      * @return True if the proper modbus slave correctly responded to the command; false
      * otherwise.
      */
+    bool setCoils(int16_t startCoil, int16_t numCoils, byte* value) {
+        return setCoils(_slaveID, startCoil, numCoils, value);
+    }
+    /// @copydoc setCoils(int16_t, int16_t, byte*)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     bool setCoils(byte slaveId, int16_t startCoil, int16_t numCoils, byte* value);
     /**@}*/
 
@@ -1469,11 +1674,15 @@ class modbusMaster {
      * registers plus overhead).  If you get a return value of >256, it means there
      * was an error and you should parse the error code.
      *
-     * @param slaveId The modbus slave ID to use in the request
      * @param command The fully formed command to send to the Modbus slave.
      * @param commandLength The length of the outgoing command.
      * @return The number of bytes received from the Modbus slave.
      */
+    uint16_t sendCommand(byte* command, int commandLength) {
+        return sendCommand(_slaveID, command, commandLength);
+    }
+    /// @copydoc sendCommand( byte*, int)
+    /// @param slaveId The modbus slave ID of the device to communicate with.
     uint16_t sendCommand(byte slaveId, byte* command, int commandLength);
     /**@}*/
 
@@ -1644,6 +1853,7 @@ class modbusMaster {
         }
     }
 
+    byte _slaveID;  ///< The sensor slave id
     /**
      * @brief The stream instance (serial port) for communication with the Modbus slave
      * (usually over RS485)

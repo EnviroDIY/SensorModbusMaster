@@ -27,22 +27,47 @@ byte modbusMaster::crcFrame[2] = {
 //----------------------------------------------------------------------------
 
 modbusMaster::modbusMaster() {
+    setSlaveID(0);
     setStream(nullptr);
     setEnablePin(-1);
 }
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream* stream) {
+    setSlaveID(modbusSlaveID);
+    setStream(stream);
+    setEnablePin(-1);
+}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream& stream) {
+    setSlaveID(modbusSlaveID);
+    setStream(&stream);
+    setEnablePin(-1);
+}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream* stream, int8_t enablePin) {
+    setSlaveID(modbusSlaveID);
+    setStream(stream);
+    setEnablePin(enablePin);
+}
+modbusMaster::modbusMaster(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
+    setSlaveID(modbusSlaveID);
+    setStream(&stream);
+    setEnablePin(enablePin);
+}
 modbusMaster::modbusMaster(Stream* stream) {
+    setSlaveID(0);
     setStream(stream);
     setEnablePin(-1);
 }
 modbusMaster::modbusMaster(Stream& stream) {
+    setSlaveID(0);
     setStream(&stream);
     setEnablePin(-1);
 }
 modbusMaster::modbusMaster(Stream* stream, int8_t enablePin) {
+    setSlaveID(0);
     setStream(stream);
     setEnablePin(enablePin);
 }
 modbusMaster::modbusMaster(Stream& stream, int8_t enablePin) {
+    setSlaveID(0);
     setStream(&stream);
     setEnablePin(enablePin);
 }
@@ -50,20 +75,29 @@ modbusMaster::modbusMaster(Stream& stream, int8_t enablePin) {
 // This function sets up the communication
 // It should be run during the arduino "setup" function.
 // The "stream" device must be initialized and begun prior to running this.
-bool modbusMaster::begin(Stream* stream, int8_t enablePin) {
+bool modbusMaster::begin(byte modbusSlaveID, Stream* stream, int8_t enablePin) {
     // Give values to variables;
+    setSlaveID(modbusSlaveID);
     setStream(stream);
     setEnablePin(enablePin);
     return true;
 }
-bool modbusMaster::begin(Stream& stream, int8_t enablePin) {
-    return begin(&stream, enablePin);
+bool modbusMaster::begin(byte modbusSlaveID, Stream& stream, int8_t enablePin) {
+    return begin(modbusSlaveID, &stream, enablePin);
 }
-bool modbusMaster::begin(Stream* stream) {
-    return begin(stream, -1);
+bool modbusMaster::begin(byte modbusSlaveID, Stream* stream) {
+    return begin(modbusSlaveID, stream, -1);
 }
-bool modbusMaster::begin(Stream& stream) {
-    return begin(&stream, -1);
+bool modbusMaster::begin(byte modbusSlaveID, Stream& stream) {
+    return begin(modbusSlaveID, &stream, -1);
+}
+
+
+void modbusMaster::setSlaveID(byte slaveID) {
+    _slaveID = slaveID;
+}
+byte modbusMaster::getSlaveID() {
+    return _slaveID;
 }
 
 void modbusMaster::setEnablePin(int8_t enablePin) {
