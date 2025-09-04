@@ -1008,6 +1008,13 @@ uint16_t modbusMaster::sendCommand(byte* command, int commandLength) {
     debugPrint("Raw Request >>> ");
     printFrameHex(command, commandLength);
 
+    // If the command was a broadcast (slave ID = 0), return immediately
+    // Broadcast commands do not get a response
+    if (command[0] == 0) {
+        lastError = NO_ERROR;
+        return 0;
+    }
+
     // Wait for a response
     uint32_t start = millis();
     while (_stream->available() == 0 && millis() - start < modbusTimeout) { delay(1); }
@@ -1025,7 +1032,8 @@ uint16_t modbusMaster::sendCommand(byte* command, int commandLength) {
         printFrameHex(responseBuffer, bytesRead);
 
         // Verify that the returned slave ID matches with the first byte of the command
-        if (responseBuffer[0] != command[0]) {
+        // - unless it is a broadcast command to address 0x0
+        if (command[0] != 0 && responseBuffer[0] != command[0]) {
             gotGoodResponse = false;
             lastError       = WRONG_SLAVE_ID;
         }
