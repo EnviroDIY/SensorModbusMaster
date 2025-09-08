@@ -1974,6 +1974,21 @@ class modbusMaster {
      * @brief The last error code returned by the modbus command
      */
     modbusErrorCode lastError = NO_ERROR;
+
+    /**
+     * @brief print hex byte with padding
+     *
+     * @param value The value to print
+     */
+    void printPaddedHex(byte value);
+    /**
+     * @brief Print a slice of an array in hex format
+     *
+     * @param array The array to print
+     * @param start_index The starting index of the slice
+     * @param numBytes The number of bytes to print
+     */
+    void printArraySlice(byte* array, int start_index, int numBytes);
 };
 
 #endif

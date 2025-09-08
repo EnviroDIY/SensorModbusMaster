@@ -421,11 +421,13 @@ uint32_t modbusMaster::TAI64NAFromFrame(uint32_t& nanoseconds, uint32_t& attosec
 }
 
 byte modbusMaster::byteFromFrame(int start_index, byte* sourceFrame) {
+    printArraySlice(sourceFrame, start_index, 1);
     return sourceFrame[start_index];
 }
 
 uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index,
                                         byte* sourceFrame) {
+    printArraySlice(sourceFrame, start_index, 2);
     leFrame fram;
     if (endian == bigEndian) {
         // Shift the lower address bit DOWN two
@@ -442,11 +444,14 @@ uint16_t modbusMaster::pointerFromFrame(endianness endian, int start_index,
 int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index,
                                           byte* sourceFrame) {
     uint8_t pointerRegType;
+    printArraySlice(sourceFrame, start_index, 2);
     // Mask with 3 (0b00000011) to get the last two bits, which are the type
     if (endian == bigEndian) {
         pointerRegType = sourceFrame[start_index + 1] & 3;
+        printPaddedHex(sourceFrame[start_index + 1]);
     } else {
         pointerRegType = sourceFrame[start_index] & 3;
+        printPaddedHex(sourceFrame[start_index]);
     }
     return pointerRegType;
 }
@@ -455,6 +460,7 @@ String modbusMaster::StringFromFrame(int charLength, int start_index,
                                      byte* sourceFrame) {
     char charString[RESPONSE_BUFFER_SIZE];
     memset(charString, '\0', RESPONSE_BUFFER_SIZE);
+    printArraySlice(sourceFrame, start_index, charLength);
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++) {
         // check that it's a printable character
@@ -470,6 +476,7 @@ String modbusMaster::StringFromFrame(int charLength, int start_index,
 
 void modbusMaster::charFromFrame(char* outChar, int charLength, int start_index,
                                  byte* sourceFrame) {
+    printArraySlice(sourceFrame, start_index, charLength);
     int j = 0;
     for (int i = start_index; i < start_index + charLength; i++) {
         // check that it's a printable character
@@ -1132,17 +1139,28 @@ void modbusMaster::emptySerialBuffer(Stream* stream) {
     }
 }
 
-// Just a function to pretty-print the modbus hex frames
-// This is purely for debugging
+// These print bytes and byte arrays in hex format for debugging
+void modbusMaster::printPaddedHex(byte value) {
+    char buf[5];
+    sprintf(buf, "0x%02X", value);
+    buf[4] = '\0';
+    debugPrint(buf);
+}
 void modbusMaster::printFrameHex(byte* modbusFrame, int frameLength) {
     debugPrint("{");
     for (int i = 0; i < frameLength; i++) {
-        debugPrint("0x");
-        if (modbusFrame[i] < 16) debugPrint("0");
-        debugPrint(String(modbusFrame[i], HEX));
+        printPaddedHex(modbusFrame[i]);
         if (i < frameLength - 1) debugPrint(", ");
     }
     debugPrint("}\n");
+}
+void modbusMaster::printArraySlice(byte* array, int start_index, int numBytes) {
+    debugPrint("bytes ", start_index, "-", start_index + numBytes - 1, " [");
+    for (int i = start_index; i < start_index + numBytes; i++) {
+        printPaddedHex(array[i]);
+        if (i < start_index + numBytes - 1) debugPrint(", ");
+    }
+    debugPrint("]\n");
 }
 
 
@@ -1191,6 +1209,7 @@ void modbusMaster::insertCRC(byte* modbusFrame, int frameLength) {
 // Used for slicing one or more registers out of a returned modbus RTU frame
 void modbusMaster::sliceArray(byte inputArray[], byte outputArray[], int start_index,
                               int numBytes, bool reverseOrder) {
+    printArraySlice(inputArray, start_index, numBytes);
     if (reverseOrder) {
         // Reverse the order of bytes to get from big-endian to little-endian
         int j = numBytes - 1;
