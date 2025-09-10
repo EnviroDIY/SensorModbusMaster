@@ -448,10 +448,8 @@ int8_t modbusMaster::pointerTypeFromFrame(endianness endian, int start_index,
     // Mask with 3 (0b00000011) to get the last two bits, which are the type
     if (endian == bigEndian) {
         pointerRegType = sourceFrame[start_index + 1] & 3;
-        printPaddedHex(sourceFrame[start_index + 1]);
     } else {
         pointerRegType = sourceFrame[start_index] & 3;
-        printPaddedHex(sourceFrame[start_index]);
     }
     return pointerRegType;
 }
@@ -715,16 +713,23 @@ int16_t modbusMaster::getModbusData(byte slaveId, byte readCommand,
     while (!success && tries < commandRetries) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
-        // The structure of the responses should be:
-        // {slaveID, fxnCode, # bytes, data, CRC (hi/lo)}
         int16_t respSize = sendCommand(commandBuffer, 8);
-        success          = (respSize == returnFrameSize &&
-                   responseBuffer[2] == expectedReturnBytes);
         // if we got a valid modbusErrorCode, stop trying
+        // the sendCommand function will print the error info if debugging is on
         if (static_cast<int8_t>(lastError) > 0 &&
             static_cast<int8_t>(lastError) < 0x0C) {
-            tries = commandRetries;                      // exit the loop
-        } else if (!success && lastError == NO_ERROR) {  // print error info
+            tries = commandRetries;  // exit the loop
+        }
+        // If the response is what we expect, we're done
+        // The structure of the responses should be:
+        // {slaveID, fxnCode, # bytes, data, CRC (hi/lo)}
+        else if (respSize == returnFrameSize &&
+                 responseBuffer[2] == expectedReturnBytes) {
+            success = true;
+        }
+        // If we got no error but the response is not what we expect, print info and
+        // allow retry
+        else if (!success && lastError == NO_ERROR) {  // print error info
             debugPrint(F("Failed to get requested data on try "), tries + 1, '\n');
             debugPrint(F("  Got back "), respSize, F(" of expected "), returnFrameSize,
                        F(" bytes from slave\n"));
@@ -816,23 +821,29 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(commandBuffer, commandLength);
-        // The structure of the response for 0x10 should be:
-        // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
-        if (numRegisters > 1 || forceMultiple) {
-            success = respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
-                int16FromFrame(bigEndian, 4) == numRegisters;
-        }
-        // The structure of the response for 0x06 should be:
-        // {slaveID, fxnCode, Address of 1st register, Value written, CRC}
-        if (numRegisters == 1) {
-            success = respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
-                responseBuffer[4] == value[0] && responseBuffer[5] == value[1];
-        }
         // if we got a valid modbusErrorCode, stop trying
         if (static_cast<int8_t>(lastError) > 0 &&
             static_cast<int8_t>(lastError) < 0x0C) {
-            tries = commandRetries;                      // exit the loop
-        } else if (!success && lastError == NO_ERROR) {  // print error info
+            tries = commandRetries;  // exit the loop
+        }
+        // If the response is what we expect, we're done
+        // The structure of the response for 0x10 should be:
+        // {slaveID, fxnCode, Address of 1st register, # Registers, CRC}
+        else if ((numRegisters > 1 || forceMultiple) &&
+                 (respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
+                  int16FromFrame(bigEndian, 4) == numRegisters)) {
+            success = true;
+        }
+        // The structure of the response for 0x06 should be:
+        // {slaveID, fxnCode, Address of 1st register, Value written, CRC}
+        else if ((numRegisters == 1) &&
+                 (respSize == 8 && int16FromFrame(bigEndian, 2) == startRegister &&
+                  responseBuffer[4] == value[0] && responseBuffer[5] == value[1])) {
+            success = true;
+        }
+        // If we got no error but the response is not what we expect, print info and
+        // allow retry
+        else if (!success && lastError == NO_ERROR) {  // print error info
             debugPrint(F("Failed to set register[s] on try "), tries + 1, '\n');
             debugPrint(F("  Got back "), respSize, F(" of expected "), 8,
                        F(" bytes\n"));
@@ -892,18 +903,23 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(commandBuffer, commandLength);
+        // If we got a valid modbusErrorCode, stop trying
+        // the sendCommand function will print the error info if debugging is on
+        if (static_cast<int8_t>(lastError) > 0 &&
+            static_cast<int8_t>(lastError) < 0x0C) {
+            tries = commandRetries;  // exit the loop
+        }
+        // If the response is what we expect, we're done
         // The structure of the response for 0x05 should be:
         // {slaveID, fxnCode, Address of coil (hi/lo), write data hi/lo, CRC (hi/lo)}
         // which is exactly the same as the command itself.
-        if (respSize == 8 &&
-            strncmp((char*)responseBuffer, (char*)commandBuffer, 8) == 0) {
+        else if (respSize == 8 &&
+                 strncmp((char*)responseBuffer, (char*)commandBuffer, 8) == 0) {
             success = true;
         }
-        // if we got a valid modbusErrorCode, stop trying
-        if (static_cast<int8_t>(lastError) > 0 &&
-            static_cast<int8_t>(lastError) < 0x0C) {
-            tries = commandRetries;                      // exit the loop
-        } else if (!success && lastError == NO_ERROR) {  // print error info
+        // If we got no error but the response is not what we expect, print info and
+        // allow retry
+        else if (!success && lastError == NO_ERROR) {
             debugPrint(F("Failed to set a single coil on try "), tries + 1, '\n');
             debugPrint(F("  Got back "), respSize, F(" of expected "), 8,
                        F(" bytes from slave\n"));
@@ -966,16 +982,23 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte* value) {
         // Send out the command - this adds the CRC and verifies that the return is from
         // the right slave and has the correct CRC
         respSize = sendCommand(commandBuffer, commandLength);
+        // if we got a valid modbusErrorCode, stop trying
+        // the sendCommand function will print the error info if debugging is on
+        if (static_cast<int8_t>(lastError) > 0 &&
+            static_cast<int8_t>(lastError) < 0x0C) {
+            tries = commandRetries;  // exit the loop
+        }
+        // If the response is what we expect, we're done
         // The structure of the response for 0x0F should be:
         // {slaveID, fxnCode, Address of 1st coil (hi/lo), # coils (hi/lo), CRC
         // (hi/lo)}
-        success = (respSize == 8 && int16FromFrame(bigEndian, 2) == startCoil &&
-                   int16FromFrame(bigEndian, 4) == numCoils);
-        // if we got a valid modbusErrorCode, stop trying
-        if (static_cast<int8_t>(lastError) > 0 &&
-            static_cast<int8_t>(lastError) < 0x0C) {
-            tries = commandRetries;                      // exit the loop
-        } else if (!success && lastError == NO_ERROR) {  // print error info
+        else if (respSize == 8 && int16FromFrame(bigEndian, 2) == startCoil &&
+                 int16FromFrame(bigEndian, 4) == numCoils) {
+            success = true;
+        }
+        // If we got no error but the response is not what we expect, print info and
+        // allow retry
+        else if (!success && lastError == NO_ERROR) {
             debugPrint(F("Failed to set multiple coils on try "), tries + 1, '\n');
             debugPrint(F("Got back "), respSize, F(" of expected "), 8, F(" bytes\n"));
             debugPrint(F("The slave said it set coils starting at coil "),
