@@ -487,6 +487,8 @@ void modbusMaster::charFromFrame(char* outChar, int charLength, int start_index,
     if (j < charLength) {
         for (int i = j; i < +charLength; i++) { outChar[j] = '\0'; }
     }
+    // null terminate the string
+    outChar[charLength] = '\0';
 }
 void modbusMaster::charFromFrame(const char* outChar, int charLength, int start_index,
                                  byte* sourceFrame) {
