@@ -17,6 +17,10 @@
 //                        ENUMERATIONS FOR CONFIGURING DEVICE
 //----------------------------------------------------------------------------
 
+// Uncomment the next line to enable debugging prints of every subset of the modbus
+// frame to the serial port
+// #define MODBUSMASTER_DEBUG_SLICE
+
 /**
  * @brief The size of the response buffer for the modbus devices.
  *

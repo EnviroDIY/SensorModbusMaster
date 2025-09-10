@@ -14,11 +14,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Added debugging of slicing/subsetting arrays
-
 ### Removed
 
 ### Fixed
+
+***
+
+## [1.6.1]
+
+### Added
+
+- Added debugging of slicing/subsetting arrays
+
+### Fixed
+
+- Reordered retry logic
 
 ***
 
@@ -278,7 +288,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.1
 [1.6.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.0
 [1.5.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.5.0
 [1.4.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.4.0
