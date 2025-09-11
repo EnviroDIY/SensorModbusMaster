@@ -221,78 +221,68 @@ void modbusMaster::charFromRegister(byte regType, int regNum, const char* outCha
 // multiple registers command, set the boolean input for forceMultiple to true.
 bool modbusMaster::uint16ToRegister(int regNum, uint16_t value, endianness endian,
                                     bool forceMultiple) {
-    byte bytesToWrite[UINT16_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[UINT16_SIZE];
+    memset(bytesToWrite, 0x00, UINT16_SIZE);
     uint16ToFrame(value, endian, bytesToWrite, 0);
     return setRegisters(regNum, UINT16_SIZE / 2, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::int16ToRegister(int regNum, int16_t value, endianness endian,
                                    bool forceMultiple) {
-    byte bytesToWrite[INT16_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[INT16_SIZE];
+    memset(bytesToWrite, 0x00, INT16_SIZE);
     int16ToFrame(value, endian, bytesToWrite, 0);
     return setRegisters(regNum, INT16_SIZE / 2, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::float32ToRegister(int regNum, float value, endianness endian) {
-    byte bytesToWrite[FLOAT32_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[FLOAT32_SIZE];
+    memset(bytesToWrite, 0x00, FLOAT32_SIZE);
     float32ToFrame(value, endian, bytesToWrite, 0);
     return setRegisters(regNum, FLOAT32_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::uint32ToRegister(int regNum, uint32_t value, endianness endian) {
-    byte bytesToWrite[UINT32_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[UINT32_SIZE];
+    memset(bytesToWrite, 0x00, UINT32_SIZE);
     uint32ToFrame(value, endian, bytesToWrite, 0);
     return setRegisters(regNum, UINT32_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::int32ToRegister(int regNum, int32_t value, endianness endian) {
-    byte bytesToWrite[INT32_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[INT32_SIZE];
+    memset(bytesToWrite, 0x00, INT32_SIZE);
     int32ToFrame(value, endian, bytesToWrite, 0);
     return setRegisters(regNum, INT32_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::TAI64ToRegister(int regNum, uint32_t seconds) {
-    byte bytesToWrite[TAI64_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[TAI64_SIZE];
+    memset(bytesToWrite, 0x00, TAI64_SIZE);
     TAI64ToFrame(seconds, bytesToWrite, 0);
     return setRegisters(regNum, TAI64_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::TAI64NToRegister(int regNum, uint32_t seconds,
                                     uint32_t nanoseconds) {
-    byte bytesToWrite[TAI64N_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[TAI64N_SIZE];
+    memset(bytesToWrite, 0x00, TAI64N_SIZE);
     TAI64NToFrame(seconds, nanoseconds, bytesToWrite, 0);
     return setRegisters(regNum, TAI64N_SIZE / 2, bytesToWrite);
 }
 bool modbusMaster::TAI64NAToRegister(int regNum, uint32_t seconds, uint32_t nanoseconds,
                                      uint32_t attoseconds) {
-    byte bytesToWrite[TAI64NA_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[TAI64NA_SIZE];
+    memset(bytesToWrite, 0x00, TAI64NA_SIZE);
     TAI64NAToFrame(seconds, nanoseconds, attoseconds, bytesToWrite, 0);
     return setRegisters(regNum, TAI64NA_SIZE / 2, bytesToWrite);
 }
 
 bool modbusMaster::byteToRegister(int regNum, int byteNum, byte value,
                                   bool forceMultiple) {
-    byte bytesToWrite[2] = {
-        0x00,
-    };
-    byteToFrame(value, byteNum, bytesToWrite, 0);
+    byte bytesToWrite[2];
+    memset(bytesToWrite, 0x00, 2);
+    byteToFrame(value, bytesToWrite, byteNum == 1 ? 0 : 1);
     return setRegisters(regNum, 1, bytesToWrite, forceMultiple);
 }
 bool modbusMaster::pointerToRegister(int regNum, uint16_t value, pointerType point,
                                      endianness endian, bool forceMultiple) {
-    byte bytesToWrite[UINT16_SIZE] = {
-        0x00,
-    };
+    byte bytesToWrite[UINT16_SIZE];
+    memset(bytesToWrite, 0x00, UINT16_SIZE);
     pointerToFrame(value, point, endian, bytesToWrite, 0);
     return setRegisters(regNum, UINT16_SIZE / 2, bytesToWrite, forceMultiple);
 }
@@ -628,13 +618,8 @@ void modbusMaster::TAI64NAToFrame(uint32_t seconds, uint32_t nanoseconds,
         destFrame[end_index_attosec - i] = fram.Byte[i];
     }
 }
-void modbusMaster::byteToFrame(byte value, int byteNum, byte* destFrame,
-                               int start_index) {
-    if (byteNum == 1) {
-        destFrame[start_index] = value;
-    } else {
-        destFrame[start_index + 1] = value;
-    }
+void modbusMaster::byteToFrame(byte value, byte* destFrame, int start_index) {
+    destFrame[start_index] = value;
 }
 void modbusMaster::pointerToFrame(uint16_t value, pointerType point, endianness endian,
                                   byte* destFrame, int start_index) {
@@ -673,6 +658,8 @@ void modbusMaster::charToFrame(const char* inChar, int charLength, byte* destFra
 int16_t modbusMaster::getModbusData(byte slaveId, byte readCommand,
                                     int16_t startAddress, int16_t numChunks,
                                     uint8_t expectedReturnBytes) {
+    // Empty the command buffer, just in case
+    memset(commandBuffer, 0x00, COMMAND_BUFFER_SIZE);
     // Put in the slave id and the command number into the command buffer
     commandBuffer[0] = slaveId;
     commandBuffer[1] = readCommand;
@@ -777,6 +764,8 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
         commandLength = 8;
     }
 
+    // Empty the command buffer, just in case
+    memset(commandBuffer, 0x00, COMMAND_BUFFER_SIZE);
     // Put in the slave id and the command number into the command buffer
     commandBuffer[0] = _slaveID;
     if (numRegisters > 1 || forceMultiple) {
@@ -881,6 +870,8 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
     // For a total size of 8
     int commandLength = 8;
 
+    // Empty the command buffer, just in case
+    memset(commandBuffer, 0x00, COMMAND_BUFFER_SIZE);
     // Put in the slave id and the command number into the command buffer
     commandBuffer[0] = _slaveID;
     commandBuffer[1] = 0x05;
@@ -951,6 +942,8 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte* value) {
     // For a total size of numCoils / 8 + 9
     int commandLength = ceil(numCoils / 8.0) + 9;
 
+    // Empty the command buffer, just in case
+    memset(commandBuffer, 0x00, COMMAND_BUFFER_SIZE);
     // Put in the slave id and the command number in to the command buffer
     commandBuffer[0] = _slaveID;
     commandBuffer[1] = 0x0F;
@@ -1023,9 +1016,7 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte* value) {
 // This sends a command to the sensor bus and listens for a response
 uint16_t modbusMaster::sendCommand(byte* command, int commandLength) {
     // Empty the response buffer
-    for (int i = 0; i < RESPONSE_BUFFER_SIZE; i++) {
-        modbusMaster::responseBuffer[i] = 0x00;
-    }
+    memset(responseBuffer, 0x00, RESPONSE_BUFFER_SIZE);
 
     // Add the CRC to the frame
     insertCRC(command, commandLength);

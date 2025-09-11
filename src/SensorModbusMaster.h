@@ -882,12 +882,11 @@ class modbusMaster {
      * The byte will be inserted as a 16-bit value with the unused byte set to 0.
      *
      * @param value The byte to write
-     * @param byteNum The byte number to set (1 for upper or 2 for lower)
      * @param destFrame The byte array to write to
      * @param start_index The starting position of the byte in the response frame.
      * Optional with a default of 0.
      */
-    void byteToFrame(byte value, int byteNum, byte* destFrame, int start_index = 0);
+    void byteToFrame(byte value, byte* destFrame, int start_index = 0);
     /**@}*/
 
 
