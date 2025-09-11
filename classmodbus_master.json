@@ -4270,7 +4270,7 @@
             "func",
             {
               "base_url": "classmodbus_master.html",
-              "id": "aedd8f6be9f05112b2e9a5cd63bbfb84c",
+              "id": "a0d940d9b5bd885e467d00d1a8744a1bd",
               "include": null,
               "has_details": true,
               "type": "void",
@@ -4309,14 +4309,6 @@
                   "type_name": "byte value",
                   "default": null,
                   "description": "The byte to write",
-                  "direction": ""
-                },
-                {
-                  "name": "byteNum",
-                  "type": "int",
-                  "type_name": "int byteNum",
-                  "default": null,
-                  "description": "The byte number to set (1 for upper or 2 for lower)",
                   "direction": ""
                 },
                 {
