@@ -1170,16 +1170,18 @@ void modbusMaster::printFrameHex(byte* modbusFrame, int frameLength) {
     }
     debugPrint("}\n");
 }
-void modbusMaster::printArraySlice(byte* array, int start_index, int numBytes) {
 #if defined(MODBUSMASTER_DEBUG_SLICE)
+void modbusMaster::printArraySlice(byte* array, int start_index, int numBytes) {
     debugPrint("bytes ", start_index, "-", start_index + numBytes - 1, " [");
     for (int i = start_index; i < start_index + numBytes; i++) {
         printPaddedHex(array[i]);
         if (i < start_index + numBytes - 1) debugPrint(", ");
     }
     debugPrint("]\n");
-#endif
 }
+#else
+void modbusMaster::printArraySlice(byte*, int, int) {}
+#endif
 
 
 // Calculates a Modbus RTC cyclical redundancy code (CRC)
