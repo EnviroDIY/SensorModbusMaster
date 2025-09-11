@@ -20,6 +20,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.6.3]
+
+### Changed
+
+- **BREAKING** Changed arguments of byteToFrame function
+- Ensure all buffers are filled with 0's before filling them with real values
+
+***
+
 ## [1.6.2]
 
 ### Changed
@@ -297,7 +306,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.3...HEAD
+[1.6.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.3
 [1.6.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.2
 [1.6.1]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.1
 [1.6.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.0
