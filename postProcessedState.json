@@ -274,7 +274,7 @@
       "name": "ChangeLog",
       "url": "change_log.html",
       "brief": "",
-      "has_details": 32,
+      "has_details": 33,
       "children": [],
       "childrenClasses": [],
       "childrenNamespaces": [],
@@ -437,7 +437,7 @@
   ],
   "doxyfile": {
     "PROJECT_NAME": "SensorModbusMaster",
-    "PROJECT_NUMBER": "1.6.3",
+    "PROJECT_NUMBER": "1.6.4",
     "PROJECT_BRIEF": "An Arduino library for communicating via modbus with the Arduino acting as master.",
     "PROJECT_LOGO": "gp-desktop-logo.png",
     "OUTPUT_DIRECTORY": "../../SensorModbusMaster_Doxygen",
