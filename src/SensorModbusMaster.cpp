@@ -1094,7 +1094,7 @@ uint16_t modbusMaster::sendCommand(byte* command, int commandLength) {
 
 
 void modbusMaster::printLastError(void) {
-    _debugStream->print("Modbus Error: ");
+    debugPrint("Modbus Error: ");
     switch (lastError) {
         case NO_ERROR: debugPrint("No Error\n"); break;
         case ILLEGAL_FUNCTION: debugPrint("Illegal Function!\n"); break;

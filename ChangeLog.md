@@ -20,6 +20,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.6.5]
+
+### Fixed
+
+- Fix attempt to print to nullptr
+
+***
+
 ## [1.6.4]
 
 ### Fixed
@@ -314,7 +322,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.4...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.5...HEAD
+[1.6.5]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.5
 [1.6.4]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.4
 [1.6.3]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.3
 [1.6.2]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.2
