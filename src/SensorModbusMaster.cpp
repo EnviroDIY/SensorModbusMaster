@@ -115,7 +115,7 @@ uint32_t modbusMaster::getCommandTimeout() {
 }
 
 void modbusMaster::setFrameTimeout(uint32_t timeout) {
-    _stream->setTimeout(timeout);
+    if (_stream != nullptr) { _stream->setTimeout(timeout); }
     modbusFrameTimeout = timeout;
 }
 uint32_t modbusMaster::getFrameTimeout() {
@@ -131,11 +131,11 @@ uint8_t modbusMaster::getCommandRetries() {
 
 void modbusMaster::setStream(Stream* stream) {
     _stream = stream;
-    _stream->setTimeout(modbusFrameTimeout);
+    if (_stream != nullptr) { _stream->setTimeout(modbusFrameTimeout); }
 }
 void modbusMaster::setStream(Stream& stream) {
     _stream = &stream;
-    _stream->setTimeout(modbusFrameTimeout);
+    if (_stream != nullptr) { _stream->setTimeout(modbusFrameTimeout); }
 }
 Stream* modbusMaster::getStream() {
     return _stream;
@@ -1015,6 +1015,12 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte* value) {
 
 // This sends a command to the sensor bus and listens for a response
 uint16_t modbusMaster::sendCommand(byte* command, int commandLength) {
+    if (_stream == nullptr) {
+        debugPrint("Modbus Error: No Stream Defined!\n");
+        lastError = NO_RESPONSE;
+        return static_cast<uint16_t>(lastError) << 12;
+    }
+
     // Empty the response buffer
     memset(responseBuffer, 0x00, RESPONSE_BUFFER_SIZE);
 
