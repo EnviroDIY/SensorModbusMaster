@@ -17,8 +17,8 @@
     "example_navigation": null,
     "footer_navigation": [
       [
-        "read_write_register_8ino-example.html",
-        "readWriteRegister.ino"
+        "scan_registers_8ino-example.html",
+        "scanRegisters.ino"
       ],
       [
         "example_get_set_address.html",

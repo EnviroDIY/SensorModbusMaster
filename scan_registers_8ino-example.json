@@ -16,14 +16,17 @@
     "since": null,
     "example_navigation": null,
     "footer_navigation": [
-      null,
+      [
+        "read_write_register_8ino-example.html",
+        "readWriteRegister.ino"
+      ],
       [
         "example_scan_registers.html",
         "Scanning Registers"
       ],
       [
-        "read_write_register_8ino-example.html",
-        "readWriteRegister.ino"
+        "get_set_address_8ino-example.html",
+        "getSetAddress.ino"
       ]
     ],
     "topics": [],
