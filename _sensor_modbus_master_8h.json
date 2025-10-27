@@ -245,6 +245,15 @@
             "since": null
           },
           {
+            "id": "a32bdb92774b67a64a50bbf538fa10f05ac76368d004f49f44a15927b3bfbe7ad0",
+            "name": "IMPROPER_RESPONSE",
+            "initializer": "=\n        0xC",
+            "brief": "The response is incorrect, malformed, or doesn&#x27;t have the expected number of bytes.",
+            "description": "",
+            "deprecated": null,
+            "since": null
+          },
+          {
             "id": "a32bdb92774b67a64a50bbf538fa10f05af25c4a77a7696176acf9bfc510f7a384",
             "name": "WRONG_SLAVE_ID",
             "initializer": "= 0xD",
