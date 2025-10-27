@@ -726,6 +726,8 @@ int16_t modbusMaster::getModbusData(byte slaveId, byte readCommand,
                        F(" bytes of expected "), expectedReturnBytes, '\n');
 
             delay(25);
+            // If it's the last attempt, set the error code
+            if (tries + 1 >= commandRetries) { lastError = WRONG_BYTE_COUNT; }
         }
         tries++;
     }

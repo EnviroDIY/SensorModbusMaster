@@ -102,6 +102,7 @@ typedef enum modbusErrorCode {
     GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND =
         0x0B,  ///< The gateway target device failed to respond
     // additional codes in this library
+    WRONG_BYTE_COUNT = 0xC,  ///< The response doesn't have the expected number of bytes
     WRONG_SLAVE_ID = 0xD,  ///< The response is not from the correct modbus slave
     BAD_CRC        = 0xE,  ///< The CRC check on the response failed
     NO_RESPONSE    = 0xF,  ///< No response was received at all
