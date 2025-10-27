@@ -726,8 +726,8 @@ int16_t modbusMaster::getModbusData(byte slaveId, byte readCommand,
                        F(" bytes of expected "), expectedReturnBytes, '\n');
 
             delay(25);
-            // If it's the last attempt, set the error code
-            if (tries + 1 >= commandRetries) { lastError = WRONG_BYTE_COUNT; }
+            // If it's the last attempt, set the error code for an improper response
+            if (tries + 1 >= commandRetries) { lastError = IMPROPER_RESPONSE; }
         }
         tries++;
     }
@@ -854,6 +854,8 @@ bool modbusMaster::setRegisters(int16_t startRegister, int16_t numRegisters,
                            value[1], F(" was expected"), '\n');
             }
             delay(25);
+            // If it's the last attempt, set the error code for an improper response
+            if (tries + 1 >= commandRetries) { lastError = IMPROPER_RESPONSE; }
         }
         tries++;
     }
@@ -924,6 +926,8 @@ bool modbusMaster::setCoil(int16_t coilAddress, bool value) {
                            : F("does not "),
                        F("match the command\n"));
             delay(25);
+            // If it's the last attempt, set the error code for an improper response
+            if (tries + 1 >= commandRetries) { lastError = IMPROPER_RESPONSE; }
         }
         tries++;
     }
@@ -1003,6 +1007,8 @@ bool modbusMaster::setCoils(int16_t startCoil, int16_t numCoils, byte* value) {
             debugPrint(F("The slave said it set "), int16FromFrame(bigEndian, 4),
                        F(" of expected "), numCoils, F(" coils\n"));
             delay(25);
+            // If it's the last attempt, set the error code for an improper response
+            if (tries + 1 >= commandRetries) { lastError = IMPROPER_RESPONSE; }
         }
         tries++;
     }
@@ -1116,6 +1122,9 @@ void modbusMaster::printLastError(void) {
         case GATEWAY_PATH_UNAVAILABLE: debugPrint("Gateway Path Unavailable!\n"); break;
         case GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND:
             debugPrint("Gateway Target Device Failed to Respond!\n");
+            break;
+        case IMPROPER_RESPONSE:
+            debugPrint("Response is incorrect, malformed, or doesn't have the expected number of bytes!\n");
             break;
         case WRONG_SLAVE_ID:
             debugPrint("Response is not from the correct modbus slave!\n");
