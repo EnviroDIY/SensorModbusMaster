@@ -20,6 +20,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ***
 
+## [1.7.0]
+
+### Added
+
+- Added an error code (IMPROPER_RESPONSE = 0xC) that will be set when the modbus response doesn't match the request. This could be an incorrect value set, a malformed response, or a number of bytes returned from a command is different from that expected.
+
+***
+
 ## [1.6.6]
 
 ### Fixed
@@ -330,7 +338,8 @@ This information can now be found in its [own repository](https://github.com/Env
 
 ***
 
-[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.6.6...HEAD
+[Unreleased]: https://github.com/EnviroDIY/SensorModbusMaster/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.7.0
 [1.6.6]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.6
 [1.6.5]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.5
 [1.6.4]: https://github.com/EnviroDIY/SensorModbusMaster/releases/tag/v1.6.4
